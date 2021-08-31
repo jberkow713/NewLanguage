@@ -9,6 +9,9 @@ TT_DIV = 'DIV'
 TT_LPAREN = 'LPAREN'
 TT_RPAREN = 'RPAREN'
 DIGITS = '0123456789'
+LETTERS = 'abcdefghijklmnopqrstuvwxyz'
+LETTER = 'LETTER'
+WORD = 'WORD'
 
 class Token:
     def __init__(self, type_, value=None):
@@ -52,8 +55,6 @@ class Position:
     def copy(self):
         return Position(self.idx, self.ln, self.col, self.fn, self.ftxt)
 
-
-
 class Reader:
     def __init__(self, fn, text):
         self.fn = fn 
@@ -77,8 +78,11 @@ class Reader:
         while self.current_char != None:
             
             
-            if self.current_char in ' \t':
+            if self.current_char in ' \t.,':
                 self.advance()
+            elif self.current_char in LETTERS:
+                tokens.append(self.make_word())
+                   
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
                 
@@ -107,6 +111,26 @@ class Reader:
                 return [], IllegalCharError(pos_start, self.pos, "'" + char + "'")
 
         return tokens, None 
+    
+    def make_word(self):
+        word_str = ''
+        word_length = 0
+        word = False
+
+        while self.current_char != None and self.current_char in LETTERS:
+            
+            if self.current_char in LETTERS:
+                word_str += self.current_char
+                word_length +=1
+            print(word_length)
+            if word_length >1:
+                word = True 
+            self.advance()            
+        if word == False:
+            return Token(LETTER, word_str)
+        else:
+            return Token(WORD, word_str)    
+
 
     def make_number(self):
         num_str = ''
