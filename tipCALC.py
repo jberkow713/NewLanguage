@@ -1,7 +1,8 @@
-def divide_tips(cash_tips, card_tips):
-
-    Total_Tips = cash_tips + card_tips
-    
+def divide_tips(cash_tips, card_tips=None):
+    if card_tips != None:
+        Total_Tips = cash_tips + card_tips
+    else:
+        Total_Tips = cash_tips
     names = []
     hours = []
     Staff_To_add = True
@@ -15,8 +16,7 @@ def divide_tips(cash_tips, card_tips):
         anyone_left = input('anyone else left to add? Enter 1 for yes, and 0 for no: ')
         if anyone_left == str(0):
             Staff_To_add = False
-
-    # Employee_Dict = dict(zip(names, hours))
+    
     total = sum(hours)
 
     Final_Cut = []
@@ -46,4 +46,4 @@ def divide_tips(cash_tips, card_tips):
 
 
 
-divide_tips(10,20)    
+divide_tips(10)    
