@@ -16,12 +16,12 @@ def divide_tips(cash_tips, card_tips):
         if anyone_left == str(0):
             Staff_To_add = False
 
-    Employee_Dict = dict(zip(names, hours))
+    # Employee_Dict = dict(zip(names, hours))
     total = sum(hours)
 
     Final_Cut = []
-    for v in Employee_Dict.values():
-        Final_Cut.append(round((v/total)*Total_Tips,2))
+    for x in hours:
+        Final_Cut.append(round((x/total)*Total_Tips,2))
     
     length = len(names)
     tuples = []
