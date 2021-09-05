@@ -61,8 +61,41 @@ class mover:
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))     
 
 #TODO create rectangles to be smashed on screen
+class Rectangles():
+    def __init__(self):
+        self.positions = []
+        self.draw()
+    def draw(self):
+        
+        x = 100
+        y = 100
+        length = 75
+        width = 25
+        colors = [RED, GREEN, BLUE, PURPLE]
+        index = 0
 
+        while y <=201:
+            #tuple of tuples, representing the drawing coordinates, then the xrange, and yrange of rectangles
+            #appended to the positions list, to be referenced for when the ball hits the rectangles
+            a = round(x,2)
+            b = round(y,2)
+            c = a+length
+            d = b+width
+            self.positions.append(((a,b),(a,c),(b,d))) 
+            pygame.draw.rect(screen,colors[index],(a,b,length,width))
 
+            x +=length+.05
+            index +=1
+            if index >3:
+                index = 0
+            if x >=1050:
+                y+=width+.2
+                x = 100
+
+((100, 100), (175, 100), (100, 125), (175, 125))
+
+Rectangle = Rectangles()
+print(Rectangle.positions)
 Mover = mover()
 pygame.init()
 
