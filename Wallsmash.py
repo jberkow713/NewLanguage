@@ -40,8 +40,8 @@ class mover:
         self.x = width/2
         self.y = 733
         self.speed = 10
-        pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5)) 
-    
+        pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))
+            
     def update(self):
         
         keys = pygame.key.get_pressed()        
@@ -59,8 +59,12 @@ class mover:
                 self.x =self.new_x            
         
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))     
-        
+
+#TODO create rectangles to be smashed on screen
+
+
 Mover = mover()
+pygame.init()
 
 running = True
 while running:
