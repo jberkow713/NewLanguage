@@ -91,7 +91,10 @@ class Rectangles():
             if x >=1050:
                 y+=width+.2
                 x = 100
+
 #TODO create ball class, movement of ball, bounce off Mover, hit rectangles, update rectangles, etc
+#can now reference the rectangle positions within the ball class to update rectangles
+#can now reference the mover position to check how and where ball bounces
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
