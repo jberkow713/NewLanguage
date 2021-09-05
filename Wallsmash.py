@@ -6,6 +6,7 @@ from pygame.locals import(
     K_UP, K_DOWN, K_LEFT, K_RIGHT,
     K_ESCAPE, KEYDOWN, QUIT, K_RETURN
 )
+pygame.init()
 
 width = 1200
 height = 800
@@ -15,6 +16,8 @@ top_left = origin+margin, origin+margin
 top_right = width-margin, origin+margin
 bottom_left = origin+margin, height-margin
 bottom_right = width-margin, height-margin
+
+
  
 FPS =60
 WHITE = (255,255,255)
@@ -25,8 +28,11 @@ BLUE = (0,0,255)
 PURPLE = (255,0,255)
 
 clock = pygame.time.Clock()
+
 screen = pygame.display.set_mode((width, height))
 screen.fill(WHITE)
+
+
 pygame.draw.lines(screen, BLACK, False, [(top_left), (top_right), (bottom_right), (bottom_left), (top_left)], 4)
 pygame.display.set_caption("Wallsmash")
 
@@ -60,6 +66,22 @@ class mover:
         
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))     
 
+class Ball():
+    def __init__(self,x,y,color):
+        self.x = x
+        self.y = y
+        self.color = color
+        pygame.draw.circle(screen,self.color,(self.x,self.y),15)     
+    
+    def move(self):
+        speed = 5
+        pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
+        
+        self.y +=speed
+        
+        pygame.draw.circle(screen,self.color,(self.x,self.y),15)
+  
+        
 
 class Rectangles():
     def __init__(self):
@@ -98,8 +120,9 @@ class Rectangles():
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
+Ball = Ball(width/2, height/2, BLACK)
 Mover = mover()
-pygame.init()
+
 
 running = True
 while running:
@@ -111,5 +134,10 @@ while running:
             sys.exit()
     if event.type == pygame.KEYDOWN:
                         
-        Mover.update()          
+        Mover.update()
+    
+    Ball.move()
+       
+    
+
     pygame.display.flip()
