@@ -67,21 +67,21 @@ class mover:
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))     
 
 class Ball():
-    def __init__(self,x,y,color):
+    def __init__(self,x,y,color, speed):
         self.x = x
         self.y = y
         self.color = color
-        pygame.draw.circle(screen,self.color,(self.x,self.y),15)     
+        self.speed = speed
+        pygame.draw.circle(screen,self.color,(self.x,self.y),15)    
     
     def move(self):
-        speed = 5
-        pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
-        
-        self.y +=speed
-        
+        #This will be the main movement function that takes care of all the physics, collisions, etc with the walls,
+        #The mover, the bricks, etc
+        speed = self.speed
+        pygame.draw.circle(screen,WHITE,(self.x,self.y),15)        
+        self.y +=speed        
         pygame.draw.circle(screen,self.color,(self.x,self.y),15)
-  
-        
+     
 
 class Rectangles():
     def __init__(self):
@@ -120,7 +120,7 @@ class Rectangles():
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
-Ball = Ball(width/2, height/2, BLACK)
+Ball = Ball(width/2, height/2, BLACK, 5)
 Mover = mover()
 
 
@@ -138,6 +138,5 @@ while running:
     
     Ball.move()
        
-    
 
     pygame.display.flip()
