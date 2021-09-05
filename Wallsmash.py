@@ -60,7 +60,7 @@ class mover:
         
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))     
 
-#TODO create rectangles to be smashed on screen
+
 class Rectangles():
     def __init__(self):
         self.positions = []
@@ -91,7 +91,7 @@ class Rectangles():
             if x >=1050:
                 y+=width+.2
                 x = 100
-
+#TODO create ball class, movement of ball, bounce off Mover, hit rectangles, update rectangles, etc
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
