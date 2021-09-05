@@ -92,7 +92,6 @@ class Rectangles():
                 y+=width+.2
                 x = 100
 
-((100, 100), (175, 100), (100, 125), (175, 125))
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
