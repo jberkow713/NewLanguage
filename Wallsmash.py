@@ -80,6 +80,7 @@ class Ball():
         self.yspeed = yspeed
         self.lives = 3
         self.last_wall = None
+        self.blocks = 0
 
         pygame.draw.circle(screen,self.color,(self.x,self.y),10)    
     
@@ -87,7 +88,10 @@ class Ball():
         #This will be the main movement function that takes care of all the physics, collisions, etc with the walls,
         #The mover, the bricks, etc
         #Need to be able to check the direction ball is moving right before it hits a surface, to reverse either x or y
-        
+        if self.blocks == 10:
+            self.xspeed = self.xspeed *1.25
+            self.yspeed = self.yspeed *1.25
+            self.blocks = 0
         #paddle collision
         if self.y >=715:
             pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
@@ -114,11 +118,7 @@ class Ball():
             self.xspeed = self.xspeed *-1
             self.x +=self.xspeed
             pygame.draw.circle(screen,self.color,(self.x,self.y),15)
-
-            if self.x <100:
-                self.last_wall = 'left'
-            if self.x >1000:
-                self.last_wall = 'right'    
+              
             return 
         
         #top wall
@@ -138,6 +138,7 @@ class Ball():
 
                 if self.x >= x[1][0] and self.x <= x[1][1]:
                     if self.y >= x[2][0] and self.y <= x[2][1]:
+                        self.blocks +=1
                         del Rectangle_Positions[count]
                         pygame.draw.rect(screen,WHITE,(x[0][0],x[0][1],75,25))
                         if self.last_wall == 'bottom':
@@ -156,22 +157,7 @@ class Ball():
                             pygame.draw.circle(screen,self.color,(self.x,self.y),15)
                             self.last_wall = 'bottom'
                             return
-                        elif self.last_wall == 'right':
-                            pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
-                            self.y +=self.yspeed
-                            self.xspeed = self.xspeed * -1
-                            self.x +=self.xspeed
-                            pygame.draw.circle(screen,self.color,(self.x,self.y),15)
-                            self.last_wall = 'left'
-                            return
-                        elif self.last_wall == 'left':
-                            pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
-                            self.y +=self.yspeed
-                            self.xspeed = self.xspeed * -1
-                            self.x +=self.xspeed
-                            pygame.draw.circle(screen,self.color,(self.x,self.y),15)
-                            self.last_wall = 'right'
-                            return
+                        
                 count +=1
         pygame.draw.circle(screen,WHITE,(self.x,self.y),15)        
         self.x +=self.xspeed
