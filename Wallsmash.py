@@ -102,6 +102,23 @@ class Ball():
                     self.lives -=1
                     self.x = width/2
                     self.y = height/2 
+        #side walls
+        if self.x <50 or self.x >=1160:
+            pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
+            self.y +=self.yspeed 
+            self.xspeed = self.xspeed *-1
+            self.x +=self.xspeed
+            pygame.draw.circle(screen,self.color,(self.x,self.y),15)
+            return 
+        #top wall
+        if self.y <50:
+            pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
+            self.x +=self.xspeed 
+            self.yspeed = self.yspeed *-1
+            self.y +=self.yspeed
+            pygame.draw.circle(screen,self.color,(self.x,self.y),15)
+            return 
+
 
                 
 
@@ -151,7 +168,7 @@ class Rectangles():
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
-Ball = Ball(width/2, height/2, BLACK, 0,3)
+Ball = Ball(width/2, height/2, BLACK,2,3)
 Mover = mover()
 
 
