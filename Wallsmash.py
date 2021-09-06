@@ -77,6 +77,7 @@ class Ball():
         self.color = color
         self.xspeed = xspeed
         self.yspeed = yspeed
+        self.lives = 3
         
         pygame.draw.circle(screen,self.color,(self.x,self.y),10)    
     
@@ -96,6 +97,12 @@ class Ball():
                 pygame.draw.circle(screen,self.color,(self.x,self.y),15)
                 return 
             else:
+                if self.y >750:
+
+                    self.lives -=1
+                    self.x = width/2
+                    self.y = height/2 
+
                 
 
 
