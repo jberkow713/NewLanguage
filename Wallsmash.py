@@ -36,6 +36,9 @@ screen.fill(WHITE)
 pygame.draw.lines(screen, BLACK, False, [(top_left), (top_right), (bottom_right), (bottom_left), (top_left)], 4)
 pygame.display.set_caption("Wallsmash")
 
+Mover_Position = []
+
+
 #Need 3 classes:
 #Class for the movable rectangle
 #Class for the ball
@@ -47,6 +50,7 @@ class mover:
         self.y = 733
         self.speed = 10
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))
+        Mover_Position.append((self.x, self.x+100))
             
     def update(self):
         
@@ -63,23 +67,43 @@ class mover:
             self.new_x = self.x - self.speed
             if self.new_x >25 and self.new_x < 1075:
                 self.x =self.new_x            
-        
+        Mover_Position.append((self.x, self.x+100))
         pygame.draw.rect(screen,BLUE,(self.x,self.y,100,5))     
 
 class Ball():
-    def __init__(self,x,y,color, speed):
+    def __init__(self,x,y,color, xspeed, yspeed):
         self.x = x
         self.y = y
         self.color = color
-        self.speed = speed
-        pygame.draw.circle(screen,self.color,(self.x,self.y),15)    
+        self.xspeed = xspeed
+        self.yspeed = yspeed
+        
+        pygame.draw.circle(screen,self.color,(self.x,self.y),10)    
     
     def move(self):
         #This will be the main movement function that takes care of all the physics, collisions, etc with the walls,
         #The mover, the bricks, etc
-        speed = self.speed
+        #Need to be able to check the direction ball is moving right before it hits a surface, to reverse either x or y
+        
+        if self.y >=715:
+            pygame.draw.circle(screen,WHITE,(self.x,self.y),15)
+            paddle_x = Mover_Position[-1]
+            if self.x > paddle_x[0] and self.x < paddle_x[1]:
+
+                self.x +=self.xspeed
+                self.yspeed = self.yspeed * -1
+                self.y +=self.yspeed
+                pygame.draw.circle(screen,self.color,(self.x,self.y),15)
+                return 
+            else:
+                
+
+
+
         pygame.draw.circle(screen,WHITE,(self.x,self.y),15)        
-        self.y +=speed        
+        self.x +=self.xspeed
+        self.y +=self.yspeed
+                
         pygame.draw.circle(screen,self.color,(self.x,self.y),15)
      
 
@@ -120,7 +144,7 @@ class Rectangles():
 
 Rectangle = Rectangles()
 print(Rectangle.positions)
-Ball = Ball(width/2, height/2, BLACK, 5)
+Ball = Ball(width/2, height/2, BLACK, 0,3)
 Mover = mover()
 
 
@@ -137,6 +161,7 @@ while running:
         Mover.update()
     
     Ball.move()
-       
+    # print(Mover_Position[-1])
+           
 
     pygame.display.flip()
