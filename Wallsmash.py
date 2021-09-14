@@ -82,7 +82,7 @@ class Ball():
         self.last_wall = None
         self.blocks = 0
 
-        pygame.draw.circle(screen,self.color,(self.x,self.y),10)    
+        pygame.draw.circle(screen,self.color,(self.x,self.y),15)    
     
     def move(self):
         #This will be the main movement function that takes care of all the physics, collisions, etc with the walls,
@@ -136,8 +136,8 @@ class Ball():
             count = 0
             for x in Rectangle_Positions:
 
-                if self.x >= x[1][0] and self.x <= x[1][1]:
-                    if self.y >= x[2][0] and self.y <= x[2][1]:
+                if self.x+15 >= x[1][0] and self.x-15 <= x[1][1]:
+                    if self.y+15 >= x[2][0] and self.y-15 <= x[2][1]:
                         self.blocks +=1
                         del Rectangle_Positions[count]
                         pygame.draw.rect(screen,WHITE,(x[0][0],x[0][1],75,25))
