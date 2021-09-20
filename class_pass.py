@@ -24,7 +24,8 @@ class Nested_More():
 
                 if a not in self.nested:
                     self.nested.append(a)
-                    new = True 
+                    new = True
+        self.keys = self.create_keys()             
     def create_keys(self):
         index = 0
         length = len(self.letters)
@@ -37,15 +38,19 @@ class Nested_More():
             b = self.nested[index]
             c = int(round(sum(b)/len(b),1)*10)
             letters.append(a)
-            avg.append(c)
-
+            if c not in avg:
+                avg.append(c)
+            elif c in avg:
+                d = int(round(c*1.5,1)*10)
+                avg.append(d)
+            
             index +=1
             length -=1
 
         crypt_dict = dict(zip(letters, avg))
         return crypt_dict
-
+    
 a = Nested_More(25)
 print(len(a.nested))
-print(a.create_keys())
+print(a.keys)
 
