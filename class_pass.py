@@ -49,8 +49,19 @@ class Nested_More():
 
         crypt_dict = dict(zip(letters, avg))
         return crypt_dict
-    
-a = Nested_More(25)
+    def encode_word(self, word):
+        count = 0
+        for x in word:
+            for k,v in self.keys.items():
+                if x == k:
+                    count += v
+        a = len(word)
+
+        return int(round(count/a,2))             
+
+            
+a = Nested_More(14)
 print(len(a.nested))
 print(a.keys)
+print(a.encode_word('hello'))
 
