@@ -80,7 +80,8 @@ def main():
             elif e.type == p.MOUSEBUTTONDOWN:
                 turn = gs.turn
 
-                                       
+                print(gs.turn)
+                print(can_move)                       
                 
                 if can_move == True and gs.turn == 'White':
                                         
@@ -92,13 +93,29 @@ def main():
                         gs.board[row][col]= current 
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
-                        gs.board[moved_row][moved_col]= '-'
-                                                
+                        gs.board[moved_row][moved_col]= '-'                              
 
-                        can_move = False  
-                        gs.turn = 'Black'                       
                         
+                        can_move = False  
+                        gs.turn = 'Black'
+                        break     
+                                         
+                if can_move == True and gs.turn == 'Black':
+                                        
+                    location = p.mouse.get_pos()
+                    col = location[0]//Sq_Size
+                    row = location[1]//Sq_Size
+                    
+                    if gs.board[row][col] not in gs.black_moves:
+                        gs.board[row][col]= current 
+                        moved_row = locations[-1][0]
+                        moved_col = locations[-1][1]
+                        gs.board[moved_row][moved_col]= '-'                              
 
+                        
+                        can_move = False  
+                        gs.turn = 'White'
+                        break  
                 
                 if turn == 'White':
                     
@@ -113,17 +130,21 @@ def main():
                         pieces.append(piece)
                         current = pieces[-1]
                         can_move = True
-                
-                                       
 
-                        
+                if turn == 'Black' :
+                    
+                    location = p.mouse.get_pos()
+                    col = location[0]//Sq_Size
+                    row = location[1]//Sq_Size
 
+                    locations.append((row, col))
 
-                if turn == 'Black':
                     if gs.board[row][col] in gs.black_moves:
                         piece = gs.board[row][col]
-                        print(piece)
-                    location_end = p.mouse.get_pos()     
+                        pieces.append(piece)
+                        current = pieces[-1]
+                        can_move = True        
+               
                 
 
 
