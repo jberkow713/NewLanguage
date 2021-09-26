@@ -25,6 +25,8 @@ class Gamestate():
 
                     ]
         self.turn = 'White'
+        self.white_moves = ['wp', 'wr', 'wkn', 'wb', 'wq', 'wk']
+        self.black_moves = ['bp', 'br', 'bkn', 'bb', 'bq', 'bk']
         self.move_log = []            
 
 # g = Gamestate()
@@ -65,19 +67,64 @@ def main():
     screen.fill(p.Color('white'))
     gs = Gamestate()
     load_images()
+    
+    can_move = False
+    pieces = []
+    locations = []
+
     running = True
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
             elif e.type == p.MOUSEBUTTONDOWN:
-                location = p.mouse.get_pos()
-                col = location[0]//Sq_Size
-                row = location[1]//Sq_Size
-                piece = gs.board[row][col]
-                print(gs.board[row][col])
-                print(row,col)
-                print(location)
+                turn = gs.turn
+
+                                       
+                
+                if can_move == True and gs.turn == 'White':
+                                        
+                    location = p.mouse.get_pos()
+                    col = location[0]//Sq_Size
+                    row = location[1]//Sq_Size
+                    
+                    if gs.board[row][col] not in gs.white_moves:
+                        gs.board[row][col]= current 
+                        moved_row = locations[-1][0]
+                        moved_col = locations[-1][1]
+                        gs.board[moved_row][moved_col]= '-'
+                                                
+
+                        can_move = False  
+                        gs.turn = 'Black'                       
+                        
+
+                
+                if turn == 'White':
+                    
+                    location = p.mouse.get_pos()
+                    col = location[0]//Sq_Size
+                    row = location[1]//Sq_Size
+
+                    locations.append((row, col))
+
+                    if gs.board[row][col] in gs.white_moves:
+                        piece = gs.board[row][col]
+                        pieces.append(piece)
+                        current = pieces[-1]
+                        can_move = True
+                
+                                       
+
+                        
+
+
+                if turn == 'Black':
+                    if gs.board[row][col] in gs.black_moves:
+                        piece = gs.board[row][col]
+                        print(piece)
+                    location_end = p.mouse.get_pos()     
+                
 
 
         drawBoard(screen)
