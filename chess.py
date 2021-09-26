@@ -1,4 +1,5 @@
 import pygame as p
+from pygame.constants import MOUSEBUTTONDOWN
 p.init()
 
 class Gamestate():
@@ -69,6 +70,16 @@ def main():
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
+            elif e.type == p.MOUSEBUTTONDOWN:
+                location = p.mouse.get_pos()
+                col = location[0]//Sq_Size
+                row = location[1]//Sq_Size
+                piece = gs.board[row][col]
+                print(gs.board[row][col])
+                print(row,col)
+                print(location)
+
+
         drawBoard(screen)
         draw_pieces(screen, gs.board)        
         
