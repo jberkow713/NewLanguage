@@ -29,6 +29,13 @@ class Gamestate():
         self.black_moves = ['bp', 'br', 'bkn', 'bb', 'bq', 'bk']
         self.move_log = []            
 
+        def check_move(self, starting_position, ending_position):
+            #check if piece being moved from starting position, can move to the ending position
+            #this means we need to get all possible moves for the piece being moved at the starting position
+            #check if the ending position is one of these spots
+
+
+
 # g = Gamestate()
 # print(g.board[0][0])
 
@@ -93,22 +100,29 @@ def main():
                         gs.board[row][col]= pieces[-1]
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
-                        gs.board[moved_row][moved_col]= '-'                              
 
+                        starting_position = gs.board[moved_row][moved_col]
+                        ending_position = gs.board[row][col]
                         
-                        can_move = False  
-                        gs.turn = 'Black'
-                        break     
+                        if gs.check_move(starting_position, ending_position)==True:
+
+                            gs.board[moved_row][moved_col]= '-'      
+
+                            
+                            can_move = False  
+                            gs.turn = 'Black'
+                            break  
+                        
+                        elif gs.check_move(starting_position, ending_position)==False:
+                            break
+              
                                          
                 if can_move == True and gs.turn == 'Black':
                                         
                     location = p.mouse.get_pos()
                     col = location[0]//Sq_Size
                     row = location[1]//Sq_Size
-                    #Evaluate here, whether or not gs.board[row][col] is a legal move, given the 
-                    #piece that is actually being moved:  pieces[-1] is the piece type,
-                    #evaluate if this piece type from it's current location can move to the location
-                    #the player has just clicked on
+                                       
                     
                     if gs.board[row][col] not in gs.black_moves:
                         #set empty piece you click to be equal to last piece clicked by black
@@ -118,13 +132,27 @@ def main():
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
                         #set the last position that was moved from to an empty spot
-                        gs.board[moved_row][moved_col]= '-'                              
-
                         
-                        can_move = False  
-                        gs.turn = 'White'
-                        break  
-                
+                        #Evaluate here, whether or not gs.board[row][col] is a legal move.
+                        # given the piece that is actually being moved:  pieces[-1] is the piece type,
+                        #evaluate if this piece type from it's current location can move to the location
+                        #the player has just clicked on
+
+                        starting_position = gs.board[moved_row][moved_col]
+                        ending_position = gs.board[row][col]
+                        
+                        if gs.check_move(starting_position, ending_position)==True:
+
+                            gs.board[moved_row][moved_col]= '-'      
+
+                            
+                            can_move = False  
+                            gs.turn = 'White'
+                            break  
+                        
+                        elif gs.check_move(starting_position, ending_position)==False:
+                            break          
+
                 if turn == 'White':
                     
                     location = p.mouse.get_pos()
