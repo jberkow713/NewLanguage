@@ -90,7 +90,7 @@ def main():
                     row = location[1]//Sq_Size
                     
                     if gs.board[row][col] not in gs.white_moves:
-                        gs.board[row][col]= current 
+                        gs.board[row][col]= pieces[-1]
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
                         gs.board[moved_row][moved_col]= '-'                              
@@ -105,11 +105,19 @@ def main():
                     location = p.mouse.get_pos()
                     col = location[0]//Sq_Size
                     row = location[1]//Sq_Size
+                    #Evaluate here, whether or not gs.board[row][col] is a legal move, given the 
+                    #piece that is actually being moved:  pieces[-1] is the piece type,
+                    #evaluate if this piece type from it's current location can move to the location
+                    #the player has just clicked on
                     
                     if gs.board[row][col] not in gs.black_moves:
-                        gs.board[row][col]= current 
+                        #set empty piece you click to be equal to last piece clicked by black
+                        gs.board[row][col]= pieces[-1]
+                        #the last piece in locations will represent the spot on the grid that you want
+                        #to move from
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
+                        #set the last position that was moved from to an empty spot
                         gs.board[moved_row][moved_col]= '-'                              
 
                         
@@ -128,7 +136,10 @@ def main():
                     if gs.board[row][col] in gs.white_moves:
                         piece = gs.board[row][col]
                         pieces.append(piece)
-                        current = pieces[-1]
+                        #until you click on an empty spot, or a non white spot during white's turn,
+                        #you append the piece you click on to pieces, and the last piece you clicked on
+                        #will be used for reference once it is time to move the piece
+                        
                         can_move = True
 
                 if turn == 'Black' :
@@ -142,7 +153,7 @@ def main():
                     if gs.board[row][col] in gs.black_moves:
                         piece = gs.board[row][col]
                         pieces.append(piece)
-                        current = pieces[-1]
+                        
                         can_move = True        
                
                 
