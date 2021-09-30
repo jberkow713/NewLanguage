@@ -53,24 +53,77 @@ class Gamestate():
 
         possible_moves = []
 
-        #eventually want to highlight all possible moves you can make with a piece
+        piece_type = self.board[starting_position[0]][starting_position[1]]
+        
+        possible_pieces = ['wp', 'bp', 'wkn', 'bkn', 'wr', 'br', 'wq', 'bq', 'wk', 'bk', 'wb', 'bb']
+        
+        movable_spots = []
 
-        #check if piece being moved from starting position, can move to the ending position
-        #this means we need to get all possible moves for the piece being moved at the starting position
-        #check if the ending position is one of these spots
+        if piece_type == 'wp':           
 
-        #7 types of pieces, bp, wp, (wr,br), (wq, bq), (wk, bk), (wb, bb), (wkn, bkn)
-        #pawns go in different directions, every other piece can move wherever based on its type
-        #need functions to check possible moves of each type based on their type
+            a = starting_position[0]
+            b = starting_position[1]
 
-        #first we want to check in general all the moves it could go to
-        #then we want to check if one of its own pieces is either in the way of its path, or the 
-        #ending of its path
-        #if that is not the case, we want to check if opponent's piece is in the path...at which point
-        #it can also not move to the spot by going through opponents piece...with the exception of the knight
+            conquerable = [(a-1, b-1), (a-1, b+1)]
 
-        #basically if spots are being blocked in the path, then all possible spots it could have moved to
-        #beyond that point, will not exist...aside from the knight
+            for x in conquerable:
+                if self.board[x[0]][x[1]] in possible_pieces:
+                    movable_spots.append(x)                 
+
+
+            for k,v in self.initial_move_log.items():
+                if starting_position == k:
+                                      
+                    if v == 'False':                                           
+
+                        movable = [(a-1,b),(a-2,b)]
+                           
+                        for x in movable:
+                            
+                            print(self.board[x[0]][x[1]])
+                            if self.board[x[0]][x[1]] == '-':
+                                                                
+                                movable_spots.append(x)
+                        self.initial_move_log[starting_position]='True'
+                    else:
+                        movable = (a-1,b)
+                        if self.board[movable[0]][movable[1]] not in possible_pieces:
+                            movable_spots.append(movable) 
+
+            print(movable_spots)
+            print(ending_position)
+            print(self.initial_move_log)
+
+            if ending_position in movable_spots:
+                return True
+            else:
+                return False     
+
+                        
+
+
+
+
+
+
+
+
+                        
+
+
+
+
+
+        #need to take the piece type, piece position, and determine where it can move
+
+        #going to use current board state to determine moving
+
+        
+     
+
+        
+
+        
 
         #for pawns initially, if their current row is their starting row, they are allowed
         # to move 2 spots forward...we can do this by adding a has_moved variable to each pawn,
@@ -123,8 +176,8 @@ def main():
             elif e.type == p.MOUSEBUTTONDOWN:
                 turn = gs.turn
 
-                print(gs.turn)
-                print(can_move)                       
+                # print(gs.turn)
+                # print(can_move)                       
                 
                 if can_move == True and gs.turn == 'White':
                                         
@@ -133,17 +186,18 @@ def main():
                     row = location[1]//Sq_Size
                     
                     if gs.board[row][col] not in gs.white_moves:
-                        gs.board[row][col]= pieces[-1]
+                        # gs.board[row][col]= pieces[-1]
+
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
 
-                        starting_position = gs.board[moved_row][moved_col]
-                        ending_position = gs.board[row][col]
+                        starting_position = moved_row,moved_col
+                        ending_position = row,col
                         
                         if gs.check_move(starting_position, ending_position)==True:
 
                             gs.board[moved_row][moved_col]= '-'      
-
+                            gs.board[row][col]= pieces[-1]
                             
                             can_move = False  
                             gs.turn = 'Black'
@@ -174,8 +228,8 @@ def main():
                         #evaluate if this piece type from it's current location can move to the location
                         #the player has just clicked on
 
-                        starting_position = gs.board[moved_row][moved_col]
-                        ending_position = gs.board[row][col]
+                        starting_position = moved_row,moved_col
+                        ending_position = row,col
                         
                         if gs.check_move(starting_position, ending_position)==True:
 
