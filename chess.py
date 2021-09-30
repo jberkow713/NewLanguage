@@ -120,42 +120,15 @@ class Gamestate():
                     if self.board[movable[0]][movable[1]] not in possible_pieces:
                         movable_spots.append(movable)            
 
+        #For every other one of the pieces, if an enemy piece is in the path, it will conquer it,
+        #If it's own piece is in the way, it will not be able to move, and for every piece aside from knights,
+        #This will then limit it's movement
+        #Need a helper function to do this, so we can use it with the rest of the pieces
+
         if ending_position in movable_spots:
             return True
         else:
-            return False     
-
-                        
-
-
-
-
-
-
-
-
-                        
-
-
-
-
-
-        #need to take the piece type, piece position, and determine where it can move
-
-        #going to use current board state to determine moving
-
-        
-     
-
-        
-
-        
-
-        #for pawns initially, if their current row is their starting row, they are allowed
-        # to move 2 spots forward...we can do this by adding a has_moved variable to each pawn,
-        # so once it has initially moved, it can no longer move 2 spots
-
-        #need to check if pawns, king, or rooks have moved, use self.initial_move_log dictionary for this
+            return False      
 
 
 # g = Gamestate()
@@ -299,9 +272,7 @@ def main():
                         piece = gs.board[row][col]
                         pieces.append(piece)
                         
-                        can_move = True        
-               
-                
+                        can_move = True                     
 
 
         drawBoard(screen)
