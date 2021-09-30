@@ -89,15 +89,41 @@ class Gamestate():
                         movable = (a-1,b)
                         if self.board[movable[0]][movable[1]] not in possible_pieces:
                             movable_spots.append(movable) 
+        if piece_type == 'bp':           
 
-            print(movable_spots)
-            print(ending_position)
-            print(self.initial_move_log)
+            a = starting_position[0]
+            b = starting_position[1]
 
-            if ending_position in movable_spots:
-                return True
-            else:
-                return False     
+            conquerable = [(a+1, b-1), (a+1, b+1)]
+
+            for x in conquerable:
+                if self.board[x[0]][x[1]] in possible_pieces:
+                    movable_spots.append(x)                 
+
+
+            for k,v in self.initial_move_log.items():
+                if starting_position == k:
+                                      
+                    if v == 'False':                                           
+
+                        movable = [(a+1,b),(a+2,b)]
+                           
+                        for x in movable:
+                            
+                            print(self.board[x[0]][x[1]])
+                            if self.board[x[0]][x[1]] == '-':
+                                                                
+                                movable_spots.append(x)
+                        self.initial_move_log[starting_position]='True'
+                else:
+                    movable = (a+1,b)
+                    if self.board[movable[0]][movable[1]] not in possible_pieces:
+                        movable_spots.append(movable)            
+
+        if ending_position in movable_spots:
+            return True
+        else:
+            return False     
 
                         
 
@@ -216,7 +242,7 @@ def main():
                     
                     if gs.board[row][col] not in gs.black_moves:
                         #set empty piece you click to be equal to last piece clicked by black
-                        gs.board[row][col]= pieces[-1]
+                        # gs.board[row][col]= pieces[-1]
                         #the last piece in locations will represent the spot on the grid that you want
                         #to move from
                         moved_row = locations[-1][0]
@@ -233,7 +259,8 @@ def main():
                         
                         if gs.check_move(starting_position, ending_position)==True:
 
-                            gs.board[moved_row][moved_col]= '-'      
+                            gs.board[moved_row][moved_col]= '-'
+                            gs.board[row][col]= pieces[-1]      
 
                             
                             can_move = False  
