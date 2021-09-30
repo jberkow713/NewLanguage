@@ -59,7 +59,8 @@ class Gamestate():
         
         movable_spots = []
 
-        if piece_type == 'wp':           
+        if piece_type == 'wp':
+            print('hi')           
 
             a = starting_position[0]
             b = starting_position[1]
@@ -69,6 +70,11 @@ class Gamestate():
             for x in conquerable:
                 if self.board[x[0]][x[1]] in possible_pieces:
                     movable_spots.append(x)                 
+
+            movable = (a-1,b)
+
+            if self.board[movable[0]][movable[1]] == '-':
+                movable_spots.append(movable)
 
 
             for k,v in self.initial_move_log.items():
@@ -80,15 +86,13 @@ class Gamestate():
                            
                         for x in movable:
                             
-                            print(self.board[x[0]][x[1]])
                             if self.board[x[0]][x[1]] == '-':
                                                                 
                                 movable_spots.append(x)
-                        self.initial_move_log[starting_position]='True'
-                    else:
-                        movable = (a-1,b)
-                        if self.board[movable[0]][movable[1]] not in possible_pieces:
-                            movable_spots.append(movable) 
+
+                        self.initial_move_log[starting_position]='True'      
+            
+
         if piece_type == 'bp':           
 
             a = starting_position[0]
@@ -100,6 +104,10 @@ class Gamestate():
                 if self.board[x[0]][x[1]] in possible_pieces:
                     movable_spots.append(x)                 
 
+            movable = (a+1,b)
+
+            if self.board[movable[0]][movable[1]] == '-':
+                movable_spots.append(movable)
 
             for k,v in self.initial_move_log.items():
                 if starting_position == k:
@@ -114,18 +122,19 @@ class Gamestate():
                             if self.board[x[0]][x[1]] == '-':
                                                                 
                                 movable_spots.append(x)
-                        self.initial_move_log[starting_position]='True'
-                else:
-                    movable = (a+1,b)
-                    if self.board[movable[0]][movable[1]] not in possible_pieces:
-                        movable_spots.append(movable)            
+                        
+                        self.initial_move_log[starting_position]='True'                        
 
         #For every other one of the pieces, if an enemy piece is in the path, it will conquer it,
         #If it's own piece is in the way, it will not be able to move, and for every piece aside from knights,
         #This will then limit it's movement
         #Need a helper function to do this, so we can use it with the rest of the pieces
+        
 
         if ending_position in movable_spots:
+            self.board[starting_position[0]][starting_position[1]]='-'
+            self.board[ending_position[0]][ending_position[1]] = piece_type
+            
             return True
         else:
             return False      
@@ -194,7 +203,7 @@ def main():
                         ending_position = row,col
                         
                         if gs.check_move(starting_position, ending_position)==True:
-
+                                   
                             gs.board[moved_row][moved_col]= '-'      
                             gs.board[row][col]= pieces[-1]
                             
@@ -254,6 +263,7 @@ def main():
                     if gs.board[row][col] in gs.white_moves:
                         piece = gs.board[row][col]
                         pieces.append(piece)
+                        print(pieces)
                         #until you click on an empty spot, or a non white spot during white's turn,
                         #you append the piece you click on to pieces, and the last piece you clicked on
                         #will be used for reference once it is time to move the piece
