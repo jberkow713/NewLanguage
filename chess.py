@@ -8,8 +8,6 @@ Sq_Size = int(Width/Dimensions)
 Max_FPS = 15
 IMAGES = {}
 
-
-
 class Gamestate():
     def __init__(self):
         self.board = [
@@ -60,8 +58,7 @@ class Gamestate():
         white_pieces = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
         movable_spots = []
 
-        if piece_type == 'wp':
-                       
+        if piece_type == 'wp':                       
 
             a = starting_position[0]
             b = starting_position[1]
@@ -91,8 +88,7 @@ class Gamestate():
                                                                 
                                 movable_spots.append(x)
 
-                        self.initial_move_log[starting_position]='True'      
-            
+                        self.initial_move_log[starting_position]='True'             
 
         if piece_type == 'bp':           
 
@@ -117,14 +113,14 @@ class Gamestate():
 
                         movable = [(a+1,b),(a+2,b)]
                            
-                        for x in movable:
-                            
+                        for x in movable:                            
                             
                             if self.board[x[0]][x[1]] == '-':
                                                                 
                                 movable_spots.append(x)
                         
-                        self.initial_move_log[starting_position]='True'                        
+                        self.initial_move_log[starting_position]='True'
+
         if piece_type == 'wkn' or piece_type == 'bkn':
             
             possible_spots = [(starting_position[0]+2, starting_position[1]+1), (starting_position[0]+2, starting_position[1]-1),\
@@ -142,14 +138,7 @@ class Gamestate():
                         if piece_type == 'bkn':
                             if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
                                 movable_spots.append(x)
-                                
-        
-
-        #For every other one of the pieces, if an enemy piece is in the path, it will conquer it,
-        #If it's own piece is in the way, it will not be able to move, and for every piece aside from knights,
-        #This will then limit it's movement
-        #Need a helper function to do this, so we can use it with the rest of the pieces
-        
+               
         if piece_type == 'wk' or piece_type == 'bk':
             possible_spots = [(starting_position[0], starting_position[1]+1), (starting_position[0], starting_position[1]-1),\
                 (starting_position[0]+1, starting_position[1]), (starting_position[0]-1, starting_position[1])]
@@ -162,8 +151,11 @@ class Gamestate():
                         if piece_type == 'bk':
                             if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
                                 movable_spots.append(x)
-        #Need to eventually update this so that the king can not move into check
+        
+        #TODO Need to eventually update this so that the king can not move into check
 
+        #TODO work on bishops, queens, rooks movement
+        
         if ending_position in movable_spots:
             self.board[starting_position[0]][starting_position[1]]='-'
             self.board[ending_position[0]][ending_position[1]] = piece_type
@@ -171,10 +163,6 @@ class Gamestate():
             return True
         else:
             return False      
-
-
-# g = Gamestate()
-# print(g.board[0][0])
 
 def load_images():
 
@@ -215,10 +203,7 @@ def main():
             if e.type == p.QUIT:
                 running = False
             elif e.type == p.MOUSEBUTTONDOWN:
-                turn = gs.turn
-
-                # print(gs.turn)
-                # print(can_move)                       
+                turn = gs.turn                                     
                 
                 if can_move == True and gs.turn == 'White':
                                         
@@ -227,8 +212,7 @@ def main():
                     row = location[1]//Sq_Size
                     
                     if gs.board[row][col] not in gs.white_moves:
-                        # gs.board[row][col]= pieces[-1]
-
+                        
                         moved_row = locations[-1][0]
                         moved_col = locations[-1][1]
 
