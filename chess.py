@@ -56,7 +56,8 @@ class Gamestate():
         piece_type = self.board[starting_position[0]][starting_position[1]]
         
         possible_pieces = ['wp', 'bp', 'wkn', 'bkn', 'wr', 'br', 'wq', 'bq', 'wk', 'bk', 'wb', 'bb']
-        
+        black_pieces = ['bp', 'bkn', 'br', 'bq', 'bk', 'bb']
+        white_pieces = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
         movable_spots = []
 
         if piece_type == 'wp':
@@ -124,6 +125,25 @@ class Gamestate():
                                 movable_spots.append(x)
                         
                         self.initial_move_log[starting_position]='True'                        
+        if piece_type == 'wkn' or piece_type == 'bkn':
+            
+            possible_spots = [(starting_position[0]+2, starting_position[1]+1), (starting_position[0]+2, starting_position[1]-1),\
+                (starting_position[0]-2, starting_position[1]+1), (starting_position[0]-2, starting_position[1]-1),\
+                    (starting_position[0]+1, starting_position[1]+2), (starting_position[0]+1, starting_position[1]-2),\
+                        (starting_position[0]-1, starting_position[1]+2),(starting_position[0]-1, starting_position[1]-2)]                
+            print(possible_spots)
+            for x in possible_spots:
+                if x[0]>=0 and x[0]<Dimensions:
+                    if x[1]>=0 and x[1]<Dimensions:
+                        if piece_type == 'wkn':
+                            if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
+                                movable_spots.append(x)
+                                print(movable_spots)
+                        if piece_type == 'bkn':
+                            if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
+                                movable_spots.append(x)
+                                
+        
 
         #For every other one of the pieces, if an enemy piece is in the path, it will conquer it,
         #If it's own piece is in the way, it will not be able to move, and for every piece aside from knights,
@@ -169,7 +189,7 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color('white'))
     gs = Gamestate()
-    print(gs.initial_move_log)
+    # print(gs.initial_move_log)
     load_images()
     
     can_move = False
