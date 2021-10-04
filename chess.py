@@ -150,6 +150,19 @@ class Gamestate():
         #This will then limit it's movement
         #Need a helper function to do this, so we can use it with the rest of the pieces
         
+        if piece_type == 'wk' or piece_type == 'bk':
+            possible_spots = [(starting_position[0], starting_position[1]+1), (starting_position[0], starting_position[1]-1),\
+                (starting_position[0]+1, starting_position[1]), (starting_position[0]-1, starting_position[1])]
+            for x in possible_spots:
+                if x[0]>=0 and x[0]<Dimensions:
+                    if x[1]>=0 and x[1]<Dimensions:
+                        if piece_type == 'wk':
+                            if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
+                                movable_spots.append(x)
+                        if piece_type == 'bk':
+                            if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
+                                movable_spots.append(x)
+        #Need to eventually update this so that the king can not move into check
 
         if ending_position in movable_spots:
             self.board[starting_position[0]][starting_position[1]]='-'
