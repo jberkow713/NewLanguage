@@ -61,7 +61,7 @@ class Gamestate():
         movable_spots = []
 
         if piece_type == 'wp':
-            print('hi')           
+                       
 
             a = starting_position[0]
             b = starting_position[1]
@@ -119,7 +119,7 @@ class Gamestate():
                            
                         for x in movable:
                             
-                            print(self.board[x[0]][x[1]])
+                            
                             if self.board[x[0]][x[1]] == '-':
                                                                 
                                 movable_spots.append(x)
@@ -131,14 +131,14 @@ class Gamestate():
                 (starting_position[0]-2, starting_position[1]+1), (starting_position[0]-2, starting_position[1]-1),\
                     (starting_position[0]+1, starting_position[1]+2), (starting_position[0]+1, starting_position[1]-2),\
                         (starting_position[0]-1, starting_position[1]+2),(starting_position[0]-1, starting_position[1]-2)]                
-            print(possible_spots)
+            
             for x in possible_spots:
                 if x[0]>=0 and x[0]<Dimensions:
                     if x[1]>=0 and x[1]<Dimensions:
                         if piece_type == 'wkn':
                             if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
                                 movable_spots.append(x)
-                                print(movable_spots)
+                                
                         if piece_type == 'bkn':
                             if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
                                 movable_spots.append(x)
@@ -283,7 +283,7 @@ def main():
                     if gs.board[row][col] in gs.white_moves:
                         piece = gs.board[row][col]
                         pieces.append(piece)
-                        print(pieces)
+                        
                         #until you click on an empty spot, or a non white spot during white's turn,
                         #you append the piece you click on to pieces, and the last piece you clicked on
                         #will be used for reference once it is time to move the piece
