@@ -77,6 +77,77 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
                 break            
             temp_col+=1    
         return possible_spots
+    
+    if piece_type == 'bishop':
+        temp_row = row_pos
+        temp_col = col_pos
+
+        while temp_row>0 and temp_col>0:
+
+            if board[temp_row-1][temp_col-1] == '-':
+                possible_spots.append((temp_row-1,temp_col-1))
+
+            elif board[temp_row-1][temp_col-1] in opposite_piece_list:
+                possible_spots.append((temp_row-1,temp_col-1))
+                break
+            elif board[temp_row-1][temp_col-1] in piece_list:
+                break
+            temp_row-=1
+            temp_col-=1
+        
+        temp_row = row_pos
+        temp_col = col_pos
+
+        while temp_row<Boardsize-1 and temp_col<Boardsize-1:
+
+            if board[temp_row+1][temp_col+1] == '-':
+                possible_spots.append((temp_row+1,temp_col+1))
+
+            elif board[temp_row+1][temp_col+1] in opposite_piece_list:
+                possible_spots.append((temp_row+1,temp_col+1))
+                break
+            elif board[temp_row+1][temp_col+1] in piece_list:
+                break
+            temp_row+=1
+            temp_col+=1
+
+        temp_row = row_pos
+        temp_col = col_pos
+
+        while temp_row>0 and temp_col<Boardsize-1:
+
+            if board[temp_row-1][temp_col+1] == '-':
+                possible_spots.append((temp_row-1,temp_col+1))
+
+            elif board[temp_row-1][temp_col+1] in opposite_piece_list:
+                possible_spots.append((temp_row-1,temp_col+1))
+                break
+            elif board[temp_row-1][temp_col+1] in piece_list:
+                break
+            temp_row-=1
+            temp_col+=1
+
+        temp_row = row_pos
+        temp_col = col_pos
+
+        while temp_row<Boardsize-1 and temp_col>0:
+
+            if board[temp_row+1][temp_col-1] == '-':
+                possible_spots.append((temp_row+1,temp_col-1))
+
+            elif board[temp_row+1][temp_col-1] in opposite_piece_list:
+                possible_spots.append((temp_row+1,temp_col-1))
+                break
+            elif board[temp_row+1][temp_col-1] in piece_list:
+                break
+            temp_row+=1
+            temp_col-=1
+        return possible_spots    
+
+
+
+
+
 
 
 
@@ -242,6 +313,14 @@ class Gamestate():
         if piece_type =='br':
             Position = (starting_position[0], starting_position[1])
             movable_spots= create_moves(Position, self.board, Dimensions, 'rook', black_pieces, white_pieces)
+
+        if piece_type == 'wb':
+            Position = (starting_position[0], starting_position[1])
+            movable_spots= create_moves(Position, self.board, Dimensions, 'bishop', white_pieces, black_pieces)
+
+        if piece_type =='bb':
+            Position = (starting_position[0], starting_position[1])
+            movable_spots= create_moves(Position, self.board, Dimensions, 'bishop', black_pieces, white_pieces)    
 
 
         #TODO Need to eventually update this so that the king can not move into check
