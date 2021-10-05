@@ -22,27 +22,31 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
         temp_col = col_pos 
         
         while temp_row>0:
+
             if board[temp_row-1][temp_col] == '-':
                 possible_spots.append((temp_row-1,temp_col))
-                temp_row-=1
-            if board[temp_row-1][temp_col] in opposite_piece_list:
+
+            elif board[temp_row-1][temp_col] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col))
                 break
-            if board[temp_row-1][temp_col] in piece_list:
+            elif board[temp_row-1][temp_col] in piece_list:
                 break
+            temp_row-=1    
         
         temp_row = row_pos
-        temp_col = col_pos 
+        temp_col = col_pos                 
         
         while temp_row < Boardsize-1:
             if board[temp_row+1][temp_col] == '-':
-                possible_spots.append((temp_row+1,temp_col))
-                temp_row+=1
-            if board[temp_row+1][temp_col] in opposite_piece_list:
+                possible_spots.append((temp_row+1,temp_col))                
+            
+            elif board[temp_row+1][temp_col] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col))
                 break
-            if board[temp_row+1][temp_col] in piece_list:
+            elif board[temp_row+1][temp_col] in piece_list:
                 break
+            
+            temp_row+=1    
         
         temp_row = row_pos
         temp_col = col_pos 
@@ -50,12 +54,14 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
         while temp_col>0:
             if board[temp_row][temp_col-1] == '-':
                 possible_spots.append((temp_row,temp_col-1))
-                temp_col-=1
-            if board[temp_row][temp_col-1] in opposite_piece_list:
+            
+            elif board[temp_row][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row,temp_col-1))
                 break
-            if board[temp_row][temp_col-1] in piece_list:
+            elif board[temp_row][temp_col-1] in piece_list:
                 break
+           
+            temp_col-=1    
         
         temp_row = row_pos
         temp_col = col_pos 
@@ -63,13 +69,13 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
         while temp_col < Boardsize-1:
             if board[temp_row][temp_col+1] == '-':
                 possible_spots.append((temp_row,temp_col+1))
-                temp_col+=1
-            if board[temp_row][temp_col+1] in opposite_piece_list:
+
+            elif board[temp_row][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row,temp_col+1))
                 break
-            if board[temp_row][temp_col+1] in piece_list:
+            elif board[temp_row][temp_col+1] in piece_list:
                 break            
-        
+            temp_col+=1    
         return possible_spots
 
 
