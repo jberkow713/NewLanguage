@@ -427,7 +427,10 @@ class Gamestate():
                
         if piece_type == 'wk' or piece_type == 'bk':
             possible_spots = [(starting_position[0], starting_position[1]+1), (starting_position[0], starting_position[1]-1),\
-                (starting_position[0]+1, starting_position[1]), (starting_position[0]-1, starting_position[1])]
+                (starting_position[0]+1, starting_position[1]), (starting_position[0]-1, starting_position[1]),\
+                    (starting_position[0]+1, starting_position[1]+1),(starting_position[0]+1, starting_position[1]-1),\
+                        (starting_position[0]-1, starting_position[1]+1),(starting_position[0]-1, starting_position[1]-1)
+                    ]
             for x in possible_spots:
                 if board_check(x, Dimensions)==True:
                     
