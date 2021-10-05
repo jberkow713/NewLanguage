@@ -7,6 +7,83 @@ Dimensions = 16
 Sq_Size = int(Width/Dimensions)
 Max_FPS = 15
 IMAGES = {}
+def board_check(coord, Boardsize):
+    
+    if coord[0]>=0 and coord[0]<Boardsize:
+        if coord[1]>=0 and coord[1]<Boardsize:
+            return True        
+def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_piece_list):
+    possible_spots = []
+    row_pos = position[0]
+    col_pos = position[1]
+
+    if piece_type == 'rook':
+        temp_row = row_pos
+        temp_col = col_pos 
+        
+        while temp_row>0:
+            if board[temp_row-1][temp_col] == '-':
+                possible_spots.append((temp_row-1,temp_col))
+                temp_row-=1
+            if board[temp_row-1][temp_col] in opposite_piece_list:
+                possible_spots.append((temp_row-1,temp_col))
+                break
+            if board[temp_row-1][temp_col] in piece_list:
+                break
+        
+        temp_row = row_pos
+        temp_col = col_pos 
+        
+        while temp_row < Boardsize-1:
+            if board[temp_row+1][temp_col] == '-':
+                possible_spots.append((temp_row+1,temp_col))
+                temp_row+=1
+            if board[temp_row+1][temp_col] in opposite_piece_list:
+                possible_spots.append((temp_row+1,temp_col))
+                break
+            if board[temp_row+1][temp_col] in piece_list:
+                break
+        
+        temp_row = row_pos
+        temp_col = col_pos 
+        
+        while temp_col>0:
+            if board[temp_row][temp_col-1] == '-':
+                possible_spots.append((temp_row,temp_col-1))
+                temp_col-=1
+            if board[temp_row][temp_col-1] in opposite_piece_list:
+                possible_spots.append((temp_row,temp_col-1))
+                break
+            if board[temp_row][temp_col-1] in piece_list:
+                break
+        
+        temp_row = row_pos
+        temp_col = col_pos 
+        
+        while temp_col < Boardsize-1:
+            if board[temp_row][temp_col+1] == '-':
+                possible_spots.append((temp_row,temp_col+1))
+                temp_col+=1
+            if board[temp_row][temp_col+1] in opposite_piece_list:
+                possible_spots.append((temp_row,temp_col+1))
+                break
+            if board[temp_row][temp_col+1] in piece_list:
+                break            
+        
+        return possible_spots
+
+
+
+
+
+        
+
+
+
+
+
+    #return a list of possible moves based on the input that user can move to
+
 
 class Gamestate():
     def __init__(self):
@@ -129,29 +206,38 @@ class Gamestate():
                         (starting_position[0]-1, starting_position[1]+2),(starting_position[0]-1, starting_position[1]-2)]                
             
             for x in possible_spots:
-                if x[0]>=0 and x[0]<Dimensions:
-                    if x[1]>=0 and x[1]<Dimensions:
-                        if piece_type == 'wkn':
-                            if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
-                                movable_spots.append(x)
-                                
-                        if piece_type == 'bkn':
-                            if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
-                                movable_spots.append(x)
+                if board_check(x, Dimensions)==True:
+
+                    if piece_type == 'wkn':
+                        
+                        if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
+                            movable_spots.append(x)
+                            
+                    if piece_type == 'bkn':
+                        if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
+                            movable_spots.append(x)
                
         if piece_type == 'wk' or piece_type == 'bk':
             possible_spots = [(starting_position[0], starting_position[1]+1), (starting_position[0], starting_position[1]-1),\
                 (starting_position[0]+1, starting_position[1]), (starting_position[0]-1, starting_position[1])]
             for x in possible_spots:
-                if x[0]>=0 and x[0]<Dimensions:
-                    if x[1]>=0 and x[1]<Dimensions:
-                        if piece_type == 'wk':
-                            if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
-                                movable_spots.append(x)
-                        if piece_type == 'bk':
-                            if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
-                                movable_spots.append(x)
-        
+                if board_check(x, Dimensions)==True:
+                    
+                    if piece_type == 'wk':
+                        if self.board[x[0]][x[1]] in black_pieces or self.board[x[0]][x[1]]== '-':
+                            movable_spots.append(x)
+                    if piece_type == 'bk':
+                        if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
+                            movable_spots.append(x)
+        if piece_type == 'wr':
+            Position = (starting_position[0], starting_position[1])
+            movable_spots= create_moves(Position, self.board, Dimensions, 'rook', white_pieces, black_pieces)
+
+        if piece_type =='br':
+            Position = (starting_position[0], starting_position[1])
+            movable_spots= create_moves(Position, self.board, Dimensions, 'rook', black_pieces, white_pieces)
+
+
         #TODO Need to eventually update this so that the king can not move into check
 
         #TODO work on bishops, queens, rooks movement
