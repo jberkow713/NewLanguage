@@ -12,6 +12,20 @@ def board_check(coord, Boardsize):
     if coord[0]>=0 and coord[0]<Boardsize:
         if coord[1]>=0 and coord[1]<Boardsize:
             return True        
+
+def while_loop(condition, board, row, col, row_val, col_val, list,opp_list, final_list):
+    
+    while condition:
+        if board[row+row_val][col+col_val] == '-':
+            final_list.append((row+row_val,col+col_val))
+        elif board[row+row_val][col+col_val] in opp_list:
+            final_list.append((row+row_val,col+col_val))
+            return
+        elif board[row+row_val][col+col_val] in list:
+            return
+        row += row_val
+        col += col_val
+    
 def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_piece_list):
     possible_spots = []
     row_pos = position[0]
@@ -75,7 +89,8 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
                 break
             elif board[temp_row][temp_col+1] in piece_list:
                 break            
-            temp_col+=1    
+            temp_col+=1
+               
         return possible_spots
     
     if piece_type == 'bishop':
@@ -143,6 +158,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             temp_row+=1
             temp_col-=1
         return possible_spots    
+    
     if piece_type == 'queen':
         
         temp_row = row_pos
@@ -266,23 +282,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
                 break
             temp_row+=1
             temp_col-=1
-        return possible_spots     
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
+        return possible_spots   
 
     #return a list of possible moves based on the input that user can move to
 
@@ -313,6 +313,8 @@ class Gamestate():
         self.white_moves = ['wp', 'wr', 'wkn', 'wb', 'wq', 'wk']
         self.black_moves = ['bp', 'br', 'bkn', 'bb', 'bq', 'bk']
         self.move_log = []
+        self.white_in_check = False
+        self.black_in_check = False  
         self.initial_move_log = self.check_initial_movement()
 
     def check_initial_movement(self):
@@ -620,6 +622,7 @@ def main():
         p.display.flip()         
 
 main() 
+
 
 
 
