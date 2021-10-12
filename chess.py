@@ -7,33 +7,18 @@ Dimensions = 16
 Sq_Size = int(Width/Dimensions)
 Max_FPS = 15
 IMAGES = {}
+
 def board_check(coord, Boardsize):
     
     if coord[0]>=0 and coord[0]<Boardsize:
         if coord[1]>=0 and coord[1]<Boardsize:
             return True        
-
-def while_loop(condition, board, row, col, row_val, col_val, list,opp_list, final_list):
-    
-    while condition:
-        if board[row+row_val][col+col_val] == '-':
-            final_list.append((row+row_val,col+col_val))
-        
-        elif board[row+row_val][col+col_val] in opp_list:
-            final_list.append((row+row_val,col+col_val))
-            return
-
-        elif board[row+row_val][col+col_val] in list:
-            return
-            
-        row += row_val
-        col += col_val
     
 def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_piece_list):
     possible_spots = []
     row_pos = position[0]
     col_pos = position[1]
-
+  
     if piece_type == 'rook':
         temp_row = row_pos
         temp_col = col_pos 
@@ -371,19 +356,20 @@ class Gamestate():
                         
             possible= [(X+2, Y+1), (X+2, Y-1),(X-2, Y+1), (X-2, Y-1),\
                 (X+1, Y+2), (X+1, Y-2), (X-1, Y+2),(X-1, Y-2)]
+            #check if king is checked by knights
             for i in possible:
                 if board_check(i, Dimensions)==True:
                     if self.board[i[0]][i[1]]=='bkn':
                         return True
             possible_pawn = [(X-1, Y+1),(X-1, Y-1) ]
-            
+            #check if king is checked by pawns
             for i in possible_pawn:
                 if board_check(i, Dimensions)==True:
                     if self.board[i[0]][i[1]]=='bp':
                         return True                 
 
         if self.turn == 'Black':
-            #check knight position
+            
             piece_list = ['bp', 'br','bkn', 'bb', 'bq', 'bk']
             opposite_piece_list =   ['wp', 'wr', 'wkn', 'wb', 'wq', 'wk']
             narrowed_list = ['wr', 'wb', 'wq']  
@@ -405,7 +391,7 @@ class Gamestate():
                 if board_check(i, Dimensions)==True:
                     if self.board[i[0]][i[1]]=='wp':
                         return True                             
-        
+        #make sure king can not move near opposing king
         surroundings = [(X, Y-1), (X,Y+1), (X+1, Y-1), (X+1, Y+1), (X-1, Y-1), (X+1,Y), (X-1,Y)]
         if self.turn =='White':
             for i in surroundings:
@@ -424,7 +410,7 @@ class Gamestate():
         temp_row, temp_col = X,Y
         possible_spots = []
         board = self.board 
-
+        #Check kings position against rooks, queens, bishops
         while temp_row>0:
 
             if board[temp_row-1][temp_col] in opposite_piece_list:
@@ -544,7 +530,8 @@ class Gamestate():
 
             temp_row+=1
             temp_col-=1
-        #Checking to see if pieces in kings line of sight can actually attack the king, putting him in check
+        
+        #Check to see if pieces in kings line of sight can actually attack the king, putting him in check
         if self.turn == 'White':
             pce_list = ['bp', 'bkn', 'br', 'bq', 'bk', 'bb']
             opp_piece_list = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
@@ -578,7 +565,8 @@ class Gamestate():
         return False           
 
     def check_move(self, starting_position, ending_position):
-        #starting and ending positions are going to be grid locations on the game grid
+        #main function to check if the position clicked on by user is both possible position for that particular piece,
+        #also makes sure to abide by checking rules
         
         piece_type = self.board[starting_position[0]][starting_position[1]]
         
