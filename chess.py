@@ -325,19 +325,201 @@ class Gamestate():
                 piece = self.board[x][y]
                 if piece in list_to_check:
                     d[(x,y)]='False'
-        return d            
+        return d   
+
+    def in_check(self):
+        pos = []
+        if self.turn == 'White':
+            #check knight position
+            opposite_piece_list = ['bp', 'br','bkn', 'bb', 'bq', 'bk']
+            piece_list =   ['wp', 'wr', 'wkn', 'wb', 'wq', 'wk']
+            narrowed_list = ['br', 'bb', 'bq']  
+            for x in range(Dimensions):
+                for y in range(Dimensions):
+                    piece = self.board[x][y]
+                    if piece == 'wk':
+                        X,Y = x,y
+                        
+            possible= [(X+2, Y+1), (X+2, Y-1),(X-2, Y+1), (X-2, Y-1),\
+                (X+1, Y+2), (X+1, Y-2), (X-1, Y+2),(X-1, Y-2)]
+            for i in possible:
+                if board_check(i, Dimensions)==True:
+                    if self.board[i[0]][i[1]]=='bkn':
+                        return True
         
+        if self.turn == 'Black':
+            #check knight position
+            piece_list = ['bp', 'br','bkn', 'bb', 'bq', 'bk']
+            opposite_piece_list =   ['wp', 'wr', 'wkn', 'wb', 'wq', 'wk']
+            narrowed_list = ['wr', 'wb', 'wq']  
+            for x in range(Dimensions):
+                for y in range(Dimensions):
+                    piece = self.board[x][y]
+                    if piece == 'bk':
+                        X,Y = x,y
+                        
+            possible= [(X+2, Y+1), (X+2, Y-1),(X-2, Y+1), (X-2, Y-1),\
+                (X+1, Y+2), (X+1, Y-2), (X-1, Y+2),(X-1, Y-2)]
+            for i in possible:
+                if board_check(i, Dimensions)==True:
+                    if self.board[i[0]][i[1]]=='wkn':
+                        return True                
+        
+        Boardsize = Dimensions
+        temp_row, temp_col = X,Y
+        possible_spots = []
+        board = self.board 
+
+        while temp_row>0:
+
+            if board[temp_row-1][temp_col] in opposite_piece_list:
+                if board[temp_row-1][temp_col] in narrowed_list:
+
+                    possible_spots.append((temp_row-1,temp_col))
+                break
+            elif board[temp_row-1][temp_col] in piece_list:
+                break
+            temp_row-=1    
+        
+        temp_row = X
+        temp_col = Y                 
+        
+        while temp_row < Boardsize-1:                        
+            
+            if board[temp_row+1][temp_col] in opposite_piece_list:
+                if board[temp_row+1][temp_col] in narrowed_list:
+                    possible_spots.append((temp_row+1,temp_col))
+                break
+            elif board[temp_row+1][temp_col] in piece_list:
+                break
+            
+            temp_row+=1    
+        
+        temp_row = X
+        temp_col = Y  
+        
+        while temp_col>0:
+            
+            
+            if board[temp_row][temp_col-1] in opposite_piece_list:
+                if board[temp_row][temp_col-1] in narrowed_list:
+                    possible_spots.append((temp_row,temp_col-1))
+                break
+            elif board[temp_row][temp_col-1] in piece_list:
+                break
+           
+            temp_col-=1    
+        
+        temp_row = X
+        temp_col = Y  
+        
+        while temp_col < Boardsize-1:
+            
+            if board[temp_row][temp_col+1] in opposite_piece_list:
+                if board[temp_row][temp_col+1] in narrowed_list:
+                    possible_spots.append((temp_row,temp_col+1))
+                break
+            elif board[temp_row][temp_col+1] in piece_list:
+                break            
+            temp_col+=1
+        temp_row = X
+        temp_col = Y 
+
+        while temp_row>0 and temp_col>0:
+            
+            if board[temp_row-1][temp_col-1] in opposite_piece_list:
+                if board[temp_row-1][temp_col-1] in narrowed_list:
+                    possible_spots.append((temp_row-1,temp_col-1))
+                break
+            elif board[temp_row-1][temp_col-1] in piece_list:
+                break
+            temp_row-=1
+            temp_col-=1
+        
+        temp_row = X
+        temp_col = Y 
+
+        while temp_row<Boardsize-1 and temp_col<Boardsize-1:
+           
+            if board[temp_row+1][temp_col+1] in opposite_piece_list:
+                if board[temp_row+1][temp_col+1] in narrowed_list:
+                    possible_spots.append((temp_row+1,temp_col+1))
+                break
+            elif board[temp_row+1][temp_col+1] in piece_list:
+                break
+            temp_row+=1
+            temp_col+=1
+
+        temp_row = X
+        temp_col = Y 
+
+        while temp_row>0 and temp_col<Boardsize-1:           
+
+            if board[temp_row-1][temp_col+1] in opposite_piece_list:
+                if board[temp_row-1][temp_col+1] in narrowed_list:
+                    possible_spots.append((temp_row-1,temp_col+1))
+                break
+            elif board[temp_row-1][temp_col+1] in piece_list:
+                break
+            temp_row-=1
+            temp_col+=1
+
+        temp_row = X
+        temp_col = Y 
+
+        while temp_row<Boardsize-1 and temp_col>0:
+            
+            if board[temp_row+1][temp_col-1] in opposite_piece_list:
+                if board[temp_row+1][temp_col-1] in narrowed_list:
+                    possible_spots.append((temp_row+1,temp_col-1))
+                break
+            elif board[temp_row+1][temp_col-1] in piece_list:
+                break
+            temp_row+=1
+            temp_col-=1
+
+        if len(possible_spots)>0:
+            
+            return True
+        return False      
+        #possible spots is opposing pieces in kings line of sight, want to narrow this down
+         
+
+
+
+
+            
+            #want to check if the white king is in check
+            #want to check all the positions within a knights range from the king, and check if a black knight is in any 
+            #of those positions
+            #then we want to extend in all directions from the king, and find the opposing pieces that are first reached
+            #then we want to check if ANY of those positions , based on the piece type in those positions, can reach the king
+            #if so, return True, 
+            #else return False
+            
+            #first check knight positions, 
+            # if that is not true, only check pawns that are within one spot of king,
+            # check opposing kings movement
+            #for the remaining, use create moves to get a list of all bishops, queens, knights of opposing colors
+            #if all of this fails, return True
+            #else return False
+        # elif self.turn == 'Black':
+            
+            #do the same as above, only with black king  
+
+
     def check_move(self, starting_position, ending_position):
         #starting and ending positions are going to be grid locations on the game grid
-
-        possible_moves = []
-
+        
         piece_type = self.board[starting_position[0]][starting_position[1]]
         
         possible_pieces = ['wp', 'bp', 'wkn', 'bkn', 'wr', 'br', 'wq', 'bq', 'wk', 'bk', 'wb', 'bb']
         black_pieces = ['bp', 'bkn', 'br', 'bq', 'bk', 'bb']
         white_pieces = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
         movable_spots = []
+                
+            
+        
 
         if piece_type == 'wp':                       
 
@@ -361,11 +543,11 @@ class Gamestate():
 
             for k,v in self.initial_move_log.items():
                 if starting_position == k:
-                                      
+                                    
                     if v == 'False':                                           
 
                         movable = [(a-1,b),(a-2,b)]
-                           
+                        
                         for x in movable:
                             
                             if self.board[x[0]][x[1]] == '-':
@@ -395,11 +577,11 @@ class Gamestate():
 
             for k,v in self.initial_move_log.items():
                 if starting_position == k:
-                                      
+                                    
                     if v == 'False':                                           
 
                         movable = [(a+1,b),(a+2,b)]
-                           
+                        
                         for x in movable:                            
                             
                             if self.board[x[0]][x[1]] == '-':
@@ -426,7 +608,7 @@ class Gamestate():
                     if piece_type == 'bkn':
                         if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
                             movable_spots.append(x)
-               
+            
         if piece_type == 'wk' or piece_type == 'bk':
             possible_spots = [(starting_position[0], starting_position[1]+1), (starting_position[0], starting_position[1]-1),\
                 (starting_position[0]+1, starting_position[1]), (starting_position[0]-1, starting_position[1]),\
@@ -466,16 +648,41 @@ class Gamestate():
             movable_spots= create_moves(Position, self.board, Dimensions, 'queen', black_pieces, white_pieces)
 
         #TODO Need to eventually update this so that the king can not move into check
-
-        #TODO work on bishops, queens, rooks movement
+        
         
         if ending_position in movable_spots:
-            self.board[starting_position[0]][starting_position[1]]='-'
-            self.board[ending_position[0]][ending_position[1]] = piece_type
+            if self.in_check()==False:
+                
+                self.board[starting_position[0]][starting_position[1]]='-'
+                self.board[ending_position[0]][ending_position[1]] = piece_type
+
+                if self.in_check()==True:
+
+                    self.board[starting_position[0]][starting_position[1]]=piece_type
+                    self.board[ending_position[0]][ending_position[1]] = '-'
+                    
+                    return False
+
+                return True
             
-            return True
+            if self.in_check()==True:    
+
+                self.board[starting_position[0]][starting_position[1]]='-'
+                self.board[ending_position[0]][ending_position[1]] = piece_type
+
+                if self.in_check()==True:
+                    self.board[starting_position[0]][starting_position[1]]=piece_type
+                    self.board[ending_position[0]][ending_position[1]] = '-'
+
+                
+                    return False
+
+                return True
+
         else:
             return False      
+            
+        
 
 def load_images():
 
@@ -573,7 +780,6 @@ def main():
 
                             gs.board[moved_row][moved_col]= '-'
                             gs.board[row][col]= pieces[-1]      
-
                             
                             can_move = False  
                             gs.turn = 'White'
