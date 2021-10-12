@@ -18,11 +18,14 @@ def while_loop(condition, board, row, col, row_val, col_val, list,opp_list, fina
     while condition:
         if board[row+row_val][col+col_val] == '-':
             final_list.append((row+row_val,col+col_val))
+        
         elif board[row+row_val][col+col_val] in opp_list:
             final_list.append((row+row_val,col+col_val))
             return
+
         elif board[row+row_val][col+col_val] in list:
             return
+            
         row += row_val
         col += col_val
     
@@ -43,8 +46,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row-1][temp_col] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col))
                 break
+
             elif board[temp_row-1][temp_col] in piece_list:
                 break
+
             temp_row-=1    
         
         temp_row = row_pos
@@ -57,6 +62,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row+1][temp_col] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col))
                 break
+
             elif board[temp_row+1][temp_col] in piece_list:
                 break
             
@@ -72,6 +78,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row,temp_col-1))
                 break
+
             elif board[temp_row][temp_col-1] in piece_list:
                 break
            
@@ -87,8 +94,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row,temp_col+1))
                 break
+
             elif board[temp_row][temp_col+1] in piece_list:
-                break            
+                break
+
             temp_col+=1
                
         return possible_spots
@@ -105,8 +114,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row-1][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col-1))
                 break
+
             elif board[temp_row-1][temp_col-1] in piece_list:
                 break
+
             temp_row-=1
             temp_col-=1
         
@@ -121,8 +132,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row+1][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col+1))
                 break
+
             elif board[temp_row+1][temp_col+1] in piece_list:
                 break
+
             temp_row+=1
             temp_col+=1
 
@@ -137,8 +150,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row-1][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col+1))
                 break
+
             elif board[temp_row-1][temp_col+1] in piece_list:
                 break
+
             temp_row-=1
             temp_col+=1
 
@@ -153,8 +168,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row+1][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col-1))
                 break
+
             elif board[temp_row+1][temp_col-1] in piece_list:
                 break
+
             temp_row+=1
             temp_col-=1
         return possible_spots    
@@ -172,8 +189,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row-1][temp_col] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col))
                 break
+
             elif board[temp_row-1][temp_col] in piece_list:
                 break
+
             temp_row-=1    
         
         temp_row = row_pos
@@ -186,6 +205,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row+1][temp_col] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col))
                 break
+
             elif board[temp_row+1][temp_col] in piece_list:
                 break
             
@@ -201,6 +221,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row,temp_col-1))
                 break
+
             elif board[temp_row][temp_col-1] in piece_list:
                 break
            
@@ -216,8 +237,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row,temp_col+1))
                 break
+
             elif board[temp_row][temp_col+1] in piece_list:
-                break            
+                break
+
             temp_col+=1
         temp_row = row_pos
         temp_col = col_pos
@@ -230,8 +253,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row-1][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col-1))
                 break
+
             elif board[temp_row-1][temp_col-1] in piece_list:
                 break
+
             temp_row-=1
             temp_col-=1
         
@@ -246,8 +271,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row+1][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col+1))
                 break
+
             elif board[temp_row+1][temp_col+1] in piece_list:
                 break
+
             temp_row+=1
             temp_col+=1
 
@@ -262,8 +289,10 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row-1][temp_col+1] in opposite_piece_list:
                 possible_spots.append((temp_row-1,temp_col+1))
                 break
+
             elif board[temp_row-1][temp_col+1] in piece_list:
                 break
+
             temp_row-=1
             temp_col+=1
 
@@ -278,14 +307,14 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
             elif board[temp_row+1][temp_col-1] in opposite_piece_list:
                 possible_spots.append((temp_row+1,temp_col-1))
                 break
+
             elif board[temp_row+1][temp_col-1] in piece_list:
                 break
+
             temp_row+=1
             temp_col-=1
         return possible_spots   
-
     #return a list of possible moves based on the input that user can move to
-
 
 class Gamestate():
     def __init__(self):
@@ -351,9 +380,7 @@ class Gamestate():
             for i in possible_pawn:
                 if board_check(i, Dimensions)==True:
                     if self.board[i[0]][i[1]]=='bp':
-                        return True           
-
-            
+                        return True                 
 
         if self.turn == 'Black':
             #check knight position
@@ -393,7 +420,6 @@ class Gamestate():
                         
                         return True
 
-
         Boardsize = Dimensions
         temp_row, temp_col = X,Y
         possible_spots = []
@@ -420,6 +446,7 @@ class Gamestate():
                 if board[temp_row+1][temp_col] in narrowed_list:
                     possible_spots.append((temp_row+1,temp_col))
                 break
+
             elif board[temp_row+1][temp_col] in piece_list:
                 break
             
@@ -434,6 +461,7 @@ class Gamestate():
                 if board[temp_row][temp_col-1] in narrowed_list:
                     possible_spots.append((temp_row,temp_col-1))
                 break
+
             elif board[temp_row][temp_col-1] in piece_list:
                 break
            
@@ -448,9 +476,11 @@ class Gamestate():
                 if board[temp_row][temp_col+1] in narrowed_list:
                     possible_spots.append((temp_row,temp_col+1))
                 break
+
             elif board[temp_row][temp_col+1] in piece_list:
                 break            
             temp_col+=1
+
         temp_row = X
         temp_col = Y 
 
@@ -460,8 +490,10 @@ class Gamestate():
                 if board[temp_row-1][temp_col-1] in narrowed_list:
                     possible_spots.append((temp_row-1,temp_col-1))
                 break
+
             elif board[temp_row-1][temp_col-1] in piece_list:
                 break
+
             temp_row-=1
             temp_col-=1
         
@@ -474,8 +506,10 @@ class Gamestate():
                 if board[temp_row+1][temp_col+1] in narrowed_list:
                     possible_spots.append((temp_row+1,temp_col+1))
                 break
+
             elif board[temp_row+1][temp_col+1] in piece_list:
                 break
+
             temp_row+=1
             temp_col+=1
 
@@ -488,8 +522,10 @@ class Gamestate():
                 if board[temp_row-1][temp_col+1] in narrowed_list:
                     possible_spots.append((temp_row-1,temp_col+1))
                 break
+
             elif board[temp_row-1][temp_col+1] in piece_list:
                 break
+
             temp_row-=1
             temp_col+=1
 
@@ -502,16 +538,17 @@ class Gamestate():
                 if board[temp_row+1][temp_col-1] in narrowed_list:
                     possible_spots.append((temp_row+1,temp_col-1))
                 break
+
             elif board[temp_row+1][temp_col-1] in piece_list:
                 break
+
             temp_row+=1
             temp_col-=1
 
         if len(possible_spots)>0:
             
             return True
-        return False      
-        
+        return False           
 
     def check_move(self, starting_position, ending_position):
         #starting and ending positions are going to be grid locations on the game grid
@@ -521,10 +558,7 @@ class Gamestate():
         possible_pieces = ['wp', 'bp', 'wkn', 'bkn', 'wr', 'br', 'wq', 'bq', 'wk', 'bk', 'wb', 'bb']
         black_pieces = ['bp', 'bkn', 'br', 'bq', 'bk', 'bb']
         white_pieces = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
-        movable_spots = []
-                
-            
-        
+        movable_spots = []        
 
         if piece_type == 'wp':                       
 
@@ -629,6 +663,7 @@ class Gamestate():
                     if piece_type == 'bk':
                         if self.board[x[0]][x[1]] in white_pieces or self.board[x[0]][x[1]]== '-':
                             movable_spots.append(x)
+
         if piece_type == 'wr':
             Position = (starting_position[0], starting_position[1])
             movable_spots= create_moves(Position, self.board, Dimensions, 'rook', white_pieces, black_pieces)
@@ -650,10 +685,7 @@ class Gamestate():
             movable_spots= create_moves(Position, self.board, Dimensions, 'queen', white_pieces, black_pieces)
         if piece_type == 'bq':
             Position = (starting_position[0], starting_position[1])
-            movable_spots= create_moves(Position, self.board, Dimensions, 'queen', black_pieces, white_pieces)
-
-        #TODO Need to eventually update this so that the king can not move into check
-        
+            movable_spots= create_moves(Position, self.board, Dimensions, 'queen', black_pieces, white_pieces)       
         
         if ending_position in movable_spots:
             if self.in_check()==False:
@@ -678,16 +710,13 @@ class Gamestate():
                 if self.in_check()==True:
                     self.board[starting_position[0]][starting_position[1]]=piece_type
                     self.board[ending_position[0]][ending_position[1]] = '-'
-
                 
                     return False
 
                 return True
-
-        else:
-            return False      
-            
         
+        else:
+            return False       
 
 def load_images():
 
@@ -695,13 +724,13 @@ def load_images():
     for piece in pieces:
         IMAGES[piece]= p.transform.scale(p.image.load(piece+'.png'), (Sq_Size, Sq_Size))
 
-
 def drawBoard(screen):
     colors = [p.Color('white'), p.Color('gray')]
     for r in range(Dimensions):
         for c in range(Dimensions):
             color = colors[((r+c)%2)]
             p.draw.rect(screen, color, p.Rect(c*Sq_Size, r*Sq_Size, Sq_Size, Sq_Size))
+
 def draw_pieces(screen, board):
     
     for r in range(Dimensions):
@@ -715,7 +744,6 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color('white'))
     gs = Gamestate()
-    # print(gs.initial_move_log)
     load_images()
     
     can_move = False
@@ -754,15 +782,13 @@ def main():
                             break  
                         
                         elif gs.check_move(starting_position, ending_position)==False:
-                            break
-              
+                            break              
                                          
                 if can_move == True and gs.turn == 'Black':
                                         
                     location = p.mouse.get_pos()
                     col = location[0]//Sq_Size
-                    row = location[1]//Sq_Size
-                                       
+                    row = location[1]//Sq_Size                                       
                     
                     if gs.board[row][col] not in gs.black_moves:
                         #set empty piece you click to be equal to last piece clicked by black
@@ -823,14 +849,13 @@ def main():
                         piece = gs.board[row][col]
                         pieces.append(piece)
                         
-                        can_move = True                     
-
+                        can_move = True  
 
         drawBoard(screen)
         draw_pieces(screen, gs.board)        
         
         clock.tick(Max_FPS)
-        p.display.flip()         
+        p.display.flip()       
 
 main() 
 
