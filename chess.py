@@ -544,10 +544,44 @@ class Gamestate():
 
             temp_row+=1
             temp_col-=1
-
-        if len(possible_spots)>0:
+        #Checking to see if pieces in kings line of sight can actually attack the king, putting him in check
+        if self.turn == 'White':
+            pce_list = ['bp', 'bkn', 'br', 'bq', 'bk', 'bb']
+            opp_piece_list = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
+        if self.turn == 'Black':
+            pce_list =  ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
+            opp_piece_list =  ['bp', 'bkn', 'br', 'bq', 'bk', 'bb']  
+        
+        
+        for x in possible_spots:
+            Boardsize = Dimensions
+            piece = board[x[0]][x[1]]
+            if piece == 'bb' or piece == 'wb':
+                piece_type = 'bishop'
+                opposing_pieces = create_moves(x, board, Boardsize, piece_type, pce_list, opp_piece_list)
+                
+                for x in opposing_pieces:
+                    piece = board[x[0]][x[1]]
+                    if piece == 'wk' or piece == 'bk':
+                        return True 
+                    
+            if piece == 'br' or piece == 'wr':
+                piece_type = 'rook'
+                opposing_pieces = create_moves(x, board, Boardsize, piece_type, pce_list, opp_piece_list)
+                for x in opposing_pieces:
+                    piece = board[x[0]][x[1]]
+                    if piece == 'wk' or piece == 'bk':
+                        return True 
+                    
+            if piece == 'wq' or piece == 'bq':
+                piece_type='queen'   
             
-            return True
+                opposing_pieces = create_moves(x, board, Boardsize, piece_type, pce_list, opp_piece_list)
+                for x in opposing_pieces:
+                    piece = board[x[0]][x[1]]
+                    if piece == 'wk' or piece == 'bk':
+                        return True 
+        
         return False           
 
     def check_move(self, starting_position, ending_position):
