@@ -159,6 +159,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
 
             temp_row+=1
             temp_col-=1
+        print(possible_spots)    
         return possible_spots    
     
     if piece_type == 'queen':
@@ -298,6 +299,7 @@ def create_moves(position, board, Boardsize, piece_type, piece_list, opposite_pi
 
             temp_row+=1
             temp_col-=1
+        print(possible_spots)    
         return possible_spots   
     #return a list of possible moves based on the input that user can move to
 
@@ -342,7 +344,7 @@ class Gamestate():
         return d   
 
     def in_check(self):
-        pos = []
+        
         if self.turn == 'White':
             #check knight position
             opposite_piece_list = ['bp', 'br','bkn', 'bb', 'bq', 'bk']
@@ -567,7 +569,7 @@ class Gamestate():
     def check_move(self, starting_position, ending_position):
         #main function to check if the position clicked on by user is both possible position for that particular piece,
         #also makes sure to abide by checking rules
-        
+                
         piece_type = self.board[starting_position[0]][starting_position[1]]
         
         possible_pieces = ['wp', 'bp', 'wkn', 'bkn', 'wr', 'br', 'wq', 'bq', 'wk', 'bk', 'wb', 'bb']
@@ -575,10 +577,10 @@ class Gamestate():
         white_pieces = ['wp', 'wkn', 'wr', 'wq', 'wk', 'wb']
         movable_spots = []        
 
-        if piece_type == 'wp':                       
+        a = starting_position[0]
+        b = starting_position[1]
 
-            a = starting_position[0]
-            b = starting_position[1]
+        if piece_type == 'wp':                       
             
             if b <Dimensions-1:
                 conquerable = [(a-1, b-1), (a-1, b+1)]
@@ -610,10 +612,7 @@ class Gamestate():
 
                         self.initial_move_log[starting_position]='True'             
 
-        if piece_type == 'bp':           
-
-            a = starting_position[0]
-            b = starting_position[1]
+        if piece_type == 'bp':            
 
             if b < Dimensions-1:
                 conquerable = [(a+1, b-1), (a+1, b+1)]
@@ -776,6 +775,7 @@ def main():
                 if can_move == True and gs.turn == 'White':
                                         
                     location = p.mouse.get_pos()
+                    print(location, locations)
                     col = location[0]//Sq_Size
                     row = location[1]//Sq_Size
                     
