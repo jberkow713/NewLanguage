@@ -7,9 +7,6 @@ p.init()
 Width, Height = 1024, 1024
 Max_FPS = 15
 
-
-
-
 class Game:
     def __init__(self, size):
         self.size = size
@@ -67,10 +64,9 @@ class Game:
                 if piece != '-':
                     self.screen.blit(self.IMAGES[piece], p.Rect(c*self.Sq_sz, r*self.Sq_sz, self.Sq_sz, self.Sq_sz))
 
-
 def main():
     
-    G = Game(16)
+    G = Game(32)
     clock = p.time.Clock()
     
     while True:
@@ -83,8 +79,7 @@ def main():
         G.draw_pieces()
 
         clock.tick(Max_FPS)
-        p.display.flip()   
-
+        p.display.flip()
 
 main()            
         
