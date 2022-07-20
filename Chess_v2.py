@@ -87,9 +87,11 @@ class Comp:
             ROW +=1
 
         self.moves = moves
-        self.movable_keys = [x for x in moves.keys()]    
+        self.movable_keys = [x for x in moves.keys()]
+
     def find_pieces_moves(self, piece_position):
-        # return a list of movable spots for that piece
+        # piece position is tuple, col, row in self.board
+        # Find piece type, and return a list of movable spots for that piece
         pass
 
     def random_move(self):
@@ -99,18 +101,8 @@ class Comp:
         print(self.moves)
         print(self.movable_keys)
         # update self.board here:
-        pass       
-
-            
-
-        
-        #Moves now represents dictionary with keys as tuples representing position
-        # in the self.board matrix, of movable pieces    
-            
-            
-
-
-
+        pass
+    
 def main():
     
     G = Game(32)
