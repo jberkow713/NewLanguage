@@ -2,6 +2,7 @@ import pygame as p
 import random
 import sys
 from pygame.constants import MOUSEBUTTONDOWN
+import copy
 p.init()
 
 Width, Height = 1024, 1024
@@ -31,13 +32,13 @@ class Game:
         bottom_row[int(self.size/2)]='bk'
         
         white_pawns = ['wp' for _ in range(self.size)]
-        black_panws = ['bp' for _ in range(self.size)]
-        empty_row = ['-' for _ in range(self.size)]
+        black_pawns = ['bp' for _ in range(self.size)]
+        
         Board.append(top_row)
         Board.append(white_pawns)
         for _ in range(self.size-4):
-            Board.append(empty_row)
-        Board.append(black_panws)
+            Board.append(['-' for _ in range(self.size)])
+        Board.append(black_pawns)
         Board.append(bottom_row)
         return Board
         
@@ -73,10 +74,23 @@ class Comp:
             self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
 
     def move(self):
-        # after the move,
+        # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
-        Game.board = self.board  
-        pass     
+        
+        # update self.board here:
+        
+        self.board[1][1] = '-'
+        self.board[2][1] = 'wp'
+        # the idea is update here, board then changes, as it's linked, redraws
+
+        
+                    
+        
+               
+
+        
+        
+            
 
 
 
@@ -85,7 +99,7 @@ def main():
     G = Game(32)
     C = Comp('white', G)
     clock = p.time.Clock()
-    
+    count = 0
     while True:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -94,8 +108,11 @@ def main():
         G.screen.fill(p.Color('white'))
         G.drawBoard()
         G.draw_pieces()
+        
+        if count ==0:
 
-        C.move()
+            C.move()
+            count +=1
         # This will update the game board so that next iteration of loop, game draws piece that has moved
 
 
