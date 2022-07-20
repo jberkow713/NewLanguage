@@ -67,6 +67,11 @@ class Comp:
     def __init__(self, color, Game):
         self.color = color
         self.board = Game.board
+        if self.color == 'white':
+            self.pieces = ['wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
+        if self.color =='black':
+            self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
+
     def move(self):
         # after the move,
         # set Games board equal to this board, this will update the main board, before it is drawn
@@ -78,6 +83,7 @@ class Comp:
 def main():
     
     G = Game(32)
+    C = Comp('white', G)
     clock = p.time.Clock()
     
     while True:
@@ -88,6 +94,10 @@ def main():
         G.screen.fill(p.Color('white'))
         G.drawBoard()
         G.draw_pieces()
+
+        C.move()
+        # This will update the game board so that next iteration of loop, game draws piece that has moved
+
 
         clock.tick(Max_FPS)
         p.display.flip()
