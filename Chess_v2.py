@@ -72,25 +72,30 @@ class Comp:
             self.pieces = ['wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
         if self.color =='black':
             self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
+        self.moves = {}    
 
-    def random_move(self):
-        # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
-        # set Games board equal to this board, this will update the main board, before it is drawn
-        
-        # update self.board here:
-               
-
-        Moves = {}
+    def create_positions(self):
         ROW = 0
         for row in self.board:
             COLUMN = 0
             for piece in row:
                 if piece in self.pieces:
-                    Moves[(ROW,COLUMN)]=piece 
+                    self.moves[(ROW,COLUMN)]=piece 
                 COLUMN +=1
-            ROW +=1        
+            ROW +=1   
 
-        print(Moves)
+
+    def random_move(self):
+        # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
+        # set Games board equal to this board, this will update the main board, before it is drawn
+        self.create_positions()
+        print(self.moves)
+        # update self.board here:
+        pass       
+
+            
+
+        
         #Moves now represents dictionary with keys as tuples representing position
         # in the self.board matrix, of movable pieces    
             
