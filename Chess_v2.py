@@ -63,6 +63,17 @@ class Game:
                 piece = self.board[r][c]
                 if piece != '-':
                     self.screen.blit(self.IMAGES[piece], p.Rect(c*self.Sq_sz, r*self.Sq_sz, self.Sq_sz, self.Sq_sz))
+class Comp:
+    def __init__(self, color, Game):
+        self.color = color
+        self.board = Game.board
+    def move(self):
+        # after the move,
+        # set Games board equal to this board, this will update the main board, before it is drawn
+        Game.board = self.board  
+        pass     
+
+
 
 def main():
     
