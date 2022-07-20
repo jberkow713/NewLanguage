@@ -75,14 +75,17 @@ class Comp:
         self.moves = {}    
 
     def create_positions(self):
+        moves = {}
         ROW = 0
         for row in self.board:
             COLUMN = 0
             for piece in row:
                 if piece in self.pieces:
-                    self.moves[(ROW,COLUMN)]=piece 
+                    moves[(ROW,COLUMN)]=piece 
                 COLUMN +=1
-            ROW +=1   
+            ROW +=1
+
+        self.moves = moves    
 
 
     def random_move(self):
