@@ -73,23 +73,27 @@ class Comp:
         if self.color =='black':
             self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
 
-    def move(self):
+    def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
         
         # update self.board here:
-        
-        self.board[1][1] = '-'
-        self.board[2][1] = 'wp'
-        # the idea is update here, board then changes, as it's linked, redraws
-
-        
-                    
-        
                
 
-        
-        
+        Moves = {}
+        ROW = 0
+        for row in self.board:
+            COLUMN = 0
+            for piece in row:
+                if piece in self.pieces:
+                    Moves[(ROW,COLUMN)]=piece 
+                COLUMN +=1
+            ROW +=1        
+
+        print(Moves)
+        #Moves now represents dictionary with keys as tuples representing position
+        # in the self.board matrix, of movable pieces    
+            
             
 
 
@@ -111,7 +115,7 @@ def main():
         
         if count ==0:
 
-            C.move()
+            C.random_move()
             count +=1
         # This will update the game board so that next iteration of loop, game draws piece that has moved
 
