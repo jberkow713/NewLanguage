@@ -98,7 +98,7 @@ class Comp:
         # Find piece type, and return a list of movable spots for that piece
         # If list returned >0:
         # set self.can_move = True
-        
+
         # PlaceHolder, showing how it works
         return [(5,7), (10,6)]
         
@@ -122,7 +122,8 @@ class Comp:
                 self.board[rand_grid[0]][rand_grid[1]]= '-'
                 self.board[row][col] = rand_piece
                 self.can_move = True
-
+            elif len(moves)==0:
+                self.movable_keys.remove(rand_grid)
         Game.board = self.board        
        
     
