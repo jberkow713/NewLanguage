@@ -104,7 +104,9 @@ class Comp:
         self.enemy_movable_keys =  [x for x in enemy_moves.keys()]
 
     def find_path(self, piece_position, piece):
-        # Find limitations of movement based on the pieces position, piece type, and board size
+        # Find limitations of movement based on the pieces position, piece type, and board size,
+        # Returns a list of possible moves for that piece, or an empty list if no moves available 
+        
         print(self.moves, self.enemy_moves)
         # Self.moves for white
         # {(0, 0): 'wq', (0, 1): 'wr', (0, 2): 'wr', (0, 3): 'wr', (0, 4): 'wb', (0, 5):\
@@ -115,27 +117,14 @@ class Comp:
 
         # for both column and row, limits
         board_limit = self.Game.size -1
-        print(board_limit)        
         # piece_position = (1, 8)
+        # piece: 'wr'...
         row = piece_position[0]
         col = piece_position[1]
         movable_spots = []
         # if piece == 'wr' or piece == 'br':
 
-
-
-
-        pass
-
-    def find_pieces_moves(self, piece_position, piece_type):
-        self.find_path(piece_position, piece_type)
-        
-        # piece position is tuple, col, row in self.board
-        # Find piece type, and return a list of movable spots for that piece
-        # If list returned >0:
-        # set self.can_move = True
-
-        # PlaceHolder, showing how it works
+        # Placeholder
         return [(5,7), (10,6)]
         
 
@@ -150,7 +139,7 @@ class Comp:
             rand_piece = self.moves[rand_grid]
             # Random selection from pieces, need to test if it can move
             print(rand_piece, rand_grid)
-            moves = self.find_pieces_moves(rand_grid, rand_piece)
+            moves = self.find_path(rand_grid, rand_piece)
             if len(moves)>0:
                 move = self.random_choice(moves)
                 row = move[0]
