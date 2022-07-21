@@ -92,8 +92,19 @@ class Comp:
 
         self.moves = moves
         self.movable_keys = [x for x in moves.keys()]
+    def find_path(self, piece_position, piece):
+        # Find limitations of movement based on the pieces position, piece type, and board size
+        board_limit = self.board.size -1
+        row = piece_position[0]
+        col = piece_position[1]
+
+
+
+        pass
 
     def find_pieces_moves(self, piece_position, piece_type):
+
+        
         # piece position is tuple, col, row in self.board
         # Find piece type, and return a list of movable spots for that piece
         # If list returned >0:
