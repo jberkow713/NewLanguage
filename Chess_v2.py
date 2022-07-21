@@ -67,13 +67,18 @@ class Game:
 class Comp:
     def __init__(self, color, Game):
         self.color = color
+        self.Game = Game
         self.board = Game.board
         if self.color == 'white':
             self.pieces = ['wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
+            self.enemy_pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
         if self.color =='black':
             self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
+            self.enemy_pieces = ['wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
         self.moves = {}
         self.movable_keys = []
+        self.enemy_moves = {}
+        self.enemy_movable_keys = []
         self.can_move = False    
     
     def random_choice(self, list):
@@ -81,29 +86,49 @@ class Comp:
 
     def create_positions(self):
         moves = {}
+        enemy_moves = {}
         ROW = 0
         for row in self.board:
             COLUMN = 0
             for piece in row:
                 if piece in self.pieces:
-                    moves[(ROW,COLUMN)]=piece 
+                    moves[(ROW,COLUMN)]=piece
+                if piece in self.enemy_pieces:
+                    enemy_moves[(ROW,COLUMN)] = piece     
                 COLUMN +=1
             ROW +=1
 
         self.moves = moves
         self.movable_keys = [x for x in moves.keys()]
+        self.enemy_moves = enemy_moves
+        self.enemy_movable_keys =  [x for x in enemy_moves.keys()]
+
     def find_path(self, piece_position, piece):
         # Find limitations of movement based on the pieces position, piece type, and board size
-        board_limit = self.board.size -1
+        print(self.moves, self.enemy_moves)
+        # Self.moves for white
+        # {(0, 0): 'wq', (0, 1): 'wr', (0, 2): 'wr', (0, 3): 'wr', (0, 4): 'wb', (0, 5):\
+        #  'wr', (0, 6): 'wb', (0, 7): ... }
+        # self.enemy_moves for white
+        # {(30, 0): 'bp', (30, 1): 'bp', (30, 2): 'bp', (30, 3): 'bp', (30, 4): 'bp', \
+        # (30, 5): 'bp', (30, 6): 'bp', (30, 7)...}
+
+        # for both column and row, limits
+        board_limit = self.Game.size -1
+        print(board_limit)        
+        # piece_position = (1, 8)
         row = piece_position[0]
         col = piece_position[1]
+        movable_spots = []
+        # if piece == 'wr' or piece == 'br':
+
 
 
 
         pass
 
     def find_pieces_moves(self, piece_position, piece_type):
-
+        self.find_path(piece_position, piece_type)
         
         # piece position is tuple, col, row in self.board
         # Find piece type, and return a list of movable spots for that piece
