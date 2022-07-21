@@ -73,7 +73,11 @@ class Comp:
         if self.color =='black':
             self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
         self.moves = {}
-        self.movable_keys = []    
+        self.movable_keys = []
+        self.can_move = False    
+    
+    def random_choice(self, list):
+        return list[random.randint(0,len(list)-1)]
 
     def create_positions(self):
         moves = {}
@@ -89,19 +93,38 @@ class Comp:
         self.moves = moves
         self.movable_keys = [x for x in moves.keys()]
 
-    def find_pieces_moves(self, piece_position):
+    def find_pieces_moves(self, piece_position, piece_type):
         # piece position is tuple, col, row in self.board
         # Find piece type, and return a list of movable spots for that piece
-        pass
+        # If list returned >0:
+        # set self.can_move = True
+        
+        # PlaceHolder, showing how it works
+        return [(5,7), (10,6)]
+        
 
     def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
+        self.can_move == False
         self.create_positions()
-        print(self.moves)
-        print(self.movable_keys)
-        # update self.board here:
-        pass
+        while self.can_move == False:
+
+            rand_grid = self.random_choice(self.movable_keys)
+            rand_piece = self.moves[rand_grid]
+            # Random selection from pieces, need to test if it can move
+            print(rand_piece, rand_grid)
+            moves = self.find_pieces_moves(rand_grid, rand_piece)
+            if len(moves)>0:
+                move = self.random_choice(moves)
+                row = move[0]
+                col = move[1]
+                self.board[rand_grid[0]][rand_grid[1]]= '-'
+                self.board[row][col] = rand_piece
+                self.can_move = True
+
+        Game.board = self.board        
+       
     
 def main():
     
