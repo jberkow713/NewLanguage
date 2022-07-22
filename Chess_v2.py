@@ -18,8 +18,7 @@ class Game:
         self.IMAGES = {}
         self.load_images()
        
-    def create_board(self):
-        
+    def create_board(self):        
         Board = []
         top_row = []
         bottom_row = []
@@ -43,13 +42,11 @@ class Game:
         return Board
         
     def load_images(self):
-
         pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp', 'wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
         for piece in pieces:
             self.IMAGES[piece]= p.transform.scale(p.image.load(piece+'.png'), (self.Sq_sz, self.Sq_sz))
     
     def drawBoard(self):
-
         colors = [p.Color('white'), p.Color('gray')]
         for r in range(self.size):
             for c in range(self.size):
@@ -57,8 +54,7 @@ class Game:
                 p.draw.rect(self.screen, color, p.Rect(c*self.Sq_sz, r*self.Sq_sz, self.Sq_sz, self.Sq_sz))
         return self.screen
 
-    def draw_pieces(self):
-    
+    def draw_pieces(self):    
         for r in range(self.size):
             for c in range(self.size):
                 piece = self.board[r][c]
@@ -140,13 +136,11 @@ class Comp:
         return [(5,7), (10,6)]
 
     def move_left(self, piece_position):
-        movable_spots = []
-        
+        movable_spots = []        
         left = True
         curr_row = piece_position[0]
         curr_col = piece_position[1]  
-        while left == True:
-            
+        while left == True:            
             Next = curr_row, curr_col-1
             if self.on_board(Next)==False or Next in self.movable_keys:
                 left = False  
@@ -156,18 +150,15 @@ class Comp:
                 left = False 
                 break
             movable_spots.append(Next)
-            curr_col -=1
-        
+            curr_col -=1        
         return movable_spots
 
     def move_right(self,piece_position):
-        movable_spots = []
-        
+        movable_spots = []        
         right = True
         curr_row = piece_position[0]
         curr_col = piece_position[1] 
-        while right == True:
-            
+        while right == True:            
             Next = curr_row, curr_col+1
             if self.on_board(Next)==False or Next in self.movable_keys:
                 right = False  
@@ -177,18 +168,15 @@ class Comp:
                 right = False 
                 break
             movable_spots.append(Next)
-            curr_col +=1
-        
+            curr_col +=1        
         return movable_spots
     
     def move_up(self,piece_position):        
-        movable_spots = []
-        
+        movable_spots = []        
         up = True
         curr_row = piece_position[0]
         curr_col = piece_position[1]  
-        while up == True:
-            
+        while up == True:            
             Next = curr_row-1, curr_col
             if self.on_board(Next)==False or Next in self.movable_keys:
                 up = False  
@@ -198,8 +186,7 @@ class Comp:
                 up = False 
                 break
             movable_spots.append(Next)
-            curr_row -=1
-        
+            curr_row -=1        
         return movable_spots
     
     def move_down(self,piece_position):        
@@ -207,8 +194,7 @@ class Comp:
         down = True
         curr_row = piece_position[0]
         curr_col = piece_position[1]  
-        while down == True:
-            
+        while down == True:            
             Next = curr_row+1, curr_col
             if self.on_board(Next)==False or Next in self.movable_keys:
                 down = False  
@@ -218,8 +204,7 @@ class Comp:
                 down = False 
                 break
             movable_spots.append(Next)
-            curr_row +=1
-        
+            curr_row +=1        
         return movable_spots        
     
     def diag_r_down(self,piece_position):        
@@ -227,8 +212,7 @@ class Comp:
         drd= True
         curr_row = piece_position[0]
         curr_col = piece_position[1]   
-        while drd == True:
-            
+        while drd == True:            
             Next = curr_row+1, curr_col+1
             if self.on_board(Next)==False or Next in self.movable_keys:
                 drd = False  
@@ -247,8 +231,7 @@ class Comp:
         dru= True
         curr_row = piece_position[0]
         curr_col = piece_position[1]  
-        while dru == True:
-            
+        while dru == True:            
             Next = curr_row-1, curr_col+1
             if self.on_board(Next)==False or Next in self.movable_keys:
                 dru = False  
@@ -267,8 +250,7 @@ class Comp:
         dlu= True
         curr_row = piece_position[0]
         curr_col = piece_position[1]  
-        while dlu == True:
-            
+        while dlu == True:            
             Next = curr_row-1, curr_col-1
             if self.on_board(Next)==False or Next in self.movable_keys:
                 dlu = False  
@@ -280,7 +262,6 @@ class Comp:
             movable_spots.append(Next)
             curr_row -=1
             curr_col -=1
-
         return movable_spots
     
     def diag_left_down(self,piece_position):        
@@ -288,8 +269,7 @@ class Comp:
         dld= True
         curr_row = piece_position[0]
         curr_col = piece_position[1]  
-        while dld == True:
-            
+        while dld == True:            
             Next = curr_row+1, curr_col-1
             if self.on_board(Next)==False or Next in self.movable_keys:
                 dld = False  
@@ -301,7 +281,6 @@ class Comp:
             movable_spots.append(Next)
             curr_row +=1
             curr_col -=1
-
         return movable_spots    
 
     def random_move(self):
@@ -310,7 +289,6 @@ class Comp:
         self.can_move == False
         self.create_positions()
         while self.can_move == False:
-
             rand_grid = self.random_choice(self.movable_keys)
             rand_piece = self.moves[rand_grid]
             # Random selection from pieces, need to test if it can move
@@ -337,18 +315,15 @@ def main():
     while True:
         for e in p.event.get():
             if e.type == p.QUIT:
-                sys.exit()
-    
+                sys.exit()    
         G.screen.fill(p.Color('white'))
         G.drawBoard()
         G.draw_pieces()
         
         if count ==0:
-
             C.random_move()
             count +=1
         # This will update the game board so that next iteration of loop, game draws piece that has moved
-
         clock.tick(Max_FPS)
         p.display.flip()
 
