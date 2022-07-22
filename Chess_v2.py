@@ -112,7 +112,9 @@ class Comp:
     def find_path(self, piece_position, piece):
         # Find limitations of movement based on the pieces position, piece type, and board size,
         # Returns a list of possible moves for that piece, or an empty list if no moves available 
-                
+        
+        #TODO create Knight, King, and Pawn movement functions 
+        
         Usable_Moves = []
         Final_Moves = []
 
@@ -138,7 +140,6 @@ class Comp:
         return [(5,7), (10,6)]
 
     def move_left(self, piece_position):
-        # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
         movable_spots = []
@@ -149,20 +150,11 @@ class Comp:
         while left == True:
             
             Next = curr_row, curr_col-1
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 left = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                left = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 left = False 
                 break
             movable_spots.append(Next)
@@ -171,7 +163,6 @@ class Comp:
         return movable_spots
 
     def move_right(self,piece_position):
-        # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
         movable_spots = []
@@ -182,20 +173,11 @@ class Comp:
         while right == True:
             
             Next = curr_row, curr_col+1
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 right = False  
                 break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                right = False 
-                break
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 right = False 
                 break
             movable_spots.append(Next)
@@ -204,7 +186,6 @@ class Comp:
         return movable_spots
     
     def move_up(self,piece_position):
-        # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
         movable_spots = []
@@ -215,20 +196,11 @@ class Comp:
         while up == True:
             
             Next = curr_row-1, curr_col
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 up = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                up = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 up = False 
                 break
             movable_spots.append(Next)
@@ -237,7 +209,6 @@ class Comp:
         return movable_spots
     
     def move_down(self,piece_position):
-        # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
         movable_spots = []
@@ -248,20 +219,11 @@ class Comp:
         while down == True:
             
             Next = curr_row+1, curr_col
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 down = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                down = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 down = False 
                 break
             movable_spots.append(Next)
@@ -280,20 +242,11 @@ class Comp:
         while drd == True:
             
             Next = curr_row+1, curr_col+1
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 drd = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                drd = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 drd = False 
                 break
             movable_spots.append(Next)
@@ -312,20 +265,11 @@ class Comp:
         while dru == True:
             
             Next = curr_row-1, curr_col+1
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 dru = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                dru = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 dru = False 
                 break
             movable_spots.append(Next)
@@ -344,20 +288,11 @@ class Comp:
         while dlu == True:
             
             Next = curr_row-1, curr_col-1
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 dlu = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                dlu = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 dlu = False 
                 break
             movable_spots.append(Next)
@@ -377,20 +312,11 @@ class Comp:
         while dld == True:
             
             Next = curr_row+1, curr_col-1
-            if self.on_board(Next)==False:
-                curr_row = row
-                curr_col = col
+            if self.on_board(Next)==False or Next in self.movable_keys:
                 dld = False  
-                break 
-            if Next in self.movable_keys:
-                curr_row = row
-                curr_col = col
-                dld = False 
-                break
+                break            
             if Next in self.enemy_movable_keys:
                 movable_spots.append(Next)
-                curr_row = row
-                curr_col = col
                 dld = False 
                 break
             movable_spots.append(Next)
