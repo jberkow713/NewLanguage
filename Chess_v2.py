@@ -140,13 +140,11 @@ class Comp:
         return [(5,7), (10,6)]
 
     def move_left(self, piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
         movable_spots = []
         
         left = True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]  
         while left == True:
             
             Next = curr_row, curr_col-1
@@ -163,13 +161,11 @@ class Comp:
         return movable_spots
 
     def move_right(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
         movable_spots = []
         
         right = True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1] 
         while right == True:
             
             Next = curr_row, curr_col+1
@@ -185,14 +181,12 @@ class Comp:
         
         return movable_spots
     
-    def move_up(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
+    def move_up(self,piece_position):        
         movable_spots = []
         
         up = True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]  
         while up == True:
             
             Next = curr_row-1, curr_col
@@ -208,14 +202,11 @@ class Comp:
         
         return movable_spots
     
-    def move_down(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
-        movable_spots = []
-        
+    def move_down(self,piece_position):        
+        movable_spots = []        
         down = True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]  
         while down == True:
             
             Next = curr_row+1, curr_col
@@ -231,14 +222,11 @@ class Comp:
         
         return movable_spots        
     
-    def diag_r_down(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
-        movable_spots = []
-        
+    def diag_r_down(self,piece_position):        
+        movable_spots = []        
         drd= True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]   
         while drd == True:
             
             Next = curr_row+1, curr_col+1
@@ -254,14 +242,11 @@ class Comp:
             curr_col +=1
         return movable_spots
     
-    def diag_r_up(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
-        movable_spots = []
-        
+    def diag_r_up(self,piece_position):        
+        movable_spots = []        
         dru= True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]  
         while dru == True:
             
             Next = curr_row-1, curr_col+1
@@ -277,14 +262,11 @@ class Comp:
             curr_col +=1
         return movable_spots      
     
-    def diag_left_up(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
-        movable_spots = []
-        
+    def diag_left_up(self,piece_position):        
+        movable_spots = []        
         dlu= True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]  
         while dlu == True:
             
             Next = curr_row-1, curr_col-1
@@ -301,14 +283,11 @@ class Comp:
 
         return movable_spots
     
-    def diag_left_down(self,piece_position):
-        row = piece_position[0]
-        col = piece_position[1]
-        movable_spots = []
-        
+    def diag_left_down(self,piece_position):        
+        movable_spots = []        
         dld= True
-        curr_row = row
-        curr_col = col  
+        curr_row = piece_position[0]
+        curr_col = piece_position[1]  
         while dld == True:
             
             Next = curr_row+1, curr_col-1
