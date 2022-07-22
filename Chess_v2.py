@@ -128,7 +128,6 @@ class Comp:
             Usable_Moves.append(self.diag_r_down(piece_position))
             Usable_Moves.append(self.diag_r_up(piece_position))
 
-
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
@@ -142,7 +141,6 @@ class Comp:
         # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         left = True
@@ -176,7 +174,6 @@ class Comp:
         # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         right = True
@@ -210,7 +207,6 @@ class Comp:
         # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         up = True
@@ -244,7 +240,6 @@ class Comp:
         # for both column and row, limits
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         down = True
@@ -277,7 +272,6 @@ class Comp:
     def diag_r_down(self,piece_position):
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         drd= True
@@ -310,7 +304,6 @@ class Comp:
     def diag_r_up(self,piece_position):
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         dru= True
@@ -343,7 +336,6 @@ class Comp:
     def diag_left_up(self,piece_position):
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         dlu= True
@@ -377,7 +369,6 @@ class Comp:
     def diag_left_down(self,piece_position):
         row = piece_position[0]
         col = piece_position[1]
-
         movable_spots = []
         
         dld= True
