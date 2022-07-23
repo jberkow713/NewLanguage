@@ -33,12 +33,12 @@ class Game:
         white_pawns = ['wp' for _ in range(self.size)]
         black_pawns = ['bp' for _ in range(self.size)]
         
-        Board.append(top_row)
-        Board.append(white_pawns)
+        Board.append(bottom_row)
+        Board.append(black_pawns)
         for _ in range(self.size-4):
             Board.append(['-' for _ in range(self.size)])
-        Board.append(black_pawns)
-        Board.append(bottom_row)
+        Board.append(white_pawns)
+        Board.append(top_row)
         return Board
         
     def load_images(self):
@@ -108,14 +108,9 @@ class Comp:
     def find_path(self, piece_position, piece):
         # Find limitations of movement based on the pieces position, piece type, and board size,
         # Returns a list of possible moves for that piece, or an empty list if no moves available 
-        
-        #TODO create Pawn movement functions 
-        
         Usable_Moves = []
-        Final_Moves = []
-        Final_Enemy_Moves = []
-
-        # Takes care of the Rook, Bishop, and Queen
+        Final_Moves = []       
+        
         if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
             Usable_Moves.append(self.move_left(piece_position))
             Usable_Moves.append(self.move_right(piece_position))
@@ -130,16 +125,43 @@ class Comp:
             Usable_Moves.append(self.knight_moves(piece_position))
         if piece == 'wk' or piece =='bk':
             Usable_Moves.append(self.king_moves(piece_position))
-
+        if piece =='bp' or piece =='wp':
+            Usable_Moves.append(self.pawn_moves(piece_position, piece))
 
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
         Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
-        # Return Final_Moves, Final_Enemy_Moves
+        return Final_Moves, Final_Enemy_Moves
 
-        # Placeholder
-        return [(5,7), (10,6)]
+                
+    def pawn_moves(self, piece_position, piece):
+        movable_spots = []
+        row = piece_position[0]
+        col = piece_position[1]
+
+        if piece =='wp':
+            pos = row-1, col
+            if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
+                movable_spots.append(pos) 
+            left_diag = row-1,col-1
+            if left_diag in self.enemy_movable_keys:
+                movable_spots.append(left_diag)
+            right_diag = row-1, col+1
+            if right_diag in self.enemy_movable_keys:
+                movable_spots.append(right_diag)
+        if piece =='bp':
+            pos = row+1, col
+            if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
+                movable_spots.append(pos) 
+            left_diag = row+1,col-1
+            if left_diag in self.enemy_movable_keys:
+                movable_spots.append(left_diag)
+            right_diag = row+1, col+1
+            if right_diag in self.enemy_movable_keys:
+                movable_spots.append(right_diag)
+        return movable_spots
+
     def king_moves(self, piece_position):
         movable_spots = []
         row = piece_position[0]
