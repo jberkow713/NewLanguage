@@ -113,6 +113,7 @@ class Comp:
         
         Usable_Moves = []
         Final_Moves = []
+        Final_Enemy_Moves = []
 
         # Takes care of the Rook, Bishop, and Queen
         if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
@@ -129,8 +130,8 @@ class Comp:
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
-        #return Final_Moves
-        print(Final_Moves) 
+        Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
+        # Return Final_Moves, Final_Enemy_Moves
 
         # Placeholder
         return [(5,7), (10,6)]
