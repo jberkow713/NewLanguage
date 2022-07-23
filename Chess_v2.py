@@ -109,7 +109,7 @@ class Comp:
         # Find limitations of movement based on the pieces position, piece type, and board size,
         # Returns a list of possible moves for that piece, or an empty list if no moves available 
         
-        #TODO create Knight, King, and Pawn movement functions 
+        #TODO create Pawn movement functions 
         
         Usable_Moves = []
         Final_Moves = []
@@ -126,6 +126,11 @@ class Comp:
             Usable_Moves.append(self.diag_left_up(piece_position))
             Usable_Moves.append(self.diag_r_down(piece_position))
             Usable_Moves.append(self.diag_r_up(piece_position))
+        if piece == 'wkn' or piece =='bkn':
+            Usable_Moves.append(self.knight_moves(piece_position))
+        if piece == 'wk' or piece =='bk':
+            Usable_Moves.append(self.king_moves(piece_position))
+
 
         for x in Usable_Moves:
             for y in x:
@@ -135,6 +140,29 @@ class Comp:
 
         # Placeholder
         return [(5,7), (10,6)]
+    def king_moves(self, piece_position):
+        movable_spots = []
+        row = piece_position[0]
+        col = piece_position[1]
+        positions = [(row+1,col), (row-1,col), (row, col-1), (row,col+1),\
+            (row-1,col-1), (row-1,col+1), (row+1,col-1), (row+1, col+1)]
+        for x in positions:
+            if self.on_board(x)==True:
+                if x not in self.movable_keys:
+                    movable_spots.append(x)
+        return movable_spots    
+
+    def knight_moves(self, piece_position):
+        movable_spots = []
+        row = piece_position[0]
+        col = piece_position[1]
+        positions = [(row-2,col+1), (row-2, col-1), (row+2, col+1), (row+2, col-1), \
+            (row-1, col+2), (row+1, col+2), (row-1, col-2), (row+1, col-2)]
+        for x in positions:
+            if self.on_board(x)==True:
+                if x not in self.movable_keys:
+                    movable_spots.append(x)
+        return movable_spots
 
     def move_left(self, piece_position):
         movable_spots = []        
