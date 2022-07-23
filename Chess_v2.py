@@ -81,8 +81,8 @@ class Comp:
         return list[random.randint(0,len(list)-1)]
     
     def on_board(self, val):
-        if val[0]>=0 and val[0]<=self.Game.size:
-            if val[1]>=0 and val[1]<=self.Game.size:
+        if val[0]>=0 and val[0]<=self.Game.size-1:
+            if val[1]>=0 and val[1]<=self.Game.size-1:
                 return True
         return False         
 
@@ -133,7 +133,6 @@ class Comp:
                 Final_Moves.append(y)
         Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
         return Final_Moves, Final_Enemy_Moves
-
                 
     def pawn_moves(self, piece_position, piece):
         movable_spots = []
@@ -337,14 +336,19 @@ class Comp:
     def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
-        self.can_move == False
+        
         self.create_positions()
+        
         while self.can_move == False:
+            
             rand_grid = self.random_choice(self.movable_keys)
             rand_piece = self.moves[rand_grid]
             # Random selection from pieces, need to test if it can move
             print(rand_piece, rand_grid)
-            moves = self.find_path(rand_grid, rand_piece)
+            moves = self.find_path(rand_grid, rand_piece)[0]
+                        
+            # ([(29, 10)], [])
+            # returning 2 lists
             if len(moves)>0:
                 move = self.random_choice(moves)
                 row = move[0]
@@ -354,15 +358,17 @@ class Comp:
                 self.can_move = True
             elif len(moves)==0:
                 self.movable_keys.remove(rand_grid)
-        Game.board = self.board        
+        self.Game.board = self.board
+        self.can_move = False        
        
     
 def main():
     
     G = Game(32)
     C = Comp('white', G)
+    C2 = Comp('black', G)
     clock = p.time.Clock()
-    count = 0
+    
     while True:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -370,10 +376,13 @@ def main():
         G.screen.fill(p.Color('white'))
         G.drawBoard()
         G.draw_pieces()
+
+
+        C.random_move()
+        C2.random_move()
         
-        if count ==0:
-            C.random_move()
-            count +=1
+        
+        
         # This will update the game board so that next iteration of loop, game draws piece that has moved
         clock.tick(Max_FPS)
         p.display.flip()
