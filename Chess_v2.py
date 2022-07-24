@@ -405,7 +405,7 @@ class Comp:
     
 def main():
     
-    G = Game(8)
+    G = Game(32)
     C = Comp('white', G)
     C2 = Comp('black', G)
     clock = p.time.Clock()
