@@ -345,26 +345,54 @@ class Comp:
             rand_piece = self.moves[rand_grid]
             # Random selection from pieces, need to test if it can move
             print(rand_piece, rand_grid)
-            moves = self.find_path(rand_grid, rand_piece)[0]
-                        
-            # ([(29, 10)], [])
-            # returning 2 lists
-            if len(moves)>0:
-                move = self.random_choice(moves)
+            # moves actually is two lists, for testing just made it non conquerable moves
+            all_moves = self.find_path(rand_grid, rand_piece)
+            open_moves = all_moves[0]
+            enemy_moves = all_moves[1]
+            if len(open_moves)>0 and len(enemy_moves)>0:
+                choice = random.randint(0,1)
+                if choice ==0:
+                    move = self.random_choice(open_moves)
+                    row = move[0]
+                    col = move[1]
+                    self.board[rand_grid[0]][rand_grid[1]]= '-'
+                    self.board[row][col] = rand_piece
+                    self.can_move = True
+                    break
+                elif choice ==1:
+                    move = self.random_choice(enemy_moves)
+                    row = move[0]
+                    col = move[1]
+                    self.board[rand_grid[0]][rand_grid[1]]= '-'
+                    self.board[row][col] = rand_piece
+                    self.can_move = True
+                    break            
+            if len(open_moves)>0 and len(enemy_moves)==0:
+                move = self.random_choice(open_moves)
                 row = move[0]
                 col = move[1]
                 self.board[rand_grid[0]][rand_grid[1]]= '-'
                 self.board[row][col] = rand_piece
                 self.can_move = True
-            elif len(moves)==0:
+                break
+            if len(open_moves)==0 and len(enemy_moves)>0:
+                move = self.random_choice(enemy_moves)
+                row = move[0]
+                col = move[1]
+                self.board[rand_grid[0]][rand_grid[1]]= '-'
+                self.board[row][col] = rand_piece
+                self.can_move = True
+                break
+            else:
                 self.movable_keys.remove(rand_grid)
+
         self.Game.board = self.board
         self.can_move = False        
        
     
 def main():
     
-    G = Game(32)
+    G = Game(53)
     C = Comp('white', G)
     C2 = Comp('black', G)
     clock = p.time.Clock()
