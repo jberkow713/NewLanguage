@@ -129,6 +129,7 @@ class Comp:
         if piece =='bp' or piece =='wp':
             Usable_Moves.append(self.pawn_moves(piece_position, piece))
 
+
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
@@ -391,13 +392,24 @@ class Comp:
                 self.can_move = True
                 break
             else:
+                # If only one key removes and it can not be moved
                 if len(self.movable_keys)==1:
                     self.can_move==True
                     break 
                 else:
-                    self.movable_keys.remove(rand_grid)
-                
-                    
+                    self.movable_keys.remove(rand_grid)                    
+        
+        white_upgrades = ['wkn', 'wq', 'wb', 'wr']
+        black_upgrades =['bkn', 'bq', 'bb', 'br']
+
+        if rand_piece == 'wp':
+            if row == 0:
+                upgrade = self.random_choice(white_upgrades)
+                self.board[row][col] = upgrade
+        if rand_piece == 'bp':
+            if row == self.Game.size-1:
+                upgrade = self.random_choice(black_upgrades)
+                self.board[row][col] = upgrade
 
         self.Game.board = self.board
         self.can_move = False        
@@ -405,7 +417,7 @@ class Comp:
     
 def main():
     
-    G = Game(32)
+    G = Game(10)
     C = Comp('white', G)
     C2 = Comp('black', G)
     clock = p.time.Clock()
