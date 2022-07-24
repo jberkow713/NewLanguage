@@ -75,7 +75,8 @@ class Comp:
         self.movable_keys = []
         self.enemy_moves = {}
         self.enemy_movable_keys = []
-        self.can_move = False    
+        self.can_move = False
+        self.game_over = False    
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
@@ -141,24 +142,26 @@ class Comp:
 
         if piece =='wp':
             pos = row-1, col
-            if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
-                movable_spots.append(pos) 
-            left_diag = row-1,col-1
-            if left_diag in self.enemy_movable_keys:
-                movable_spots.append(left_diag)
-            right_diag = row-1, col+1
-            if right_diag in self.enemy_movable_keys:
-                movable_spots.append(right_diag)
+            if self.on_board(pos)==True:
+                if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
+                    movable_spots.append(pos) 
+                left_diag = row-1,col-1
+                if left_diag in self.enemy_movable_keys:
+                    movable_spots.append(left_diag)
+                right_diag = row-1, col+1
+                if right_diag in self.enemy_movable_keys:
+                    movable_spots.append(right_diag)
         if piece =='bp':
             pos = row+1, col
-            if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
-                movable_spots.append(pos) 
-            left_diag = row+1,col-1
-            if left_diag in self.enemy_movable_keys:
-                movable_spots.append(left_diag)
-            right_diag = row+1, col+1
-            if right_diag in self.enemy_movable_keys:
-                movable_spots.append(right_diag)
+            if self.on_board(pos)==True:
+                if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
+                    movable_spots.append(pos) 
+                left_diag = row+1,col-1
+                if left_diag in self.enemy_movable_keys:
+                    movable_spots.append(left_diag)
+                right_diag = row+1, col+1
+                if right_diag in self.enemy_movable_keys:
+                    movable_spots.append(right_diag)
         return movable_spots
 
     def king_moves(self, piece_position):
@@ -338,13 +341,16 @@ class Comp:
         # set Games board equal to this board, this will update the main board, before it is drawn
         
         self.create_positions()
+        if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
+            self.game_over = True
+            return
         
         while self.can_move == False:
             
             rand_grid = self.random_choice(self.movable_keys)
             rand_piece = self.moves[rand_grid]
             # Random selection from pieces, need to test if it can move
-            print(rand_piece, rand_grid)
+            # print(rand_piece, rand_grid)
             # moves actually is two lists, for testing just made it non conquerable moves
             all_moves = self.find_path(rand_grid, rand_piece)
             open_moves = all_moves[0]
@@ -369,6 +375,7 @@ class Comp:
                     break            
             if len(open_moves)>0 and len(enemy_moves)==0:
                 move = self.random_choice(open_moves)
+                # print(move)
                 row = move[0]
                 col = move[1]
                 self.board[rand_grid[0]][rand_grid[1]]= '-'
@@ -384,7 +391,13 @@ class Comp:
                 self.can_move = True
                 break
             else:
-                self.movable_keys.remove(rand_grid)
+                if len(self.movable_keys)==1:
+                    self.can_move==True
+                    break 
+                else:
+                    self.movable_keys.remove(rand_grid)
+                
+                    
 
         self.Game.board = self.board
         self.can_move = False        
@@ -392,7 +405,7 @@ class Comp:
     
 def main():
     
-    G = Game(53)
+    G = Game(8)
     C = Comp('white', G)
     C2 = Comp('black', G)
     clock = p.time.Clock()
@@ -405,7 +418,9 @@ def main():
         G.drawBoard()
         G.draw_pieces()
 
-
+        if C.game_over==True or C2.game_over==True:
+            print('Game is over')
+            sys.exit()
         C.random_move()
         C2.random_move()
         
