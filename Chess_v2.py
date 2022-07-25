@@ -315,12 +315,6 @@ class Comp:
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
-    
-    def on_board(self, val):
-        if val[0]>=0 and val[0]<=self.Game.size-1:
-            if val[1]>=0 and val[1]<=self.Game.size-1:
-                return True
-        return False         
 
     def find_path(self, piece_position, piece):
         # Find limitations of movement based on the pieces position, piece type, and board size,
