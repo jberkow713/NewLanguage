@@ -251,22 +251,24 @@ class Human:
         self.enemy_moves = {}
         self.enemy_movable_keys = []
         self.moved = False
-        
 
-    def find_moves(self, location):
+    def find_square(self, mouse_pos):
         Positions = create_positions(self.board, self.pieces, self.enemy_pieces)
         self.moves = Positions[0]
         self.movable_keys = Positions[1]
         self.enemy_moves = Positions[2]
-        self.enemy_movable_keys = Positions[3]
+        self.enemy_movable_keys = Positions[3]        
         
-        
-        col = location[0]//self.Game.Sq_sz
-        row = location[1]//self.Game.Sq_sz
+        col = mouse_pos[0]//self.Game.Sq_sz
+        row = mouse_pos[1]//self.Game.Sq_sz
         piece_position = row,col
+        return piece_position
+
+    def find_moves(self, location):
+        piece_position = self.find_square(location)
 
         if piece_position in self.movable_keys:
-            piece = self.moves[(row,col)]
+            piece = self.moves[(piece_position[0], piece_position[1])]
 
             Usable_Moves = []
             Final_Moves = []     
@@ -295,15 +297,7 @@ class Human:
             
             return Final_Moves, Final_Enemy_Moves
 
-
-       
-
-
-
     # TODO add human movement controls, etc, use global piece search functions, etc
-    # Reference the keys in the same fashion, use the created board, pass in the keys, 
-    # Have the mouse clicks generate coordinates, coordinates then hit keys on the grid,
-    # the keys on the grid run the search for that piece, returning possible list of pieces you can move to
     # Then the next click needs to be one of these pieces, etc...
     
 
@@ -505,8 +499,6 @@ def main():
             if e.type == p.QUIT:
                 sys.exit()
 
-        H_move = True
-
         G.screen.fill(p.Color('white'))
         G.drawBoard()
         G.draw_pieces()
@@ -518,6 +510,7 @@ def main():
 
         if e.type == p.MOUSEBUTTONDOWN:
             loc = p.mouse.get_pos()
+            # this is triggering function to search for possible squares to move to
             print(H.find_moves(loc))
 
             
