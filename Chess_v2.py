@@ -7,6 +7,241 @@ p.init()
 
 Width, Height = 1024, 1024
 Max_FPS = 15
+def on_board(val, Dimensions):
+    if val[0]>=0 and val[0]<=Dimensions-1:
+        if val[1]>=0 and val[1]<=Dimensions-1:
+            return True
+    return False
+
+def create_positions(board, pieces, enemy_pieces):
+    moves = {}
+    enemy_moves = {}
+    ROW = 0
+    for row in board:
+        COLUMN = 0
+        for piece in row:
+            if piece in pieces:
+                moves[(ROW,COLUMN)]=piece
+            if piece in enemy_pieces:
+                enemy_moves[(ROW,COLUMN)] = piece     
+            COLUMN +=1
+        ROW +=1
+    
+    moves = moves
+    movable_keys = [x for x in moves.keys()]
+    enemy_moves = enemy_moves
+    enemy_movable_keys =  [x for x in enemy_moves.keys()]
+
+    return moves, movable_keys, enemy_moves, enemy_movable_keys
+
+def pawn_moves(piece_position, piece, Dimensions, movable_keys, enemy_movable_keys):
+    movable_spots = []
+    row = piece_position[0]
+    col = piece_position[1]
+
+    if piece =='wp':
+        pos = row-1, col
+        if on_board(pos, Dimensions)==True:
+            if pos not in movable_keys and pos not in enemy_movable_keys:
+                movable_spots.append(pos) 
+            left_diag = row-1,col-1
+            if left_diag in enemy_movable_keys:
+                movable_spots.append(left_diag)
+            right_diag = row-1, col+1
+            if right_diag in enemy_movable_keys:
+                movable_spots.append(right_diag)
+    if piece =='bp':
+        pos = row+1, col
+        if on_board(pos, Dimensions)==True:
+            if pos not in movable_keys and pos not in enemy_movable_keys:
+                movable_spots.append(pos) 
+            left_diag = row+1,col-1
+            if left_diag in enemy_movable_keys:
+                movable_spots.append(left_diag)
+            right_diag = row+1, col+1
+            if right_diag in enemy_movable_keys:
+                movable_spots.append(right_diag)
+    return movable_spots
+
+def king_moves(piece_position, Dimensions, movable_keys):
+    movable_spots = []
+    row = piece_position[0]
+    col = piece_position[1]
+    positions = [(row+1,col), (row-1,col), (row, col-1), (row,col+1),\
+        (row-1,col-1), (row-1,col+1), (row+1,col-1), (row+1, col+1)]
+    for x in positions:
+        if on_board(x, Dimensions)==True:
+            if x not in movable_keys:
+                movable_spots.append(x)
+    return movable_spots      
+
+def knight_moves(piece_position, Dimensions, movable_keys):
+    movable_spots = []
+    row = piece_position[0]
+    col = piece_position[1]
+    positions = [(row-2,col+1), (row-2, col-1), (row+2, col+1), (row+2, col-1), \
+        (row-1, col+2), (row+1, col+2), (row-1, col-2), (row+1, col-2)]
+    for x in positions:
+        if on_board(x, Dimensions)==True:
+            if x not in movable_keys:
+                movable_spots.append(x)
+    return movable_spots
+
+def move_left(piece_position, Dimensions, movable_keys, enemy_movable_keys):
+    movable_spots = []        
+    left = True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]  
+    while left == True:            
+        Next = curr_row, curr_col-1
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            left = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            left = False 
+            break
+        movable_spots.append(Next)
+        curr_col -=1        
+    return movable_spots
+
+def move_right(piece_position, Dimensions, movable_keys, enemy_movable_keys):
+    movable_spots = []        
+    right = True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1] 
+    while right == True:            
+        Next = curr_row, curr_col+1
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            right = False  
+            break 
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            right = False 
+            break
+        movable_spots.append(Next)
+        curr_col +=1        
+    return movable_spots
+
+def move_up(piece_position, Dimensions, movable_keys, enemy_movable_keys):        
+    movable_spots = []        
+    up = True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]  
+    while up == True:            
+        Next = curr_row-1, curr_col
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            up = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            up = False 
+            break
+        movable_spots.append(Next)
+        curr_row -=1        
+    return movable_spots
+
+def move_down(piece_position, Dimensions, movable_keys, enemy_movable_keys):        
+    movable_spots = []        
+    down = True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]  
+    while down == True:            
+        Next = curr_row+1, curr_col
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            down = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            down = False 
+            break
+        movable_spots.append(Next)
+        curr_row +=1        
+    return movable_spots        
+
+def diag_r_down(piece_position, Dimensions, movable_keys, enemy_movable_keys):        
+    movable_spots = []        
+    drd= True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]   
+    while drd == True:            
+        Next = curr_row+1, curr_col+1
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            drd = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            drd = False 
+            break
+        movable_spots.append(Next)
+        curr_row +=1
+        curr_col +=1
+    return movable_spots
+
+def diag_r_up(piece_position, Dimensions, movable_keys, enemy_movable_keys):        
+    movable_spots = []        
+    dru= True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]  
+    while dru == True:            
+        Next = curr_row-1, curr_col+1
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            dru = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            dru = False 
+            break
+        movable_spots.append(Next)
+        curr_row -=1
+        curr_col +=1
+    return movable_spots      
+
+def diag_left_up(piece_position, Dimensions, movable_keys, enemy_movable_keys):        
+    movable_spots = []        
+    dlu= True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]  
+    while dlu == True:            
+        Next = curr_row-1, curr_col-1
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            dlu = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            dlu = False 
+            break
+        movable_spots.append(Next)
+        curr_row -=1
+        curr_col -=1
+    return movable_spots
+
+def diag_left_down(piece_position, Dimensions, movable_keys, enemy_movable_keys):        
+    movable_spots = []        
+    dld= True
+    curr_row = piece_position[0]
+    curr_col = piece_position[1]  
+    while dld == True:            
+        Next = curr_row+1, curr_col-1
+        if on_board(Next, Dimensions)==False or Next in movable_keys:
+            dld = False  
+            break            
+        if Next in enemy_movable_keys:
+            movable_spots.append(Next)
+            dld = False 
+            break
+        movable_spots.append(Next)
+        curr_row +=1
+        curr_col -=1
+    return movable_spots
+
+class Human:
+    # TODO add human movement controls, etc, use global piece search functions, etc
+    # Reference the keys in the same fashion, use the created board, pass in the keys, 
+    # Have the mouse clicks generate coordinates, coordinates then hit keys on the grid,
+    # the keys on the grid run the search for that piece, returning possible list of pieces you can move to
+    # Then the next click needs to be one of these pieces, etc...
+    pass
 
 class Game:
     def __init__(self, size):
@@ -87,261 +322,45 @@ class Comp:
                 return True
         return False         
 
-    def create_positions(self):
-        moves = {}
-        enemy_moves = {}
-        ROW = 0
-        for row in self.board:
-            COLUMN = 0
-            for piece in row:
-                if piece in self.pieces:
-                    moves[(ROW,COLUMN)]=piece
-                if piece in self.enemy_pieces:
-                    enemy_moves[(ROW,COLUMN)] = piece     
-                COLUMN +=1
-            ROW +=1
-
-        self.moves = moves
-        self.movable_keys = [x for x in moves.keys()]
-        self.enemy_moves = enemy_moves
-        self.enemy_movable_keys =  [x for x in enemy_moves.keys()]
-
     def find_path(self, piece_position, piece):
         # Find limitations of movement based on the pieces position, piece type, and board size,
         # Returns a list of possible moves for that piece, or an empty list if no moves available 
         Usable_Moves = []
-        Final_Moves = []       
+        Final_Moves = []     
         
         if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
-            Usable_Moves.append(self.move_left(piece_position))
-            Usable_Moves.append(self.move_right(piece_position))
-            Usable_Moves.append(self.move_up(piece_position))
-            Usable_Moves.append(self.move_down(piece_position))
+            Usable_Moves.append(move_left(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            Usable_Moves.append(move_right(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            Usable_Moves.append(move_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            Usable_Moves.append(move_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         if piece == 'wb' or piece =='bb' or piece =='wq' or piece =='bq':
-            Usable_Moves.append(self.diag_left_down(piece_position))
-            Usable_Moves.append(self.diag_left_up(piece_position))
-            Usable_Moves.append(self.diag_r_down(piece_position))
-            Usable_Moves.append(self.diag_r_up(piece_position))
+            Usable_Moves.append(diag_left_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            Usable_Moves.append(diag_left_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            Usable_Moves.append(diag_r_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            Usable_Moves.append(diag_r_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         if piece == 'wkn' or piece =='bkn':
-            Usable_Moves.append(self.knight_moves(piece_position))
+            Usable_Moves.append(knight_moves(piece_position, self.Game.size, self.movable_keys))
         if piece == 'wk' or piece =='bk':
-            Usable_Moves.append(self.king_moves(piece_position))
+            Usable_Moves.append(king_moves(piece_position, self.Game.size, self.movable_keys))
         if piece =='bp' or piece =='wp':
-            Usable_Moves.append(self.pawn_moves(piece_position, piece))
-
+            Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, self.movable_keys, self.enemy_movable_keys))
 
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
         Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
         return Final_Moves, Final_Enemy_Moves
-                
-    def pawn_moves(self, piece_position, piece):
-        movable_spots = []
-        row = piece_position[0]
-        col = piece_position[1]
-
-        if piece =='wp':
-            pos = row-1, col
-            if self.on_board(pos)==True:
-                if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
-                    movable_spots.append(pos) 
-                left_diag = row-1,col-1
-                if left_diag in self.enemy_movable_keys:
-                    movable_spots.append(left_diag)
-                right_diag = row-1, col+1
-                if right_diag in self.enemy_movable_keys:
-                    movable_spots.append(right_diag)
-        if piece =='bp':
-            pos = row+1, col
-            if self.on_board(pos)==True:
-                if pos not in self.movable_keys and pos not in self.enemy_movable_keys:
-                    movable_spots.append(pos) 
-                left_diag = row+1,col-1
-                if left_diag in self.enemy_movable_keys:
-                    movable_spots.append(left_diag)
-                right_diag = row+1, col+1
-                if right_diag in self.enemy_movable_keys:
-                    movable_spots.append(right_diag)
-        return movable_spots
-
-    def king_moves(self, piece_position):
-        movable_spots = []
-        row = piece_position[0]
-        col = piece_position[1]
-        positions = [(row+1,col), (row-1,col), (row, col-1), (row,col+1),\
-            (row-1,col-1), (row-1,col+1), (row+1,col-1), (row+1, col+1)]
-        for x in positions:
-            if self.on_board(x)==True:
-                if x not in self.movable_keys:
-                    movable_spots.append(x)
-        return movable_spots    
-
-    def knight_moves(self, piece_position):
-        movable_spots = []
-        row = piece_position[0]
-        col = piece_position[1]
-        positions = [(row-2,col+1), (row-2, col-1), (row+2, col+1), (row+2, col-1), \
-            (row-1, col+2), (row+1, col+2), (row-1, col-2), (row+1, col-2)]
-        for x in positions:
-            if self.on_board(x)==True:
-                if x not in self.movable_keys:
-                    movable_spots.append(x)
-        return movable_spots
-
-    def move_left(self, piece_position):
-        movable_spots = []        
-        left = True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]  
-        while left == True:            
-            Next = curr_row, curr_col-1
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                left = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                left = False 
-                break
-            movable_spots.append(Next)
-            curr_col -=1        
-        return movable_spots
-
-    def move_right(self,piece_position):
-        movable_spots = []        
-        right = True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1] 
-        while right == True:            
-            Next = curr_row, curr_col+1
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                right = False  
-                break 
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                right = False 
-                break
-            movable_spots.append(Next)
-            curr_col +=1        
-        return movable_spots
-    
-    def move_up(self,piece_position):        
-        movable_spots = []        
-        up = True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]  
-        while up == True:            
-            Next = curr_row-1, curr_col
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                up = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                up = False 
-                break
-            movable_spots.append(Next)
-            curr_row -=1        
-        return movable_spots
-    
-    def move_down(self,piece_position):        
-        movable_spots = []        
-        down = True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]  
-        while down == True:            
-            Next = curr_row+1, curr_col
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                down = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                down = False 
-                break
-            movable_spots.append(Next)
-            curr_row +=1        
-        return movable_spots        
-    
-    def diag_r_down(self,piece_position):        
-        movable_spots = []        
-        drd= True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]   
-        while drd == True:            
-            Next = curr_row+1, curr_col+1
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                drd = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                drd = False 
-                break
-            movable_spots.append(Next)
-            curr_row +=1
-            curr_col +=1
-        return movable_spots
-    
-    def diag_r_up(self,piece_position):        
-        movable_spots = []        
-        dru= True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]  
-        while dru == True:            
-            Next = curr_row-1, curr_col+1
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                dru = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                dru = False 
-                break
-            movable_spots.append(Next)
-            curr_row -=1
-            curr_col +=1
-        return movable_spots      
-    
-    def diag_left_up(self,piece_position):        
-        movable_spots = []        
-        dlu= True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]  
-        while dlu == True:            
-            Next = curr_row-1, curr_col-1
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                dlu = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                dlu = False 
-                break
-            movable_spots.append(Next)
-            curr_row -=1
-            curr_col -=1
-        return movable_spots
-    
-    def diag_left_down(self,piece_position):        
-        movable_spots = []        
-        dld= True
-        curr_row = piece_position[0]
-        curr_col = piece_position[1]  
-        while dld == True:            
-            Next = curr_row+1, curr_col-1
-            if self.on_board(Next)==False or Next in self.movable_keys:
-                dld = False  
-                break            
-            if Next in self.enemy_movable_keys:
-                movable_spots.append(Next)
-                dld = False 
-                break
-            movable_spots.append(Next)
-            curr_row +=1
-            curr_col -=1
-        return movable_spots    
 
     def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
         
-        self.create_positions()
+        Positions = create_positions(self.board, self.pieces, self.enemy_pieces)
+        self.moves = Positions[0]
+        self.movable_keys = Positions[1]
+        self.enemy_moves = Positions[2]
+        self.enemy_movable_keys = Positions[3]
+
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
             return
@@ -412,8 +431,7 @@ class Comp:
                 self.board[row][col] = upgrade
 
         self.Game.board = self.board
-        self.can_move = False        
-       
+        self.can_move = False      
     
 def main():
     
@@ -434,11 +452,8 @@ def main():
             print('Game is over')
             sys.exit()
         C.random_move()
-        C2.random_move()
-        
-        
-        
-        # This will update the game board so that next iteration of loop, game draws piece that has moved
+        C2.random_move()        
+                
         clock.tick(Max_FPS)
         p.display.flip()
 
