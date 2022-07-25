@@ -236,12 +236,76 @@ def diag_left_down(piece_position, Dimensions, movable_keys, enemy_movable_keys)
     return movable_spots
 
 class Human:
+    def __init__(self, color, Game):
+        self.color = color
+        self.Game = Game
+        self.board = Game.board
+        if self.color == 'white':
+            self.pieces = ['wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
+            self.enemy_pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
+        if self.color =='black':
+            self.pieces = ['br', 'bkn', 'bb', 'bq', 'bk', 'bp']
+            self.enemy_pieces = ['wr', 'wkn', 'wb', 'wq', 'wk', 'wp']
+        self.moves = {}
+        self.movable_keys = []
+        self.enemy_moves = {}
+        self.enemy_movable_keys = []
+        self.moved = False
+        
+
+    def find_moves(self, location):
+        Positions = create_positions(self.board, self.pieces, self.enemy_pieces)
+        self.moves = Positions[0]
+        self.movable_keys = Positions[1]
+        self.enemy_moves = Positions[2]
+        self.enemy_movable_keys = Positions[3]
+        
+        
+        col = location[0]//self.Game.Sq_sz
+        row = location[1]//self.Game.Sq_sz
+        piece_position = row,col
+
+        if piece_position in self.movable_keys:
+            piece = self.moves[(row,col)]
+
+            Usable_Moves = []
+            Final_Moves = []     
+            
+            if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
+                Usable_Moves.append(move_left(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+                Usable_Moves.append(move_right(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+                Usable_Moves.append(move_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+                Usable_Moves.append(move_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            if piece == 'wb' or piece =='bb' or piece =='wq' or piece =='bq':
+                Usable_Moves.append(diag_left_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+                Usable_Moves.append(diag_left_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+                Usable_Moves.append(diag_r_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+                Usable_Moves.append(diag_r_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+            if piece == 'wkn' or piece =='bkn':
+                Usable_Moves.append(knight_moves(piece_position, self.Game.size, self.movable_keys))
+            if piece == 'wk' or piece =='bk':
+                Usable_Moves.append(king_moves(piece_position, self.Game.size, self.movable_keys))
+            if piece =='bp' or piece =='wp':
+                Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, self.movable_keys, self.enemy_movable_keys))
+
+            for x in Usable_Moves:
+                for y in x:
+                    Final_Moves.append(y)
+            Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
+            
+            return Final_Moves, Final_Enemy_Moves
+
+
+       
+
+
+
     # TODO add human movement controls, etc, use global piece search functions, etc
     # Reference the keys in the same fashion, use the created board, pass in the keys, 
     # Have the mouse clicks generate coordinates, coordinates then hit keys on the grid,
     # the keys on the grid run the search for that piece, returning possible list of pieces you can move to
     # Then the next click needs to be one of these pieces, etc...
-    pass
+    
 
 class Game:
     def __init__(self, size):
@@ -429,24 +493,42 @@ class Comp:
     
 def main():
     
+
     G = Game(10)
-    C = Comp('white', G)
-    C2 = Comp('black', G)
-    clock = p.time.Clock()
+    H = Human('white', G)
+    C = Comp('black', G)
     
+    clock = p.time.Clock()
+            
     while True:
         for e in p.event.get():
             if e.type == p.QUIT:
-                sys.exit()    
+                sys.exit()
+
+        H_move = True
+
         G.screen.fill(p.Color('white'))
         G.drawBoard()
         G.draw_pieces()
 
-        if C.game_over==True or C2.game_over==True:
+        if C.game_over==True:
             print('Game is over')
-            sys.exit()
-        C.random_move()
-        C2.random_move()        
+            sys.exit()        
+        
+
+        if e.type == p.MOUSEBUTTONDOWN:
+            loc = p.mouse.get_pos()
+            print(H.find_moves(loc))
+
+            
+            
+
+                        
+
+            
+            # C.random_move()
+                
+        # C2.random_move()        
                 
         clock.tick(Max_FPS)
         p.display.flip()
