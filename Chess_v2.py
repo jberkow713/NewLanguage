@@ -269,14 +269,10 @@ class Human:
         piece_position = row,col
         return piece_position
     
-    def update_board(self, pos, enemy=False):
-        if enemy==False:
-            self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'
-            self.board[pos[0]][pos[1]] = self.piece_type 
-                        
-        elif enemy==True:
-            self.moves[self.curr_loc] = '-'
-            self.moves[pos] = self.piece_type
+    def update_board(self, pos):
+        
+        self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'
+        self.board[pos[0]][pos[1]] = self.piece_type        
             
     def find_moves(self, location):
         piece_position = self.find_square(location)
@@ -419,6 +415,7 @@ class Comp:
     def smart_move(self):
         # TODO create intelligent design for smart interactive moves
         pass
+
     def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
@@ -512,7 +509,7 @@ def main():
             
     while True:
 
-        Same = False
+        
 
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -538,27 +535,21 @@ def main():
                 if Curr == H.curr_loc:
                     H.curr_moves.clear()
                     H.curr_enemy_moves.clear()
+                    
                     Same = True
+                elif Curr!= H.curr_loc:
+                    Same = False    
                     
 
                 if Same == False:
                 
-                    if Curr in H.curr_moves:
-                        H.update_board(Curr, enemy=False)
+                    if Curr in H.curr_moves or Curr in H.curr_enemy_moves:
+                        H.update_board(Curr)
                         H.curr_moves.clear()
                         H.curr_enemy_moves.clear()
+                        
                         H.Game.board = H.board
                         C.random_move()
-                    elif Curr in H.curr_enemy_moves:
-                        H.update_board(Curr, enemy=True)
-                        H.curr_moves.clear()
-                        H.curr_enemy_moves.clear()
-
-                        H.Game.board = H.board
-                        C.random_move()
-
-                    
-
                     #Once this click is made, meaning you didn't reclick, and you clicked a spot that could be made,
                     # The board needs to update, and then the computer needs to make a move 
             
