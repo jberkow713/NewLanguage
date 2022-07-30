@@ -557,13 +557,15 @@ def main():
                         H.update_board(Curr, enemy=False)
                         H.curr_moves.clear()
                         H.curr_enemy_moves.clear()
+                        H.Game.board = H.board
+                        C.random_move()
                     elif Curr in H.curr_enemy_moves:
                         H.update_board(Curr, enemy=True)
                         H.curr_moves.clear()
                         H.curr_enemy_moves.clear()
 
-                    H.Game.board = H.board
-                    C.random_move()
+                        H.Game.board = H.board
+                        C.random_move()
 
                     
 
@@ -572,19 +574,13 @@ def main():
             
             
             H.find_moves(loc)
-            print(H.curr_moves, H.curr_enemy_moves)
-
-            
-
-            
+          
          
 
                         
 
             
-            # C.random_move()
-                
-        # C2.random_move()        
+              
                 
         clock.tick(Max_FPS)
         p.display.flip()
