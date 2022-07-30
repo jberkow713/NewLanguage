@@ -271,21 +271,13 @@ class Human:
     
     def update_board(self, pos, enemy=False):
         if enemy==False:
-
-            self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'    
-
+            self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'
             self.board[pos[0]][pos[1]] = self.piece_type 
-            # self.moves[self.curr_loc] = '-'
-            # self.moves[pos] = self.piece_type
-            print(self.board)
-            
+                        
         elif enemy==True:
             self.moves[self.curr_loc] = '-'
             self.moves[pos] = self.piece_type
-            del self.enemy_moves[pos]
             
-
-
     def find_moves(self, location):
         piece_position = self.find_square(location)
 
@@ -321,11 +313,7 @@ class Human:
             self.curr_enemy_moves = Final_Enemy_Moves
             self.curr_loc = piece_position
             self.piece_type = piece
-            return
-
-    # TODO add human movement controls, etc, use global piece search functions, etc
-    # Then the next click needs to be one of these pieces, etc...
-    
+            return    
 
 class Game:
     def __init__(self, size):
@@ -428,7 +416,9 @@ class Comp:
                 Final_Moves.append(y)
         Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
         return Final_Moves, Final_Enemy_Moves
-
+    def smart_move(self):
+        # TODO create intelligent design for smart interactive moves
+        pass
     def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
         # set Games board equal to this board, this will update the main board, before it is drawn
