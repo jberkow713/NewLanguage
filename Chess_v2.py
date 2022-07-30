@@ -250,6 +250,11 @@ class Human:
         self.movable_keys = []
         self.enemy_moves = {}
         self.enemy_movable_keys = []
+        self.curr_loc = None
+        self.piece_type = None
+        self.curr_moves = []
+        self.curr_enemy_moves = []
+        
         self.moved = False
 
     def find_square(self, mouse_pos):
@@ -263,6 +268,23 @@ class Human:
         row = mouse_pos[1]//self.Game.Sq_sz
         piece_position = row,col
         return piece_position
+    
+    def update_board(self, pos, enemy=False):
+        if enemy==False:
+
+            self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'    
+
+            self.board[pos[0]][pos[1]] = self.piece_type 
+            # self.moves[self.curr_loc] = '-'
+            # self.moves[pos] = self.piece_type
+            print(self.board)
+            
+        elif enemy==True:
+            self.moves[self.curr_loc] = '-'
+            self.moves[pos] = self.piece_type
+            del self.enemy_moves[pos]
+            
+
 
     def find_moves(self, location):
         piece_position = self.find_square(location)
@@ -270,8 +292,7 @@ class Human:
         if piece_position in self.movable_keys:
             piece = self.moves[(piece_position[0], piece_position[1])]
 
-            Usable_Moves = []
-            Final_Moves = []     
+            Usable_Moves = []                
             
             if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
                 Usable_Moves.append(move_left(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
@@ -290,12 +311,17 @@ class Human:
             if piece =='bp' or piece =='wp':
                 Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, self.movable_keys, self.enemy_movable_keys))
 
+            Final_Moves = [] 
             for x in Usable_Moves:
                 for y in x:
                     Final_Moves.append(y)
+
             Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
-            
-            return Final_Moves, Final_Enemy_Moves
+            self.curr_moves = Final_Moves
+            self.curr_enemy_moves = Final_Enemy_Moves
+            self.curr_loc = piece_position
+            self.piece_type = piece
+            return
 
     # TODO add human movement controls, etc, use global piece search functions, etc
     # Then the next click needs to be one of these pieces, etc...
@@ -495,6 +521,9 @@ def main():
     clock = p.time.Clock()
             
     while True:
+
+        Same = False
+
         for e in p.event.get():
             if e.type == p.QUIT:
                 sys.exit()
@@ -509,12 +538,46 @@ def main():
         
 
         if e.type == p.MOUSEBUTTONDOWN:
+
             loc = p.mouse.get_pos()
-            # this is triggering function to search for possible squares to move to
-            print(H.find_moves(loc))
+
+            if len(H.curr_moves)>0 or len(H.curr_enemy_moves)>0:
+                # (7, 3), Curr
+                Curr = H.find_square(loc)
+                # If you press the same piece, it resets the loop
+                if Curr == H.curr_loc:
+                    H.curr_moves.clear()
+                    H.curr_enemy_moves.clear()
+                    Same = True
+                    
+
+                if Same == False:
+                
+                    if Curr in H.curr_moves:
+                        H.update_board(Curr, enemy=False)
+                        H.curr_moves.clear()
+                        H.curr_enemy_moves.clear()
+                    elif Curr in H.curr_enemy_moves:
+                        H.update_board(Curr, enemy=True)
+                        H.curr_moves.clear()
+                        H.curr_enemy_moves.clear()
+
+                    H.Game.board = H.board
+                    C.random_move()
+
+                    
+
+                    #Once this click is made, meaning you didn't reclick, and you clicked a spot that could be made,
+                    # The board needs to update, and then the computer needs to make a move 
+            
+            
+            H.find_moves(loc)
+            print(H.curr_moves, H.curr_enemy_moves)
 
             
+
             
+         
 
                         
 
