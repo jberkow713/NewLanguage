@@ -272,7 +272,9 @@ class Human:
     def update_board(self, pos):
         
         self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'
-        self.board[pos[0]][pos[1]] = self.piece_type        
+        self.board[pos[0]][pos[1]] = self.piece_type
+        self.curr_loc = None
+        self.piece_type = None        
             
     def find_moves(self, location):
         piece_position = self.find_square(location)
@@ -498,18 +500,15 @@ class Comp:
         self.Game.board = self.board
         self.can_move = False      
     
-def main():
-    
+def main():    
 
-    G = Game(10)
+    G = Game(20)
     H = Human('white', G)
     C = Comp('black', G)
     
     clock = p.time.Clock()
             
-    while True:
-
-        
+    while True:        
 
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -522,12 +521,11 @@ def main():
         if C.game_over==True:
             print('Game is over')
             sys.exit()        
-        
 
         if e.type == p.MOUSEBUTTONDOWN:
 
             loc = p.mouse.get_pos()
-
+            
             if len(H.curr_moves)>0 or len(H.curr_enemy_moves)>0:
                 # (7, 3), Curr
                 Curr = H.find_square(loc)
@@ -535,11 +533,10 @@ def main():
                 if Curr == H.curr_loc:
                     H.curr_moves.clear()
                     H.curr_enemy_moves.clear()
-                    
                     Same = True
+                
                 elif Curr!= H.curr_loc:
-                    Same = False    
-                    
+                    Same = False                    
 
                 if Same == False:
                 
@@ -551,17 +548,9 @@ def main():
                         H.Game.board = H.board
                         C.random_move()
                     #Once this click is made, meaning you didn't reclick, and you clicked a spot that could be made,
-                    # The board needs to update, and then the computer needs to make a move 
+                    # The board needs to update, and then the computer needs to make a move           
             
-            
-            H.find_moves(loc)
-          
-         
-
-                        
-
-            
-              
+            H.find_moves(loc)              
                 
         clock.tick(Max_FPS)
         p.display.flip()
