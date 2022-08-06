@@ -3,6 +3,12 @@ import random
 import sys
 from pygame.constants import MOUSEBUTTONDOWN
 import copy
+'''
+This is a customizable chess game. You can play against a computer on whatever size board you want,
+and the pieces are randomized. The AI for computer logic is still being created, but the functionality
+allows for human-comp gaming.
+'''
+
 p.init()
 
 Width, Height = 1024, 1024
