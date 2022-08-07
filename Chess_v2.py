@@ -259,8 +259,7 @@ class Human:
         self.curr_loc = None
         self.piece_type = None
         self.curr_moves = []
-        self.curr_enemy_moves = []
-        
+        self.curr_enemy_moves = []        
         self.moved = False
 
     def find_square(self, mouse_pos):
@@ -438,8 +437,7 @@ class Comp:
             self.game_over = True
             return
         
-        while self.can_move == False:
-            
+        while self.can_move == False:            
             rand_grid = self.random_choice(self.movable_keys)
             rand_piece = self.moves[rand_grid]
             # Random selection from pieces, need to test if it can move
@@ -529,7 +527,6 @@ def main():
             sys.exit()        
 
         if e.type == p.MOUSEBUTTONDOWN:
-
             loc = p.mouse.get_pos()
             
             if len(H.curr_moves)>0 or len(H.curr_enemy_moves)>0:
@@ -540,13 +537,11 @@ def main():
                     H.curr_moves.clear()
                     H.curr_enemy_moves.clear()
                                     
-                elif Curr!= H.curr_loc:
-                            
+                elif Curr!= H.curr_loc:                            
                     if Curr in H.curr_moves or Curr in H.curr_enemy_moves:
                         H.update_board(Curr)
                         H.curr_moves.clear()
-                        H.curr_enemy_moves.clear()
-                        
+                        H.curr_enemy_moves.clear()                        
                         H.Game.board = H.board
                         C.random_move()
                     #Once this click is made, meaning you didn't reclick, and you clicked a spot that could be made,
