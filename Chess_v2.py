@@ -539,13 +539,9 @@ def main():
                 if Curr == H.curr_loc:
                     H.curr_moves.clear()
                     H.curr_enemy_moves.clear()
-                    Same = True
-                
+                                    
                 elif Curr!= H.curr_loc:
-                    Same = False                    
-
-                if Same == False:
-                
+                            
                     if Curr in H.curr_moves or Curr in H.curr_enemy_moves:
                         H.update_board(Curr)
                         H.curr_moves.clear()
