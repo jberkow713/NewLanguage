@@ -32,8 +32,7 @@ def create_positions(board, pieces, enemy_pieces):
                 enemy_moves[(ROW,COLUMN)] = piece     
             COLUMN +=1
         ROW +=1
-    
-    moves = moves
+        
     movable_keys = [x for x in moves.keys()]
     enemy_moves = enemy_moves
     enemy_movable_keys =  [x for x in enemy_moves.keys()]
@@ -278,13 +277,13 @@ class Human:
         
         self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'
         self.board[pos[0]][pos[1]] = self.piece_type
-        self.curr_loc = None
-        self.piece_type = None        
+          
             
     def find_moves(self, location):
         piece_position = self.find_square(location)
 
         if piece_position in self.movable_keys:
+            # Classifying piece for grid search
             piece = self.moves[(piece_position[0], piece_position[1])]
 
             Usable_Moves = []                
@@ -527,27 +526,41 @@ def main():
             sys.exit()        
 
         if e.type == p.MOUSEBUTTONDOWN:
-            loc = p.mouse.get_pos()
+            loc = p.mouse.get_pos()            
+            H.find_moves(loc)
             
             if len(H.curr_moves)>0 or len(H.curr_enemy_moves)>0:
                 # (7, 3), Curr
+                
                 Curr = H.find_square(loc)
                 # If you press the same piece, it resets the loop
                 if Curr == H.curr_loc:
+                    H.update_board(Curr)
                     H.curr_moves.clear()
                     H.curr_enemy_moves.clear()
+                    H.curr_loc = None
+                    H.piece_type = None 
                                     
                 elif Curr!= H.curr_loc:                            
                     if Curr in H.curr_moves or Curr in H.curr_enemy_moves:
                         H.update_board(Curr)
-                        H.curr_moves.clear()
-                        H.curr_enemy_moves.clear()                        
                         H.Game.board = H.board
                         C.random_move()
+                        H.curr_moves.clear()
+                        H.curr_enemy_moves.clear()
+                        H.curr_loc = None
+                        H.piece_type = None
+                        
+                    else:
+                        H.curr_moves.clear()
+                        H.curr_enemy_moves.clear()
+                        H.curr_loc = None
+                        H.piece_type = None 
+
                     #Once this click is made, meaning you didn't reclick, and you clicked a spot that could be made,
                     # The board needs to update, and then the computer needs to make a move           
-            
-            H.find_moves(loc)              
+
+            H.find_moves(loc)
                 
         clock.tick(Max_FPS)
         p.display.flip()
