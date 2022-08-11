@@ -272,6 +272,11 @@ class Human:
         row = mouse_pos[1]//self.Game.Sq_sz
         piece_position = row,col
         return piece_position
+    def reset(self):
+        self.curr_moves.clear()
+        self.curr_enemy_moves.clear()
+        self.curr_loc = None
+        self.piece_type = None 
     
     def update_board(self, pos):
         
@@ -536,26 +541,17 @@ def main():
                 # If you press the same piece, it resets the loop
                 if Curr == H.curr_loc:
                     H.update_board(Curr)
-                    H.curr_moves.clear()
-                    H.curr_enemy_moves.clear()
-                    H.curr_loc = None
-                    H.piece_type = None 
+                    H.reset()
                                     
                 elif Curr!= H.curr_loc:                            
                     if Curr in H.curr_moves or Curr in H.curr_enemy_moves:
                         H.update_board(Curr)
                         H.Game.board = H.board
                         C.random_move()
-                        H.curr_moves.clear()
-                        H.curr_enemy_moves.clear()
-                        H.curr_loc = None
-                        H.piece_type = None
+                        H.reset()
                         
                     else:
-                        H.curr_moves.clear()
-                        H.curr_enemy_moves.clear()
-                        H.curr_loc = None
-                        H.piece_type = None 
+                        H.reset()
 
                     #Once this click is made, meaning you didn't reclick, and you clicked a spot that could be made,
                     # The board needs to update, and then the computer needs to make a move           
