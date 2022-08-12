@@ -405,17 +405,7 @@ class Comp:
         self.king = None     
     
     def in_check(self):
-        # Pre move, determine if your king is in range of enemy pieces
-        # If ANY enemy piece has the king as a possible spot in their enemy moves, using find_path(piece_position, piece)
-        # for every piece, then your king is now in check, 
-        # And so then you can not make a move, until you take your king out of check, meaning the move you make, 
-        
-        # Needs to take your king out of check
-        # Can scan the board from the position of your king, checking all 8 directions,
-        # Any enemy pieces that exist on these lines , now just run their find_path, and determine, if king shows up
-        # If any of these enemy pieces have self.enemy_king in their path, then your king is in check
-        
-        
+        # Determines if king is in check, True if in check, else False       
         
         King_Attacks = []
         King_Attacks.append(move_left(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
@@ -428,47 +418,66 @@ class Comp:
         King_Attacks.append(diag_r_up(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         King_Attacks.append(knight_moves(self.king,self.Game.size, self.movable_keys))
 
+        All_Moves = []
+        for x in King_Attacks:
+            for y in x:
+                All_Moves.append(y)              
 
-        # King Attacks represent all squares that could theoretically touch the king
-        # Need to find out now if any enemies exist in those squares
-        # Once determine that, determine if any of those enemies can actually reach the king
-        # If so, return True, if not, False
-
-        return King_Attacks 
+        for check in All_Moves:
+            for move, Piece in self.enemy_moves.items():
+                if move ==check:
+                    attacking_path = self.find_path(move, Piece, enemy=True)
+                    print(self.king)
+                    if self.king in attacking_path:
+                        return True
+        return False           
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
 
-    def find_path(self, piece_position, piece):
+    def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
         # Returns a list of possible moves for that piece, or an empty list if no moves available 
         Usable_Moves = []
         Final_Moves = []     
         
-        if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
-            Usable_Moves.append(move_left(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-            Usable_Moves.append(move_right(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-            Usable_Moves.append(move_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-            Usable_Moves.append(move_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-        if piece == 'wb' or piece =='bb' or piece =='wq' or piece =='bq':
-            Usable_Moves.append(diag_left_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-            Usable_Moves.append(diag_left_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-            Usable_Moves.append(diag_r_down(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-            Usable_Moves.append(diag_r_up(piece_position,self.Game.size, self.movable_keys, self.enemy_movable_keys))
-        if piece == 'wkn' or piece =='bkn':
-            Usable_Moves.append(knight_moves(piece_position, self.Game.size, self.movable_keys))
-        if piece == 'wk' or piece =='bk':
-            Usable_Moves.append(king_moves(piece_position, self.Game.size, self.movable_keys))
-        if piece =='bp' or piece =='wp':
-            Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        if enemy==False:
 
-        
+            keys = self.movable_keys
+            enemy_keys = self.enemy_movable_keys
+        elif enemy==True:
+            keys = self.enemy_movable_keys
+            enemy_keys = self.movable_keys
+
+        if piece == 'wr' or piece == 'br' or piece == 'wq' or piece == 'bq':
+            Usable_Moves.append(move_left(piece_position,self.Game.size, keys, enemy_keys))
+            Usable_Moves.append(move_right(piece_position,self.Game.size, keys, enemy_keys))
+            Usable_Moves.append(move_up(piece_position,self.Game.size, keys, enemy_keys))
+            Usable_Moves.append(move_down(piece_position,self.Game.size, keys, enemy_keys))
+        if piece == 'wb' or piece =='bb' or piece =='wq' or piece =='bq':
+            Usable_Moves.append(diag_left_down(piece_position,self.Game.size, keys, enemy_keys))
+            Usable_Moves.append(diag_left_up(piece_position,self.Game.size, keys, enemy_keys))
+            Usable_Moves.append(diag_r_down(piece_position,self.Game.size, keys, enemy_keys))
+            Usable_Moves.append(diag_r_up(piece_position,self.Game.size, keys, enemy_keys))
+        if piece == 'wkn' or piece =='bkn':
+            Usable_Moves.append(knight_moves(piece_position, self.Game.size, keys))
+        if piece == 'wk' or piece =='bk':
+            Usable_Moves.append(king_moves(piece_position, self.Game.size, keys))
+        if piece =='bp' or piece =='wp':
+            Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, keys, enemy_keys))
+       
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
-        Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]
+        if enemy ==False:
+            Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]
         
-        return Final_Moves, Final_Enemy_Moves
+            return Final_Moves, Final_Enemy_Moves
+
+        elif enemy ==True:
+            print(Final_Moves)
+            return [x for x in Final_Moves if x in self.movable_keys]       
+
     def smart_move(self):
         # TODO create intelligent design for smart interactive moves
         pass
@@ -485,7 +494,7 @@ class Comp:
         self.enemy_king = Positions[4]
         self.king = Positions[5]
 
-        print(self.in_check())
+        print(self.in_check())        
         
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
@@ -556,8 +565,6 @@ class Comp:
             if row == self.Game.size-1:
                 upgrade = self.random_choice(black_upgrades)
                 self.board[row][col] = upgrade
-
-
 
         self.Game.board = self.board
         self.can_move = False      
