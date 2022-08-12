@@ -34,10 +34,16 @@ def create_positions(board, pieces, enemy_pieces):
         ROW +=1
         
     movable_keys = [x for x in moves.keys()]
-    enemy_moves = enemy_moves
     enemy_movable_keys =  [x for x in enemy_moves.keys()]
+    enemy_king_position = []
+    for pos, piece in enemy_moves.items():
+        if piece == 'wk' or piece =='bk':
+            enemy_king_position.append(pos)
 
-    return moves, movable_keys, enemy_moves, enemy_movable_keys
+
+
+
+    return moves, movable_keys, enemy_moves, enemy_movable_keys, enemy_king_position[0]
 
 def pawn_moves(piece_position, piece, Dimensions, movable_keys, enemy_movable_keys):
     movable_spots = []
@@ -260,13 +266,15 @@ class Human:
         self.curr_moves = []
         self.curr_enemy_moves = []        
         self.moved = False
+        self.enemy_king = None
 
     def find_square(self, mouse_pos):
         Positions = create_positions(self.board, self.pieces, self.enemy_pieces)
         self.moves = Positions[0]
         self.movable_keys = Positions[1]
         self.enemy_moves = Positions[2]
-        self.enemy_movable_keys = Positions[3]        
+        self.enemy_movable_keys = Positions[3]
+        self.enemy_king = Positions[4]        
         
         col = mouse_pos[0]//self.Game.Sq_sz
         row = mouse_pos[1]//self.Game.Sq_sz
@@ -390,7 +398,20 @@ class Comp:
         self.enemy_moves = {}
         self.enemy_movable_keys = []
         self.can_move = False
-        self.game_over = False    
+        self.game_over = False
+        self.enemy_king = None    
+    
+    def in_check(self):
+        # Pre move, determine if your king is in range of enemy pieces
+        # If ANY enemy piece has the king as a possible spot in their enemy moves, using find_path(piece_position, piece)
+        # for every piece, then your king is now in check, 
+        # And so then you can not make a move, until you take your king out of check, meaning the move you make, 
+        
+        # Needs to take your king out of check
+        # Can scan the board from the position of your king, checking all 8 directions,
+        # Any enemy pieces that exist on these lines , now just run their find_path, and determine, if king shows up
+        # If any of these enemy pieces have self.enemy_king in their path, then your king is in check
+        pass 
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
@@ -418,10 +439,13 @@ class Comp:
         if piece =='bp' or piece =='wp':
             Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, self.movable_keys, self.enemy_movable_keys))
 
+        
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
-        Final_Enemy_Moves = [x for x in Usable_Moves if x in self.enemy_movable_keys]
+        Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]
+        print(Final_Moves, Final_Enemy_Moves)
+
         return Final_Moves, Final_Enemy_Moves
     def smart_move(self):
         # TODO create intelligent design for smart interactive moves
@@ -436,7 +460,8 @@ class Comp:
         self.movable_keys = Positions[1]
         self.enemy_moves = Positions[2]
         self.enemy_movable_keys = Positions[3]
-
+        self.enemy_king = Positions[4]
+        
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
             return
@@ -450,6 +475,8 @@ class Comp:
             all_moves = self.find_path(rand_grid, rand_piece)
             open_moves = all_moves[0]
             enemy_moves = all_moves[1]
+            
+                        
             if len(open_moves)>0 and len(enemy_moves)>0:
                 choice = random.randint(0,1)
                 if choice ==0:
@@ -505,6 +532,8 @@ class Comp:
                 upgrade = self.random_choice(black_upgrades)
                 self.board[row][col] = upgrade
 
+
+
         self.Game.board = self.board
         self.can_move = False      
     
@@ -533,7 +562,7 @@ def main():
         if e.type == p.MOUSEBUTTONDOWN:
             loc = p.mouse.get_pos()            
             H.find_moves(loc)
-            
+                        
             if len(H.curr_moves)>0 or len(H.curr_enemy_moves)>0:
                 # (7, 3), Curr
                 
