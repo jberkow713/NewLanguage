@@ -492,13 +492,15 @@ class Comp:
         self.enemy_moves = Positions[2]
         self.enemy_movable_keys = Positions[3]
         self.enemy_king = Positions[4]
-        self.king = Positions[5]
-
-        print(self.in_check())        
+        self.king = Positions[5]            
         
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
             return
+        
+        # TODO
+        # Need to check if after move is made, if the piece is in check, or not
+        # Need to make temporary copy of the board
         
         while self.can_move == False:            
             rand_grid = self.random_choice(self.movable_keys)
@@ -509,8 +511,15 @@ class Comp:
             all_moves = self.find_path(rand_grid, rand_piece)
             open_moves = all_moves[0]
             enemy_moves = all_moves[1]
-            
-                        
+
+            # TODO
+            # Make the temporary copy of the board here, update the temporary copy inside the if statements,
+            # Then check if the temporary copy board, using the new moves, still has king in check
+            # If so, need to reset the temporary copy to the original, and try a new move, until
+            # Temporary copy board returns False for in_check...
+            # At this point, you can set the real board equal to the temporary copy, exit the loop, and then 
+            # Set the actual board equal to this non checked board
+
             if len(open_moves)>0 and len(enemy_moves)>0:
                 choice = random.randint(0,1)
                 if choice ==0:
@@ -519,6 +528,8 @@ class Comp:
                     col = move[1]
                     self.board[rand_grid[0]][rand_grid[1]]= '-'
                     self.board[row][col] = rand_piece
+
+
                     self.can_move = True
                     break
                 elif choice ==1:
@@ -554,6 +565,7 @@ class Comp:
                 else:
                     self.movable_keys.remove(rand_grid)                    
         
+        # Pawn upgrades after the move has been made
         white_upgrades = ['wkn', 'wq', 'wb', 'wr']
         black_upgrades =['bkn', 'bq', 'bb', 'br']
 
