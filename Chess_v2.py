@@ -39,11 +39,12 @@ def create_positions(board, pieces, enemy_pieces):
     for pos, piece in enemy_moves.items():
         if piece == 'wk' or piece =='bk':
             enemy_king_position.append(pos)
+    your_king_position = []
+    for pos, piece in moves.items():
+        if piece == 'wk' or piece =='bk':
+            your_king_position.append(pos)
 
-
-
-
-    return moves, movable_keys, enemy_moves, enemy_movable_keys, enemy_king_position[0]
+    return moves, movable_keys, enemy_moves, enemy_movable_keys, enemy_king_position[0], your_king_position[0]
 
 def pawn_moves(piece_position, piece, Dimensions, movable_keys, enemy_movable_keys):
     movable_spots = []
@@ -267,6 +268,7 @@ class Human:
         self.curr_enemy_moves = []        
         self.moved = False
         self.enemy_king = None
+        self.king = None
 
     def find_square(self, mouse_pos):
         Positions = create_positions(self.board, self.pieces, self.enemy_pieces)
@@ -274,7 +276,8 @@ class Human:
         self.movable_keys = Positions[1]
         self.enemy_moves = Positions[2]
         self.enemy_movable_keys = Positions[3]
-        self.enemy_king = Positions[4]        
+        self.enemy_king = Positions[4]
+        self.king = Positions[5]        
         
         col = mouse_pos[0]//self.Game.Sq_sz
         row = mouse_pos[1]//self.Game.Sq_sz
@@ -289,8 +292,7 @@ class Human:
     def update_board(self, pos):
         
         self.board[self.curr_loc[0]][self.curr_loc[1]] = '-'
-        self.board[pos[0]][pos[1]] = self.piece_type
-          
+        self.board[pos[0]][pos[1]] = self.piece_type          
             
     def find_moves(self, location):
         piece_position = self.find_square(location)
@@ -399,7 +401,8 @@ class Comp:
         self.enemy_movable_keys = []
         self.can_move = False
         self.game_over = False
-        self.enemy_king = None    
+        self.enemy_king = None
+        self.king = None     
     
     def in_check(self):
         # Pre move, determine if your king is in range of enemy pieces
@@ -411,7 +414,27 @@ class Comp:
         # Can scan the board from the position of your king, checking all 8 directions,
         # Any enemy pieces that exist on these lines , now just run their find_path, and determine, if king shows up
         # If any of these enemy pieces have self.enemy_king in their path, then your king is in check
-        pass 
+        
+        
+        
+        King_Attacks = []
+        King_Attacks.append(move_left(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(move_right(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(move_up(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(move_down(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(diag_left_down(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(diag_left_up(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(diag_r_down(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(diag_r_up(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
+        King_Attacks.append(knight_moves(self.king,self.Game.size, self.movable_keys))
+
+
+        # King Attacks represent all squares that could theoretically touch the king
+        # Need to find out now if any enemies exist in those squares
+        # Once determine that, determine if any of those enemies can actually reach the king
+        # If so, return True, if not, False
+
+        return King_Attacks 
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
@@ -444,8 +467,7 @@ class Comp:
             for y in x:
                 Final_Moves.append(y)
         Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]
-        print(Final_Moves, Final_Enemy_Moves)
-
+        
         return Final_Moves, Final_Enemy_Moves
     def smart_move(self):
         # TODO create intelligent design for smart interactive moves
@@ -461,6 +483,9 @@ class Comp:
         self.enemy_moves = Positions[2]
         self.enemy_movable_keys = Positions[3]
         self.enemy_king = Positions[4]
+        self.king = Positions[5]
+
+        print(self.in_check())
         
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
