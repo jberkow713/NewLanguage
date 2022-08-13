@@ -399,6 +399,7 @@ class Comp:
         self.movable_keys = []
         self.enemy_moves = {}
         self.enemy_movable_keys = []
+        self.all_moves = None
         self.can_move = False
         self.game_over = False
         self.enemy_king = None
@@ -434,6 +435,14 @@ class Comp:
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
+    def find_all_paths(self):
+        if len(self.moves)==0:
+            return
+        move_dict = {}
+        for pos,piece in self.moves.items():
+            move_dict[pos]= self.find_path(pos,piece)
+        self.all_moves = move_dict
+        return     
 
     def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
@@ -497,7 +506,8 @@ class Comp:
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
             return
-        
+        self.find_all_paths()
+        print(self.all_moves)
         # TODO
         # Need to check if after move is made, if the piece is in check, or not
         # Need to make temporary copy of the board
@@ -519,6 +529,9 @@ class Comp:
             # Temporary copy board returns False for in_check...
             # At this point, you can set the real board equal to the temporary copy, exit the loop, and then 
             # Set the actual board equal to this non checked board
+
+            # ORRRR...if king is in check, create list of moves that bring it out of check, and then select one of those moves
+            # This will be speediest way
 
             if len(open_moves)>0 and len(enemy_moves)>0:
                 choice = random.randint(0,1)
