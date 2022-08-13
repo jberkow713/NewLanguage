@@ -440,7 +440,7 @@ class Comp:
             return
         move_dict = {}
         for pos,piece in self.moves.items():
-            move_dict[pos]= self.find_path(pos,piece)
+            move_dict[(pos,piece)]= self.find_path(pos,piece)
         self.all_moves = move_dict
         return     
 
@@ -488,6 +488,10 @@ class Comp:
             return [x for x in Final_Moves if x in self.movable_keys]       
 
     def smart_move(self):
+
+        #Finds all moves for all pieces first, stores in self.all_moves 
+        self.find_all_paths()
+        # for pos, 
         # TODO create intelligent design for smart interactive moves
         pass
 
@@ -506,6 +510,7 @@ class Comp:
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
             return
+        # This is going to find all moves each time, and for this function, used to block check, etc
         self.find_all_paths()
         print(self.all_moves)
         # TODO
