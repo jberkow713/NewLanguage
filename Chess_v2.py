@@ -407,7 +407,7 @@ class Comp:
         self.king = None     
     
     def in_check(self):
-        # Determines if king is in check, True if in check, else False       
+        # Determines if king is in check, returns (True, piece type) if in check, else False,       
         
         King_Attacks = []
         King_Attacks.append(move_left(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
@@ -431,7 +431,10 @@ class Comp:
                     attacking_path = self.find_path(move, Piece, enemy=True)[1]
                     print(self.king)
                     if self.king in attacking_path:
-                        return True
+                        if Piece == 'wkn' or Piece =='bkn':
+                            return True,'knight'
+                        else:
+                            return True, self.king, move        
         return False           
     
     def random_choice(self, list):
@@ -523,14 +526,19 @@ class Comp:
             return
         # This is going to find all moves each time, and for this function, used to block check, etc
         self.find_all_paths()
-        print(self.all_moves)
+        # print(self.all_moves)
         self.find_all_enemy_paths()
-        print(self.all_enemy_moves)
+        # print(self.all_enemy_moves)
 
         print(self.in_check())
         # TODO
-        # Need to check if after move is made, if the piece is in check, or not
-        # Need to make temporary copy of the board
+        # If piece is in check, to anything but a knight, can block the path or move the king
+        # Otherwise need to kill the knight or move the king
+        # Otherwise if the king is in check to another piece, 
+        # This will return King's position, Attacker's position
+        
+        #Then, just need to basically either make a move to kill the attacker, move the king,
+        # Or put a piece in between the king and the attacker 
         
         while self.can_move == False:            
             rand_grid = self.random_choice(self.movable_keys)
