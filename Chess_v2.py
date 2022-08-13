@@ -529,82 +529,71 @@ class Comp:
         # print(self.all_moves)
         self.find_all_enemy_paths()
         # print(self.all_enemy_moves)
-
         print(self.in_check())
-        # TODO
         # If piece is in check, to anything but a knight, can block the path or move the king
         # Otherwise need to kill the knight or move the king
         # Otherwise if the king is in check to another piece, 
-        # This will return King's position, Attacker's position
-        
+        # This will return King's position, Attacker's position        
         #Then, just need to basically either make a move to kill the attacker, move the king,
-        # Or put a piece in between the king and the attacker 
+        # Or put a piece in between the king and the attacker       
+        # TODO
+        # if self.in_check()==True:
+        # Block king, move king, etc       
         
-        while self.can_move == False:            
-            rand_grid = self.random_choice(self.movable_keys)
-            rand_piece = self.moves[rand_grid]
-            # Random selection from pieces, need to test if it can move
-            # print(rand_piece, rand_grid)
-            # moves actually is two lists, for testing just made it non conquerable moves
-            all_moves = self.find_path(rand_grid, rand_piece)
-            open_moves = all_moves[0]
-            enemy_moves = all_moves[1]
+        if self.in_check()==False:
 
-            # TODO
-            # Make the temporary copy of the board here, update the temporary copy inside the if statements,
-            # Then check if the temporary copy board, using the new moves, still has king in check
-            # If so, need to reset the temporary copy to the original, and try a new move, until
-            # Temporary copy board returns False for in_check...
-            # At this point, you can set the real board equal to the temporary copy, exit the loop, and then 
-            # Set the actual board equal to this non checked board
+            while self.can_move == False:            
+                rand_grid = self.random_choice(self.movable_keys)
+                rand_piece = self.moves[rand_grid]
+                # Random selection from pieces, need to test if it can move
+                # print(rand_piece, rand_grid)
+                # moves actually is two lists, for testing just made it non conquerable moves
+                all_moves = self.find_path(rand_grid, rand_piece)
+                open_moves = all_moves[0]
+                enemy_moves = all_moves[1]                
 
-            # ORRRR...if king is in check, create list of moves that bring it out of check, and then select one of those moves
-            # This will be speediest way
-
-            if len(open_moves)>0 and len(enemy_moves)>0:
-                choice = random.randint(0,1)
-                if choice ==0:
+                if len(open_moves)>0 and len(enemy_moves)>0:
+                    choice = random.randint(0,1)
+                    if choice ==0:
+                        move = self.random_choice(open_moves)
+                        row = move[0]
+                        col = move[1]
+                        self.board[rand_grid[0]][rand_grid[1]]= '-'
+                        self.board[row][col] = rand_piece
+                        self.can_move = True
+                        break
+                    elif choice ==1:
+                        move = self.random_choice(enemy_moves)
+                        row = move[0]
+                        col = move[1]
+                        self.board[rand_grid[0]][rand_grid[1]]= '-'
+                        self.board[row][col] = rand_piece
+                        self.can_move = True
+                        break            
+                if len(open_moves)>0 and len(enemy_moves)==0:
                     move = self.random_choice(open_moves)
+                    # print(move)
                     row = move[0]
                     col = move[1]
                     self.board[rand_grid[0]][rand_grid[1]]= '-'
                     self.board[row][col] = rand_piece
-
-
                     self.can_move = True
                     break
-                elif choice ==1:
+                if len(open_moves)==0 and len(enemy_moves)>0:
                     move = self.random_choice(enemy_moves)
                     row = move[0]
                     col = move[1]
                     self.board[rand_grid[0]][rand_grid[1]]= '-'
                     self.board[row][col] = rand_piece
                     self.can_move = True
-                    break            
-            if len(open_moves)>0 and len(enemy_moves)==0:
-                move = self.random_choice(open_moves)
-                # print(move)
-                row = move[0]
-                col = move[1]
-                self.board[rand_grid[0]][rand_grid[1]]= '-'
-                self.board[row][col] = rand_piece
-                self.can_move = True
-                break
-            if len(open_moves)==0 and len(enemy_moves)>0:
-                move = self.random_choice(enemy_moves)
-                row = move[0]
-                col = move[1]
-                self.board[rand_grid[0]][rand_grid[1]]= '-'
-                self.board[row][col] = rand_piece
-                self.can_move = True
-                break
-            else:
-                # If only one key removes and it can not be moved
-                if len(self.movable_keys)==1:
-                    self.can_move==True
-                    break 
+                    break
                 else:
-                    self.movable_keys.remove(rand_grid)                    
+                    # If only one key removes and it can not be moved
+                    if len(self.movable_keys)==1:
+                        self.can_move==True
+                        break 
+                    else:
+                        self.movable_keys.remove(rand_grid)                    
         
         # Pawn upgrades after the move has been made
         white_upgrades = ['wkn', 'wq', 'wb', 'wr']
