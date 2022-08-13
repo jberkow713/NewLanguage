@@ -428,13 +428,13 @@ class Comp:
         for check in All_Moves:
             for move, Piece in self.enemy_moves.items():
                 if move ==check:
-                    attacking_path = self.find_path(move, Piece, enemy=True)[1]
-                    print(self.king)
+                    attacking_path = self.find_path(move, Piece, enemy=True)
+                    
                     if self.king in attacking_path:
                         if Piece == 'wkn' or Piece =='bkn':
-                            return True,'knight'
+                            return True,'knight',attacking_path
                         else:
-                            return True, self.king, move        
+                            return True, self.king, move, attacking_path       
         return False           
     
     def random_choice(self, list):
@@ -493,12 +493,13 @@ class Comp:
         for x in Usable_Moves:
             for y in x:
                 Final_Moves.append(y)
+               
         if enemy ==False:
             Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]        
             return Final_Moves, Final_Enemy_Moves
 
         elif enemy ==True:
-            return Final_Moves, [x for x in Final_Moves if x in self.movable_keys]       
+            return Final_Moves   
 
     def smart_move(self):
 
@@ -537,64 +538,68 @@ class Comp:
         #Then, just need to basically either make a move to kill the attacker, move the king,
         # Or put a piece in between the king and the attacker       
         # TODO
+        
+        
         # if self.in_check()==True:
+
+
         # Block king, move king, etc       
         
-        if self.in_check()==False:
+        # if self.in_check()==False:
 
-            while self.can_move == False:            
-                rand_grid = self.random_choice(self.movable_keys)
-                rand_piece = self.moves[rand_grid]
-                # Random selection from pieces, need to test if it can move
-                # print(rand_piece, rand_grid)
-                # moves actually is two lists, for testing just made it non conquerable moves
-                all_moves = self.find_path(rand_grid, rand_piece)
-                open_moves = all_moves[0]
-                enemy_moves = all_moves[1]                
+        while self.can_move == False:            
+            rand_grid = self.random_choice(self.movable_keys)
+            rand_piece = self.moves[rand_grid]
+            # Random selection from pieces, need to test if it can move
+            # print(rand_piece, rand_grid)
+            # moves actually is two lists, for testing just made it non conquerable moves
+            all_moves = self.find_path(rand_grid, rand_piece)
+            open_moves = all_moves[0]
+            enemy_moves = all_moves[1]                
 
-                if len(open_moves)>0 and len(enemy_moves)>0:
-                    choice = random.randint(0,1)
-                    if choice ==0:
-                        move = self.random_choice(open_moves)
-                        row = move[0]
-                        col = move[1]
-                        self.board[rand_grid[0]][rand_grid[1]]= '-'
-                        self.board[row][col] = rand_piece
-                        self.can_move = True
-                        break
-                    elif choice ==1:
-                        move = self.random_choice(enemy_moves)
-                        row = move[0]
-                        col = move[1]
-                        self.board[rand_grid[0]][rand_grid[1]]= '-'
-                        self.board[row][col] = rand_piece
-                        self.can_move = True
-                        break            
-                if len(open_moves)>0 and len(enemy_moves)==0:
+            if len(open_moves)>0 and len(enemy_moves)>0:
+                choice = random.randint(0,1)
+                if choice ==0:
                     move = self.random_choice(open_moves)
-                    # print(move)
                     row = move[0]
                     col = move[1]
                     self.board[rand_grid[0]][rand_grid[1]]= '-'
                     self.board[row][col] = rand_piece
                     self.can_move = True
                     break
-                if len(open_moves)==0 and len(enemy_moves)>0:
+                elif choice ==1:
                     move = self.random_choice(enemy_moves)
                     row = move[0]
                     col = move[1]
                     self.board[rand_grid[0]][rand_grid[1]]= '-'
                     self.board[row][col] = rand_piece
                     self.can_move = True
-                    break
+                    break            
+            if len(open_moves)>0 and len(enemy_moves)==0:
+                move = self.random_choice(open_moves)
+                # print(move)
+                row = move[0]
+                col = move[1]
+                self.board[rand_grid[0]][rand_grid[1]]= '-'
+                self.board[row][col] = rand_piece
+                self.can_move = True
+                break
+            if len(open_moves)==0 and len(enemy_moves)>0:
+                move = self.random_choice(enemy_moves)
+                row = move[0]
+                col = move[1]
+                self.board[rand_grid[0]][rand_grid[1]]= '-'
+                self.board[row][col] = rand_piece
+                self.can_move = True
+                break
+            else:
+                # If only one key removes and it can not be moved
+                if len(self.movable_keys)==1:
+                    self.can_move==True
+                    break 
                 else:
-                    # If only one key removes and it can not be moved
-                    if len(self.movable_keys)==1:
-                        self.can_move==True
-                        break 
-                    else:
-                        self.movable_keys.remove(rand_grid)                    
-        
+                    self.movable_keys.remove(rand_grid)                    
+    
         # Pawn upgrades after the move has been made
         white_upgrades = ['wkn', 'wq', 'wb', 'wr']
         black_upgrades =['bkn', 'bq', 'bb', 'br']
