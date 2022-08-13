@@ -436,7 +436,9 @@ class Comp:
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
+    
     def find_all_paths(self):
+        # Finds path of all its own pieces, stores in class Dict
         if len(self.moves)==0:
             return
         move_dict = {}
@@ -444,7 +446,9 @@ class Comp:
             move_dict[(pos,piece)]= self.find_path(pos,piece)
         self.all_moves = move_dict
         return     
+    
     def find_all_enemy_paths(self):
+        # Finds Path of all enemies, stores in class Dict
         if len(self.enemy_moves)==0:
             return
         move_dict = {}
@@ -487,8 +491,7 @@ class Comp:
             for y in x:
                 Final_Moves.append(y)
         if enemy ==False:
-            Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]
-        
+            Final_Enemy_Moves = [x for x in Final_Moves if x in self.enemy_movable_keys]        
             return Final_Moves, Final_Enemy_Moves
 
         elif enemy ==True:
@@ -498,6 +501,7 @@ class Comp:
 
         #Finds all moves for all pieces first, stores in self.all_moves 
         self.find_all_paths()
+        self.find_all_enemy_paths()
         # for pos, 
         # TODO create intelligent design for smart interactive moves
         pass
