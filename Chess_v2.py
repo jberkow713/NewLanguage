@@ -432,7 +432,7 @@ class Comp:
                     
                     if self.king in attacking_path:
                         if Piece == 'wkn' or Piece =='bkn':
-                            return True,'knight',attacking_path
+                            return True,self.king,'knight',attacking_path
                         else:
                             return True, self.king, move, attacking_path       
         return False           
@@ -531,21 +531,22 @@ class Comp:
         self.find_all_enemy_paths()
         # print(self.all_enemy_moves)
         print(self.in_check())
-        # If piece is in check, to anything but a knight, can block the path or move the king
-        # Otherwise need to kill the knight or move the king
-        # Otherwise if the king is in check to another piece, 
-        # This will return King's position, Attacker's position        
-        #Then, just need to basically either make a move to kill the attacker, move the king,
-        # Or put a piece in between the king and the attacker       
         # TODO
         
+        # So when the king is in check, going to get one of two returns:
+        # 1) For the Knight
+        # return True,self.king,'knight',attacking_path
+        # 2) For all the other pieces checking the king
+        # return True, self.king, move, attacking_path
+        # 3)King has three options
+        # For non knights...move out of the path, block the path, kill the piece
+        # For knights....move out of the path, kill the piece  
         
         # if self.in_check()==True:
-
-
-        # Block king, move king, etc       
+        # Set the conditions here for moving out of check or dealing with the opponent's piece     
         
         # if self.in_check()==False:
+        # Run the other loop below
 
         while self.can_move == False:            
             rand_grid = self.random_choice(self.movable_keys)
