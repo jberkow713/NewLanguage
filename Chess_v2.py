@@ -400,6 +400,7 @@ class Comp:
         self.enemy_moves = {}
         self.enemy_movable_keys = []
         self.all_moves = None
+        self.all_enemy_moves = None
         self.can_move = False
         self.game_over = False
         self.enemy_king = None
@@ -427,7 +428,7 @@ class Comp:
         for check in All_Moves:
             for move, Piece in self.enemy_moves.items():
                 if move ==check:
-                    attacking_path = self.find_path(move, Piece, enemy=True)
+                    attacking_path = self.find_path(move, Piece, enemy=True)[1]
                     print(self.king)
                     if self.king in attacking_path:
                         return True
@@ -443,6 +444,14 @@ class Comp:
             move_dict[(pos,piece)]= self.find_path(pos,piece)
         self.all_moves = move_dict
         return     
+    def find_all_enemy_paths(self):
+        if len(self.enemy_moves)==0:
+            return
+        move_dict = {}
+        for pos,piece in self.enemy_moves.items():
+            move_dict[(pos,piece)]= self.find_path(pos,piece,enemy=True)
+        self.all_enemy_moves = move_dict
+        return  
 
     def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
@@ -451,7 +460,6 @@ class Comp:
         Final_Moves = []     
         
         if enemy==False:
-
             keys = self.movable_keys
             enemy_keys = self.enemy_movable_keys
         elif enemy==True:
@@ -484,8 +492,7 @@ class Comp:
             return Final_Moves, Final_Enemy_Moves
 
         elif enemy ==True:
-            print(Final_Moves)
-            return [x for x in Final_Moves if x in self.movable_keys]       
+            return Final_Moves, [x for x in Final_Moves if x in self.movable_keys]       
 
     def smart_move(self):
 
@@ -513,6 +520,10 @@ class Comp:
         # This is going to find all moves each time, and for this function, used to block check, etc
         self.find_all_paths()
         print(self.all_moves)
+        self.find_all_enemy_paths()
+        print(self.all_enemy_moves)
+
+        print(self.in_check())
         # TODO
         # Need to check if after move is made, if the piece is in check, or not
         # Need to make temporary copy of the board
