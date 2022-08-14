@@ -443,7 +443,14 @@ class Comp:
         if len(Checks)>0:
             return Checks                           
         return False           
-    
+    def find_in_between(self,point_a,point_b):
+        # (0, 10), (2, 10)
+        # Determine from king's position to attacker's position, which moves fall in between
+        # return a list of tuples of positions that can be used to block piece or take attacking piece
+        blocks = []
+        pass
+
+
     def out_of_check(self):
         # Returns list of possible moves to get comp out of check
         if self.in_check()==False:
@@ -466,23 +473,23 @@ class Comp:
         # Need to scroll through the Checks in info, determine all possible moves which can be made
         # There can be multiple checks, so there will be a loop for knights, and a loop for non knights
 
-        while self.in_check()!=False:
+        # while self.in_check()!=False:
 
-            # BOARD will be reset to a copy of self.board after every attempt to get out of check
-            # is made, and if one exists, then put piece as key and moved to spot as value in the Possible_Escapes Dictionary
+        #     # BOARD will be reset to a copy of self.board after every attempt to get out of check
+        #     # is made, and if one exists, then put piece as key and moved to spot as value in the Possible_Escapes Dictionary
             
-            # Have to first try all movements of positions to escape knight
-            # Then have to try all movements to escape non knight               
+        #     # Have to first try all movements of positions to escape knight
+        #     # Then have to try all movements to escape non knight               
 
-            BOARD = copy.deepcopy(self.board)
+        #     BOARD = copy.deepcopy(self.board)
             
-            Temp_Positions = create_positions(BOARD, self.pieces, self.enemy_pieces)
-            self.moves = Temp_Positions[0]
-            self.movable_keys = Temp_Positions[1]
-            self.enemy_moves = Temp_Positions[2]
-            self.enemy_movable_keys = Temp_Positions[3]
-            self.enemy_king = Temp_Positions[4]
-            self.king = Temp_Positions[5]    
+        #     Temp_Positions = create_positions(BOARD, self.pieces, self.enemy_pieces)
+        #     self.moves = Temp_Positions[0]
+        #     self.movable_keys = Temp_Positions[1]
+        #     self.enemy_moves = Temp_Positions[2]
+        #     self.enemy_movable_keys = Temp_Positions[3]
+        #     self.enemy_king = Temp_Positions[4]
+        #     self.king = Temp_Positions[5]    
 
         
         # return some list of moves that can be made given the checked board, to be passed to 
