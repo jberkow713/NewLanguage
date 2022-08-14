@@ -408,7 +408,10 @@ class Comp:
     
     def in_check(self):
         # Determines if king is in check, returns (True, piece type) if in check, else False,       
-        
+        if self.color == 'white':
+            KING = 'wk'
+        elif self.color =='black':
+            KING = 'bk'    
         King_Attacks = []
         King_Attacks.append(move_left(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         King_Attacks.append(move_right(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
@@ -425,6 +428,8 @@ class Comp:
             for y in x:
                 All_Moves.append(y)              
 
+        Checks = []
+
         for check in All_Moves:
             for move, Piece in self.enemy_moves.items():
                 if move ==check:
@@ -432,11 +437,58 @@ class Comp:
                     
                     if self.king in attacking_path:
                         if Piece == 'wkn' or Piece =='bkn':
-                            return True,self.king,'knight',attacking_path
+                            Checks.append((self.king,'knight', self.find_path(self.king,KING)))
                         else:
-                            return True, self.king, move, attacking_path       
+                            Checks.append((self.king, move, attacking_path,self.find_path(self.king,KING)[0]))
+        if len(Checks)>0:
+            return Checks                           
         return False           
     
+    def out_of_check(self):
+        # Returns list of possible moves to get comp out of check
+        if self.in_check()==False:
+            return        
+        
+        # TODO
+        # So when the king is in check, going to get one of two returns:
+        # 1) For the Knight
+        # return True,self.king,'knight',attacking_path
+        # 2) For all the other pieces checking the king
+        # return True, self.king, move, attacking_path
+        # 3)King has three options
+        # For non knights...move out of the path, block the path, kill the piece
+        # For knights....move out of the path, kill the piece 
+       
+        info = self.in_check()
+        print(info)
+        
+        Possible_escapes = {}
+        # Need to scroll through the Checks in info, determine all possible moves which can be made
+        # There can be multiple checks, so there will be a loop for knights, and a loop for non knights
+
+        while self.in_check()!=False:
+
+            # BOARD will be reset to a copy of self.board after every attempt to get out of check
+            # is made, and if one exists, then put piece as key and moved to spot as value in the Possible_Escapes Dictionary
+            
+            # Have to first try all movements of positions to escape knight
+            # Then have to try all movements to escape non knight               
+
+            BOARD = copy.deepcopy(self.board)
+            
+            Temp_Positions = create_positions(BOARD, self.pieces, self.enemy_pieces)
+            self.moves = Temp_Positions[0]
+            self.movable_keys = Temp_Positions[1]
+            self.enemy_moves = Temp_Positions[2]
+            self.enemy_movable_keys = Temp_Positions[3]
+            self.enemy_king = Temp_Positions[4]
+            self.king = Temp_Positions[5]    
+
+        
+        # return some list of moves that can be made given the checked board, to be passed to 
+        # movement function     
+
+
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
     
@@ -525,29 +577,16 @@ class Comp:
         if len(self.movable_keys)==0 or len(self.enemy_movable_keys)==0:
             self.game_over = True
             return
-        # This is going to find all moves each time, and for this function, used to block check, etc
-        self.find_all_paths()
-        # print(self.all_moves)
-        self.find_all_enemy_paths()
-        # print(self.all_enemy_moves)
-        print(self.in_check())
+                
+        print(self.out_of_check())
+               
         # TODO
-        
-        # So when the king is in check, going to get one of two returns:
-        # 1) For the Knight
-        # return True,self.king,'knight',attacking_path
-        # 2) For all the other pieces checking the king
-        # return True, self.king, move, attacking_path
-        # 3)King has three options
-        # For non knights...move out of the path, block the path, kill the piece
-        # For knights....move out of the path, kill the piece  
-        
         # if self.in_check()==True:
-        # Set the conditions here for moving out of check or dealing with the opponent's piece     
-        
-        # if self.in_check()==False:
+        # Possible_Moves = self.out_of_check()
+        # And then randomly select one move, and run something similar to the below loop
         # Run the other loop below
 
+        # if self.in_check()==False:
         while self.can_move == False:            
             rand_grid = self.random_choice(self.movable_keys)
             rand_piece = self.moves[rand_grid]
