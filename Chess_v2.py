@@ -412,10 +412,7 @@ class Comp:
         # If the king is in check, returns a list of lists, for each piece checking king, a list of spots
         # that can be blocked, to be used in getting out of check function, for the knight, more information given
         # including the knight's path  
-        if self.color == 'white':
-            KING = 'wk'
-        elif self.color =='black':
-            KING = 'bk'    
+            
         King_Attacks = []
         King_Attacks.append(move_left(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         King_Attacks.append(move_right(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
@@ -447,6 +444,7 @@ class Comp:
                             block.remove(self.king)
                             block.append(move)
                             Checks.append(block)
+        # Set class variable for later use
         self.check_info = Checks                    
         if len(Checks)>0:
             return Checks                           
@@ -479,10 +477,10 @@ class Comp:
         blocks = []
         for x in self.check_info:
             for y in x:
-                blocks.append(y)
+                blocks.append(y)        
         
         self.find_all_paths()
-
+        
         blockers = []
 
         for block in blocks:
