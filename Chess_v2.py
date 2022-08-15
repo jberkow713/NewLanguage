@@ -429,6 +429,7 @@ class Comp:
         King_Attacks.append(diag_r_up(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         King_Attacks.append(knight_moves(self.king,self.Game.size, self.movable_keys))
 
+        # List of all spots that can see the king, from perspective of the king if looking out on the board
         All_Moves = []
         for x in King_Attacks:
             for y in x:
@@ -439,21 +440,25 @@ class Comp:
         for check in All_Moves:
             for move, Piece in self.enemy_moves.items():
                 if move ==check:
-                    attacking_path = self.find_path(move, Piece, enemy=True)
                     
+                    attacking_path = self.find_path(move, Piece, enemy=True)
+                    # If the piece which is in the king's vision has access to the king:
                     if self.king in attacking_path[0]:
                         if Piece == 'wkn' or Piece =='bkn':
                             self.attackers.append(self.find_path(move, Piece, enemy=True)[0])
                         else:
+                            # This represents blocks that other pieces can make 
                             block = attacking_path[1]
                             block.remove(self.king)
+                            # king can also move to this last spot, conquering the piece
                             block.append(move)
-                            Checks.append(block)               
+                            Checks.append(block)
+
                            
                             # Need to temporarily replace the king's key with nothing, and then add it back in
                             self.movable_keys.remove(self.king)
                             attacking_path_1 = self.find_path(move, Piece, enemy=True)
-                            self.attackers.append(attacking_path_1[0])
+                            self.attackers.append(attacking_path_1[0])                                              
                             self.movable_keys.append(self.king)                            
         # Set class variable for later use
         self.check_info = Checks                    
@@ -520,23 +525,23 @@ class Comp:
         for x in self.attackers:
             for y in x:
                 attacks.append(y)
-        
         escapes = self.find_path(self.king, Piece)[0]
         valid_escapes =[]
         for move in escapes:
             if move not in attacks:
-                valid_escapes.append((Piece,move))
+                if move not in self.check_info:
+                    valid_escapes.append((Piece,move))
         return valid_escapes        
 
     def out_of_check(self):
         
         Escapes = []
-        if self.check_info != []:
-            for Escape in self.block_check():
-                Escapes.append(Escape)
-            for escape in self.king_escapes():
-                if escape not in Escapes:
-                    Escapes.append(escape)
+        
+        for Escape in self.block_check():
+            Escapes.append(Escape)
+        for escape in self.king_escapes():
+            if escape not in Escapes:
+                Escapes.append(escape)
 
         self.attackers.clear()
         return Escapes              
@@ -571,7 +576,7 @@ class Comp:
         if piece =='bp' or piece =='wp':
             Usable_Moves.append(pawn_moves(piece_position, piece, self.Game.size, keys, enemy_keys))
         
-        Blocks = None
+        Blocks = []
         for x in Usable_Moves:
             if self.king in x:
                 Blocks = x
@@ -613,9 +618,10 @@ class Comp:
 
         # Premove, determine if king is in check        
         self.in_check()                       
-        print(self.out_of_check())
+        
 
         if self.check_info!=[]:
+            
             Escapes = self.out_of_check()
             # [(((0, 9), 'br'), (2, 9)), (((1, 8), 'bp'), (2, 9)), ('bk', (0, 10)), ('bk', (1, 11)), ('bk', (2, 9))]
             rand_move = self.random_choice(Escapes)
