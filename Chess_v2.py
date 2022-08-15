@@ -489,6 +489,7 @@ class Comp:
         self.all_enemy_moves = move_dict
         return  
     
+    # added to commit
     def block_check(self):
         blocks = []
         for x in self.check_info:
