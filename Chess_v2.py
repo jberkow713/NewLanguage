@@ -447,7 +447,7 @@ class Comp:
                             block.remove(self.king)
                             block.append(move)
                             Checks.append(block)
-                            
+        self.check_info = Checks                    
         if len(Checks)>0:
             return Checks                           
         return False           
@@ -474,6 +474,30 @@ class Comp:
             move_dict[(pos,piece)]= self.find_path(pos,piece,enemy=True)
         self.all_enemy_moves = move_dict
         return  
+    
+    def block_check(self):
+        blocks = []
+        for x in self.check_info:
+            for y in x:
+                blocks.append(y)
+        
+        self.find_all_paths()
+
+        blockers = []
+
+        for block in blocks:
+            for piece, moves in self.all_moves.items():            
+                for list in moves:
+                    for move in list:
+                        if move == block:
+                            if (piece,block) not in blockers:
+                                if 'bk' not in piece:
+                                    if 'wk' not in piece:
+                                        blockers.append((piece, block))
+        # [(((0, 9), 'bq'), (1, 10)), (((0, 11), 'bq'), (1, 10))]
+        # This represents the pieces that can move to the blocks, not including king
+        return blockers
+                
 
     def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
@@ -546,8 +570,9 @@ class Comp:
             return
 
         # Information on if the king is in check, will use this in future 
-        self.check_info = self.in_check()
-        print(self.check_info)    
+        self.in_check()
+        if self.check_info != []:
+            print(self.block_check()) 
                
         # TODO
         # if self.in_check()==True:
