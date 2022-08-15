@@ -405,14 +405,19 @@ class Comp:
         self.game_over = False
         self.enemy_king = None
         self.king = None
-        self.check_info = None     
+        self.check_info = None
+        self.attackers = []     
     
     def in_check(self):
         # Determines if king is in check
         # If the king is in check, returns a list of lists, for each piece checking king, a list of spots
         # that can be blocked, to be used in getting out of check function, for the knight, more information given
         # including the knight's path  
-            
+        if self.color =='white':
+            King = 'wk'
+        elif self.color =='black':
+            King = 'bk'    
+
         King_Attacks = []
         King_Attacks.append(move_left(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
         King_Attacks.append(move_right(self.king,self.Game.size, self.movable_keys, self.enemy_movable_keys))
@@ -443,8 +448,15 @@ class Comp:
                             block = attacking_path[1]
                             block.remove(self.king)
                             block.append(move)
-                            Checks.append(block)
-        # Set class variable for later use
+                            Checks.append(block)               
+                           
+                            # Need to temporarily replace the king's key with nothing, and then add it back in
+                            self.movable_keys.remove(self.king)
+                            attacking_path_1 = self.find_path(move, Piece, enemy=True)
+                            self.attackers.append(attacking_path_1[0])
+                            self.movable_keys.append(self.king)
+                            
+                            # Set class variable for later use
         self.check_info = Checks                    
         if len(Checks)>0:
             return Checks                           
@@ -500,8 +512,36 @@ class Comp:
         
         return blockers
     def king_escapes(self):
-        #Find moves for king to escape check
-        pass 
+               
+        if self.color =='white':
+            Piece = 'wk'
+        else:
+            Piece = 'bk'    
+        
+        attacks = []
+        for x in self.attackers:
+            for y in x:
+                attacks.append(y)
+        
+        escapes = self.find_path(self.king, Piece)[0]
+        valid_escapes =[]
+        for move in escapes:
+            if move not in attacks:
+                valid_escapes.append((Piece,move))
+        return valid_escapes        
+
+    def out_of_check(self):
+        Escapes = []
+        if self.check_info != []:
+            for Escape in self.block_check():
+                Escapes.append(Escape)
+            for escape in self.king_escapes():
+                if escape not in Escapes:
+                    Escapes.append(escape)
+
+        self.attackers.clear()
+        return Escapes
+              
 
     def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
@@ -573,10 +613,11 @@ class Comp:
             self.game_over = True
             return
 
-        # Information on if the king is in check, will use this in future 
+        # Information on if the king is in check
+        # block_check shows what pieces can block 
         self.in_check()
-        if self.check_info != []:
-            print(self.block_check()) 
+        print(self.attackers)
+        print(self.out_of_check())
                
         # TODO
         # if self.in_check()==True:
