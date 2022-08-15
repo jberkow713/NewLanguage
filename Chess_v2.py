@@ -443,7 +443,7 @@ class Comp:
                     
                     if self.king in attacking_path[0]:
                         if Piece == 'wkn' or Piece =='bkn':
-                            Checks.append(('knight',move,attacking_path[0]))
+                            self.attackers.append(self.find_path(move, Piece, enemy=True)[0])
                         else:
                             block = attacking_path[1]
                             block.remove(self.king)
@@ -454,9 +454,8 @@ class Comp:
                             self.movable_keys.remove(self.king)
                             attacking_path_1 = self.find_path(move, Piece, enemy=True)
                             self.attackers.append(attacking_path_1[0])
-                            self.movable_keys.append(self.king)
-                            
-                            # Set class variable for later use
+                            self.movable_keys.append(self.king)                            
+        # Set class variable for later use
         self.check_info = Checks                    
         if len(Checks)>0:
             return Checks                           
@@ -504,13 +503,12 @@ class Comp:
                                 if 'bk' not in piece:
                                     if 'wk' not in piece:
                                         blockers.append((piece, block))
-        # [(((0, 9), 'bq'), (1, 10)), (((0, 11), 'bq'), (1, 10))]
-        # This represents the pieces that can move to the blocks, not including king
-        
+                
         # TODO, add functionality to check if knight is checking king, to kill knight
         # Figure out way to deal with multiple checks at once, rare, but important
         
         return blockers
+
     def king_escapes(self):
                
         if self.color =='white':
@@ -531,6 +529,7 @@ class Comp:
         return valid_escapes        
 
     def out_of_check(self):
+        
         Escapes = []
         if self.check_info != []:
             for Escape in self.block_check():
@@ -540,8 +539,7 @@ class Comp:
                     Escapes.append(escape)
 
         self.attackers.clear()
-        return Escapes
-              
+        return Escapes              
 
     def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
