@@ -345,8 +345,7 @@ class Game:
     def create_board(self):        
         Board = []
         top_row = []
-        bottom_row = []
-        
+        bottom_row = []        
         for _ in range(self.size):
             piece = self.pieces[random.randint(0,3)]
             top_row.append('w' + piece)
@@ -384,6 +383,7 @@ class Game:
                 piece = self.board[r][c]
                 if piece != '-':
                     self.screen.blit(self.IMAGES[piece], p.Rect(c*self.Sq_sz, r*self.Sq_sz, self.Sq_sz, self.Sq_sz))
+
 class Comp:
     def __init__(self, color, Game):
         self.color = color
@@ -406,7 +406,7 @@ class Comp:
         self.enemy_king = None
         self.king = None
         self.check_info = None
-        self.attackers = []     
+        self.attackers = []            
     
     def in_check(self):
         # Determines if king is in check
@@ -453,7 +453,6 @@ class Comp:
                             # king can also move to this last spot, conquering the piece
                             block.append(move)
                             Checks.append(block)
-
                            
                             # Need to temporarily replace the king's key with nothing, and then add it back in
                             self.movable_keys.remove(self.king)
@@ -461,10 +460,7 @@ class Comp:
                             self.attackers.append(attacking_path_1[0])                                              
                             self.movable_keys.append(self.king)                            
         # Set class variable for later use
-        self.check_info = Checks                    
-        if len(Checks)>0:
-            return Checks                           
-        return False           
+        self.check_info = Checks             
     
     def random_choice(self, list):
         return list[random.randint(0,len(list)-1)]
@@ -488,16 +484,15 @@ class Comp:
             move_dict[(pos,piece)]= self.find_path(pos,piece,enemy=True)
         self.all_enemy_moves = move_dict
         return  
-    
-    # added to commit
+        
     def block_check(self):
+        # Creates list of blocks
         blocks = []
         for x in self.check_info:
             for y in x:
                 blocks.append(y)        
         
-        self.find_all_paths()
-        
+        self.find_all_paths()        
         blockers = []
 
         for block in blocks:
@@ -516,7 +511,7 @@ class Comp:
         return blockers
 
     def king_escapes(self):
-               
+        #Creates list of moves to push king out of check, not including conquers 
         if self.color =='white':
             Piece = 'wk'
         else:
@@ -535,9 +530,8 @@ class Comp:
         return valid_escapes        
 
     def out_of_check(self):
-        
-        Escapes = []
-        
+        # Uses class functionality to create list of all moves to get king out of check
+        Escapes = []        
         for Escape in self.block_check():
             Escapes.append(Escape)
         for escape in self.king_escapes():
@@ -593,7 +587,6 @@ class Comp:
             return Final_Moves,Blocks
 
     def smart_move(self):
-
         #Finds all moves for all pieces first, stores in self.all_moves 
         self.find_all_paths()
         self.find_all_enemy_paths()
@@ -603,8 +596,7 @@ class Comp:
 
     def random_move(self):
         # Move piece on the grid, there are no coordinates here, the game draw_pieces will do the rest
-        # set Games board equal to this board, this will update the main board, before it is drawn
-        
+        # set Games board equal to this board, this will update the main board, before it is drawn        
         Positions = create_positions(self.board, self.pieces, self.enemy_pieces)
         self.moves = Positions[0]
         self.movable_keys = Positions[1]
@@ -618,8 +610,7 @@ class Comp:
             return
 
         # Premove, determine if king is in check        
-        self.in_check()                       
-        
+        self.in_check()        
 
         if self.check_info!=[]:
             
@@ -640,10 +631,7 @@ class Comp:
             row = moved_from[0]
             col = moved_from[1]
             rand_piece=piece
-        # Possible_Moves = self.out_of_check()
-        # And then randomly select one move, and run something similar to the below loop
-        # Run the other loop below
-
+        
         elif self.check_info==[]:
             while self.can_move == False:            
                 rand_grid = self.random_choice(self.movable_keys)
@@ -716,7 +704,7 @@ class Comp:
     
 def main():    
 
-    G = Game(20)
+    G = Game(32)
     H = Human('white', G)
     C = Comp('black', G)
     
