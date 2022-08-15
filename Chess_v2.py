@@ -496,8 +496,14 @@ class Comp:
                                         blockers.append((piece, block))
         # [(((0, 9), 'bq'), (1, 10)), (((0, 11), 'bq'), (1, 10))]
         # This represents the pieces that can move to the blocks, not including king
+        
+        # TODO, add functionality to check if knight is checking king, to kill knight
+        # Figure out way to deal with multiple checks at once, rare, but important
+        
         return blockers
-                
+    def king_escapes(self):
+        #Find moves for king to escape check
+        pass 
 
     def find_path(self, piece_position, piece, enemy=False):
         # Find limitations of movement based on the pieces position, piece type, and board size,
