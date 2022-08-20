@@ -406,7 +406,8 @@ class Comp:
         self.enemy_king = None
         self.king = None
         self.check_info = None
-        self.attackers = []            
+        self.attackers = []
+        self.conquers = None            
     
     def in_check(self):
         # Determines if king is in check
@@ -522,6 +523,8 @@ class Comp:
             for y in x:
                 attacks.append(y)
         escapes = self.find_path(self.king, Piece)[0]
+        self.conquers = self.find_path(self.king,Piece)[1]
+
         valid_escapes =[]
         for move in escapes:
             if move not in attacks:
@@ -615,22 +618,39 @@ class Comp:
         if self.check_info!=[]:
             
             Escapes = self.out_of_check()
-            # [(((0, 9), 'br'), (2, 9)), (((1, 8), 'bp'), (2, 9)), ('bk', (0, 10)), ('bk', (1, 11)), ('bk', (2, 9))]
-            rand_move = self.random_choice(Escapes)
-            if rand_move[0] =='bk' or rand_move[0]=='wk':
+            if len(self.conquers)>0:
                 moved_from = self.king
-                piece = rand_move[0]
-            else:
-                moved_from = rand_move[0][0]
-                piece = rand_move[0][1]
-            moved_to = rand_move[1]
-            
-            self.board[moved_from[0]][moved_from[1]]= '-'
-            self.board[moved_to[0]][moved_to[1]] = piece            
+                moved_to = self.random_choice(self.conquers) 
+                if self.color =='white':
+                    piece = 'wk'
+                elif self.color =='black':
+                    piece = 'bk'        
+                self.board[moved_from[0]][moved_from[1]]= '-'
+                self.board[moved_to[0]][moved_to[1]] = piece
+                row = moved_from[0]
+                col = moved_from[1]
+                rand_piece=piece               
 
-            row = moved_from[0]
-            col = moved_from[1]
-            rand_piece=piece
+            else:
+
+                # [(((0, 9), 'br'), (2, 9)), (((1, 8), 'bp'), (2, 9)), ('bk', (0, 10)), ('bk', (1, 11)), ('bk', (2, 9))]
+                rand_move = self.random_choice(Escapes)
+                if rand_move[0] =='bk' or rand_move[0]=='wk':
+                    moved_from = self.king
+                    piece = rand_move[0]
+                else:
+                    moved_from = rand_move[0][0]
+                    piece = rand_move[0][1]
+                moved_to = rand_move[1]
+                
+                self.board[moved_from[0]][moved_from[1]]= '-'
+                self.board[moved_to[0]][moved_to[1]] = piece            
+
+                row = moved_from[0]
+                col = moved_from[1]
+                rand_piece=piece
+            
+            self.conquers.clear()
         
         elif self.check_info==[]:
             while self.can_move == False:            
@@ -704,7 +724,7 @@ class Comp:
     
 def main():    
 
-    G = Game(32)
+    G = Game(16)
     H = Human('white', G)
     C = Comp('black', G)
     
