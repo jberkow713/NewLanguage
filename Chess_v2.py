@@ -248,6 +248,7 @@ def diag_left_down(piece_position, Dimensions, movable_keys, enemy_movable_keys)
     return movable_spots
 
 class Human:
+    # Human Controls
     def __init__(self, color, Game):
         self.color = color
         self.Game = Game
@@ -385,6 +386,7 @@ class Game:
                     self.screen.blit(self.IMAGES[piece], p.Rect(c*self.Sq_sz, r*self.Sq_sz, self.Sq_sz, self.Sq_sz))
 
 class Comp:
+    # Computer Player
     def __init__(self, color, Game):
         self.color = color
         self.Game = Game
@@ -616,8 +618,9 @@ class Comp:
         self.in_check()        
 
         if self.check_info!=[]:
-            
+             
             Escapes = self.out_of_check()
+            # If the king can attack the checking piece, choose this option
             if len(self.conquers)>0:
                 moved_from = self.king
                 moved_to = self.random_choice(self.conquers) 
