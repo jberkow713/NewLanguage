@@ -97,7 +97,26 @@ class Graph:
           parent[edge] = current
           distance[edge] = 1+distance[current]
     return queue, distance, parent
-  
+  def dfs(self,root):
+    stack = []
+    discovered = [False] *len(self.data)
+    result = []
+    parent = [None]*len(self.data)
+
+    stack.append(root)
+    while len(stack)>0:
+      current = stack.pop()
+      discovered[current]=True
+      result.append(current)
+      for neighbor in self.data[current]:
+        if parent[neighbor]==None:
+          parent[neighbor]=current
+        if discovered[neighbor]==False:
+          stack.append(neighbor)
+
+    return result, parent  
+
+    pass
   def __repr__(self):
     return "\n".join(["{}: {}".format(n,neighbors) for n,neighbors in enumerate(self.data)])
   def __str__(self):
@@ -111,4 +130,5 @@ print(G)
 print(G.adjacency_matrix)
 G.create_adjacency_matrix()
 print(G.bfs(3))
+print(G.dfs(3))
 
