@@ -123,12 +123,51 @@ class Graph:
     return self.__repr__()   
 
 
-G = Graph(12, [(1,2), (3,4),(4,3), (1,3),(10,11),(1,10)])
-G.add_edge((4,5))
-G.remove_edge((4,5))
-print(G)
-print(G.adjacency_matrix)
-G.create_adjacency_matrix()
-print(G.bfs(3))
-print(G.dfs(3))
+# G = Graph(12, [(1,2), (3,4),(4,3), (1,3),(10,11), (4,11)])
+# G.add_edge((4,5))
+# G.remove_edge((4,5))
+# print(G)
+# print(G.adjacency_matrix)
+# G.create_adjacency_matrix()
+# print(G.bfs(3))
+# print(G.dfs(3))
+
+
+class D_Graph:
+  def __init__(self, num_nodes, edges, direction=False, weighted=False):
+    self.num_nodes = num_nodes 
+    self.edges = edges
+    self.direction = direction
+    self.weighted = weighted
+    self.data = self.create_edges()[0]
+    self.weights = self.create_edges()[1]
+  
+  def create_edges(self):
+    # Creating weights/connections given weighted,direction parameters, and edges
+    Data = [[] for _ in range(self.num_nodes)] 
+    if self.weighted ==True:
+      weights = [[] for _ in range(self.num_nodes)]              
+
+      for n1,n2,weight in self.edges:
+        if n2 not in Data[n1]:
+          Data[n1].append(n2)
+          weights[n1].append(weight)
+        if self.direction==False:
+          if n1 not in Data[n2]:
+            Data[n2].append(n1)
+            weights[n2].append(weight)     
+
+    elif self.weighted==False:
+      weights = None
+      for n1,n2 in self.edges:
+        if n2 not in Data[n1]:
+          Data[n1].append(n2)
+        if self.direction ==False:
+          if n1 not in Data[n2]:
+            Data[n2].append(n1)
+
+    return Data, weights   
+
+D  = D_Graph(12, [(1,2,5), (3,4,6),(4,3,6), (1,3,5),(10,11,8), (4,11,2)], False, True)
+print(D.data, D.weights)
 
