@@ -73,16 +73,42 @@ class Graph:
     if j in self.data[i]:
       self.data[i].remove(j)
   
+  def bfs(self, root):
+    queue  = []
+    # Tracks if connected edge has been discovered in graph
+    discovered = [False] * len(self.data)
+    discovered[root]=True
+    # distance tracks distance from root to specific nodes
+    distance = [None] *len(self.data)    
+    distance[root]=0
+
+    parent = [None]*len(self.data)
+
+    queue.append(root)
+    idx = 0
+    while idx <len(queue):
+      current = queue[idx]
+      idx+=1
+      for edge in self.data[current]:
+        if discovered[edge]==False:
+          discovered[edge]=True
+          queue.append(edge)
+
+          parent[edge] = current
+          distance[edge] = 1+distance[current]
+    return queue, distance, parent
+  
   def __repr__(self):
     return "\n".join(["{}: {}".format(n,neighbors) for n,neighbors in enumerate(self.data)])
   def __str__(self):
     return self.__repr__()   
 
 
-G = Graph(12, [(1,2), (3,4),(4,3), (1,3)])
+G = Graph(12, [(1,2), (3,4),(4,3), (1,3),(10,11),(1,10)])
 G.add_edge((4,5))
 G.remove_edge((4,5))
 print(G)
 print(G.adjacency_matrix)
 G.create_adjacency_matrix()
+print(G.bfs(3))
 
