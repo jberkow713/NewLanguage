@@ -39,32 +39,28 @@ class Graph:
   def __init__(self, num_nodes, edges):
     self.num_nodes = num_nodes
     self.edges = edges
-    self.data = [[] for _ in range(num_nodes)]    
-    for n1,n2 in edges:
-      if n2 not in self.data[n1]:
-        self.data[n1].append(n2)
-      if n1 not in self.data[n2]:
-        self.data[n2].append(n1)
-    
+    self.data = self.create_edges()
     self.adjacency_matrix = self.create_adjacency_matrix()
 
-  def create_adjacency_matrix(self):
+  def create_edges(self):
+    Data = [[] for _ in range(self.num_nodes)]    
+    for n1,n2 in self.edges:
+      if n2 not in Data[n1]:
+        Data[n1].append(n2)
+      if n1 not in Data[n2]:
+        Data[n2].append(n1)
+    return Data    
 
-    adj_list = [[0] * self.num_nodes for _ in range(self.num_nodes)]
-    print(adj_list[0])
-    
+  def create_adjacency_matrix(self):
+    adj_list = [[0] * self.num_nodes for _ in range(self.num_nodes)]       
     for i in range(self.num_nodes):
       d = self.data[i]     
       for x in d:
-        adj_list[i][x]=1              
-    
+        adj_list[i][x]=1   
     return adj_list
 
-
-
   def add_edge(self, edge):
-    i,j = edge 
-    
+    i,j = edge   
     if i not in self.data[j]:
       self.data[j].append(i)
     if j not in self.data[i]:
@@ -80,9 +76,7 @@ class Graph:
   def __repr__(self):
     return "\n".join(["{}: {}".format(n,neighbors) for n,neighbors in enumerate(self.data)])
   def __str__(self):
-    return self.__repr__()
-
-      
+    return self.__repr__()   
 
 
 G = Graph(12, [(1,2), (3,4),(4,3), (1,3)])
@@ -92,9 +86,3 @@ print(G)
 print(G.adjacency_matrix)
 G.create_adjacency_matrix()
 
-
-
-
-# M = create_matrix(25)
-# print(M)
-# print(find_islands(M))
