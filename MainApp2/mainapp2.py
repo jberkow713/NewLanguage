@@ -19,440 +19,6 @@ import sys
 import string
 from kivy.uix.image import Image, AsyncImage
 
-
-class Scramboozled2(Widget):
-    def __init__(self,  **kwargs):
-        super().__init__(**kwargs)
-        self.F = FloatLayout()
-        
-        self.word = 'CARTMAN'       
-        self.offset = (0,0)
-        self.Tile_slots = [None for _ in range(len(self.word))]
-        self.can_move = [True for _ in range(len(self.word))]
-        self.grabbed = False
-        self.grabbed_item = None
-        # Holds colors for all words in the word
-        self.colors = self.create_colors()
-        # Letter Position holds coordinates for different letters, as they move
-        self.Letter_Positions = []
-        # Letter_Dict holds buttons/letters/colors for given index        
-        self.Tile_Letter_Ref = {}
-        self.Letter_Dict = {}
-        self.Letter_Coords = {}        
-        self.directions = []
-        self.dirs = ['u', 'l','r','d']        
-        self.letter_size = .05
-        self.speed = .006
-        self.bottom =.15
-        self.buffer = .01
-        self.font_size = .5*self.letter_size
-        self.Time = 50
-        self.count = 0
-        self.score = 0
-        # Holds the position, non changing unless board changes, of the Grid Slots
-        self.Tiles = {}
-        self.create_tiles()              
-        self.create_letter_positions()        
-        self.clock = Clock.schedule_interval(self.update,1/20)
-        Window.clearcolor = (0, 1, 1, 1)    
-    
-    def New_Word(self, word):
-        # To be used in resetting words
-        self.offset = (0,0)
-        self.colors = self.create_colors()
-        self.Tile_slots = [None for _ in range(len(self.word))]
-        self.Letter_Positions = []
-        self.Tile_Letter_Ref = {}
-        self.Letter_Dict = {}
-        self.Letter_Coords = {}        
-        self.directions = []
-        self.Tiles = {}
-        self.create_letter_positions()
-        self.Time = 50
-        self.can_move = [True for _ in range(len(self.word))]
-        self.on_size()
-
-    def evaluate_word(self):
-        if None not in self.Tile_slots:
-            if ''.join(self.Tile_slots)==self.word:
-                self.score += len(self.word)
-                self.word = 'SCOTCH'
-                self.New_Word(self.word)
-                
-                return 'SOLVED!'             
-        else:
-            return
-
-    def display_timer(self):        
-        # displays timer as it counts down
-        if self.Time <=0:
-            TIME = 0
-        else:
-            TIME = self.Time    
-        with self.canvas:            
-            x_pos = .01*self.width
-            y_pos = .835*self.height
-            x_size = .15*self.width
-            y_size = .15*self.height            
-            btn = Button(text =f"Time:{str(TIME)}",
-                        size_hint =(None,None),
-                        size=(x_size,y_size),
-                        pos =(x_pos,y_pos))                       
-            # btn.text_size = (x_size,y_size)
-            btn.background_color = (1,0,0)
-            btn.font_size = self.font_size*self.width
-            btn.halign= 'center'
-            btn.valign= 'center'
-            self.F.add_widget(btn)
-        return
-
-    def display_score(self):
-        with self.canvas:            
-            x_pos = .84*self.width
-            y_pos = .835*self.height
-            x_size = .15*self.width
-            y_size = .15*self.height            
-            btn = Button(text =f"Score: {self.score}",
-                        size_hint =(None,None),
-                        size=(x_size,y_size),
-                        pos =(x_pos,y_pos))                       
-            # btn.text_size = (x_size,y_size)
-            btn.background_color = (1,0,0)
-            btn.font_size = self.font_size*self.width
-            btn.halign= 'center'
-            btn.valign= 'center'
-            self.F.add_widget(btn)
-        return
-    
-    def create_tiles(self):
-        self.Tiles = {}
-        with self.canvas:
-            Color(0,0,1)
-            space = len(self.word)*self.letter_size + len(self.word)*self.buffer
-            start = (1-space)/2
-            count= 0   
-            for i in range(len(self.word)):
-                start_x = (start+ i*self.letter_size + i*self.buffer)
-                X_1 = start_x*self.width
-                end_x = (start_x + self.letter_size)
-                X_2 = end_x*self.width       
-                Y = (self.bottom - self.letter_size-3*self.buffer)*self.height                 
-                Line(points=(X_1, Y, X_2,Y),width=3)
-                self.Tiles[count]= (X_1,Y)
-                count +=1     
-    
-    def create_colors(self):
-        
-        colors = [(0,1,0),(1,0,0), (1,0,1)]
-        c = []
-        for _ in range (len(self.word)):
-            c.append(colors[random.randint(0,len(colors)-1)])
-        return c    
-
-    def collision(self,x1,y1,x1_size, y1_size,x2,y2,x2_size,y2_size,dir=None):                    
-        
-        if dir =='u' or dir==None:
-            if y1+y1_size+self.buffer>y2 and y1+y1_size+self.buffer<y2+y2_size:
-                
-                if x1>x2 and x1<x2+x2_size:
-                    return True
-                if x1+x1_size>x2 and x1+x1_size<x2+x2_size:
-                    return True
-        if dir =='d'or dir==None:
-            if y1-self.buffer>y2 and y1-self.buffer<y2+y2_size:
-                if x1>x2 and x1<x2+x2_size:
-                    return True
-                if x1+x1_size>x2 and x1+x1_size<x2+x2_size:
-                    return True
-        if dir =='r'or dir==None:
-            if x1+x1_size>x2 and x1+x1_size<x2+x2_size:
-                if y1>y2 and y1<y2+y2_size:
-                    return True 
-                if y1+y1_size>y2 and y1+y1_size<y2+y2_size:
-                    return True    
-        if dir == 'l'or dir==None:
-            if x1>x2 and x1<x2+x2_size:
-                if y1>y2 and y1<y2+y2_size:
-                    return True 
-                if y1+y1_size>y2 and y1+y1_size<y2+y2_size:
-                    return True 
-            
-        return False
-
-    def block_positions(self):
-        self.Block_Positions.clear()
-        x_pos = self.bottom+self.block_size
-        y_pos = self.bottom+self.block_size 
-        for _ in range(self.blocks):                               
-            
-            self.Block_Positions.append((x_pos,y_pos))
-            x_pos+=self.block_size
-            y_pos+=self.block_size
-        return
-
-    def create_letter_positions(self):
-        # TODO 
-        # have letter position checking that letters are outside of pipes before placement
-        self.Letter_Positions.clear()        
-        for _ in range(len(self.word)):
-            # collision = True
-            # while collision ==True:
-                x_pos = random.uniform(0, 1-self.letter_size)
-                y_pos = random.uniform(self.bottom, 1-self.letter_size)                                   
-                           
-                        
-                # if count == len(self.Block_Positions):
-                self.Letter_Positions.append((x_pos,y_pos))
-                #     collision = False
-                self.directions.append(self.dirs[random.randint(0,len(self.dirs)-1)])
-        return
-
-    def letter_block_collision(self,x,y,dir):
-        for block in self.Block_Positions:
-            if self.collision(x,y,self.letter_size, self.letter_size, block[0], block[1], \
-                self.block_size,self.block_size,dir)==True:
-                return True       
-
-    def move_letters(self):
-        # represent movement on screen        
-        for i in range(len(self.word)):
-            if self.can_move[i]==True:
-
-                dirs = ['u','l','r','d']
-                pos = self.Letter_Positions[i]
-                dir = self.directions[i]
-                if random.randint(0,100)>97:
-                    self.directions[i] = dirs[random.randint(0,len(dirs)-1)]
-                if dir == 'u':
-                    x = pos[0]
-                    y = pos[1]+self.speed
-                            
-                    if y+self.buffer >=1-self.letter_size:
-                        y -= 2*self.speed                     
-                        self.directions[i]='d'                    
-                elif dir == 'd':
-                    x = pos[0]
-                    y = pos[1]-self.speed
-                                
-                    if y-self.buffer <=self.bottom:                    
-                        self.directions[i]='u'
-                        y += 2*self.speed   
-                elif dir == 'r':
-                    x = pos[0]+self.speed
-                    y = pos[1]
-                            
-                    if x >=1-self.letter_size:                    
-                        self.directions[i]='l'
-                        x -= 2*self.speed  
-                else:
-                    x = pos[0]-self.speed
-                    y= pos[1]                
-                                
-                    if x <=0:
-                        self.directions[i]='r'
-                        x += 2*self.speed    
-                self.Letter_Positions[i]=(x,y)
-                self.Letter_Coords[i] = (x*self.width,y*self.height)
-
-    def create_word(self):                
-        
-        index = 0
-        for i in range(0, len(self.word)):
-            with self.canvas:                
-                btn = Button(text=self.word[i],
-                                size_hint =(None,None),
-                                size=(self.letter_size*self.width,self.letter_size*self.width),
-                                pos =(self.Letter_Positions[i][0]*self.width, self.Letter_Positions[i][1]*self.height))
-                
-                btn.background_color = self.colors[i]
-                btn.font_size = self.font_size*self.width
-                btn.halign= 'center'
-                btn.valign= 'center'
-                self.F.add_widget(btn)
-                self.Letter_Dict[index]=btn,self.word[i],self.colors[index]
-                index+=1
-
-    
-    def drop_letter(self, x,y,text,color):
-        with self.canvas:
-            btn = Button(text=text,
-                            size_hint =(None,None),
-                            size=(self.letter_size*self.width,self.letter_size*self.width),
-                            pos =(x, y))                
-            btn.background_color = color
-            btn.font_size = self.font_size*self.width
-            btn.halign= 'center'
-            btn.valign= 'center'
-            self.F.add_widget(btn)               
-    
-    def add_grid(self):
-        # TODO add the grid where blocks go
-        pass  
-    def add_blocks(self):
-        for i in range(self.blocks):
-            with self.canvas:
-                btn = Button(text='',
-                                size_hint =(None,None),
-                                size=(self.block_size*self.width,self.block_size*self.width),
-                                pos =(self.Block_Positions[i][0]*self.width, self.Block_Positions[i][1]*self.height))                
-                btn.background_color = (0,0,1)
-                btn.font_size = self.font_size*self.width
-                btn.halign= 'center'
-                btn.valign= 'center'
-                self.F.add_widget(btn)
-
-    def distance_to(self, pos_1,pos_2):
-        
-        a = pos_1[0]-pos_2[0]
-        b = pos_1[1]-pos_2[1]
-        return a**2 + b**2
-
-    def on_touch_down(self, touch):
-        # Checks mouse click to see if clicks on button, if so , saves object, letter, color to self.grabbed_item
-        # to be used in on_touch_move()
-        POS = touch.pos
-        
-        buttons = []
-        for button,coords in self.Letter_Coords.items():
-            if POS[0]>coords[0] and POS[0]<=coords[0]+self.letter_size*self.width:
-                if POS[1]>=coords[1] and POS[1]<=coords[1]+self.letter_size*self.height:
-                    
-                    self.offset = ((POS[0]-coords[0])/(self.letter_size*self.width)),\
-                        ((POS[1]-coords[1])/(self.letter_size*self.width))                       
-                    
-                    self.grabbed = True
-                    buttons.append(button)                   
-                    
-        if len(buttons)==0:
-            return
-        if len(buttons)==1:
-            chosen = buttons[0]
-            item = self.Letter_Dict[buttons[0]]
-        elif len(buttons)>1:
-            print(buttons)
-            chosen = buttons[random.randint(0,len(buttons)-1)]
-            item = self.Letter_Dict[chosen]
-        self.num = chosen
-        self.grabbed_item = item
-        self.can_move[chosen]=False                            
-        return
-
-    def on_touch_up(self, touch):
-        # Moving letter from grabbed position               
-        
-        if self.grabbed == True:
-            for k,v in self.Tile_Letter_Ref.items():
-                if v == self.num:
-                    self.Tile_Letter_Ref[k]=None
-            for k,v in self.Tile_Letter_Ref.items():
-                if v == None:
-                    self.Tile_slots[k]=None
-
-            POS = touch.pos            
-            self.grabbed = False            
-
-            for slot,v in self.Tiles.items():
-                if slot == 0:
-                    min_x = v[0]
-                    min_y = v[1]
-                if slot == len(self.word)-1:
-                    max_x = v[0]+(self.letter_size*self.width)
-            
-            # This allows tile to move after being dropped, unless it is dropped in one of the tiles, 
-            #TODO 
-            # The 100 needs to be adapted to size of square and board size
-            if POS[0]>=min_x and POS[0]<=max_x:
-                
-                if POS[1]>min_y and POS[1]<(min_y + 2*(self.letter_size*self.height)):
-
-                    block_size = self.letter_size*self.width    
-                    reposition_x = POS[0]-(block_size*self.offset[0])
-                    reposition_y = POS[1]-(block_size*self.offset[1])
-                    reposition = reposition_x,reposition_y                
-                    S=10000
-                    Slot = None
-                    for slot, pos in self.Tiles.items():
-                        d = self.distance_to(reposition,pos)
-                        if d <S:
-                            S = d
-                            Slot = slot
-                    if self.Tile_slots[Slot]==None:
-
-                        New_Pos = self.Tiles[Slot]
-                        self.Letter_Coords[self.num]= New_Pos
-                        # List of tiles in order
-                        self.Tile_slots[Slot]=self.word[self.num]
-                        
-                        self.Letter_Positions[self.num]=(New_Pos[0]/self.width,New_Pos[1]/self.height)
-                        self.can_move[self.num]=False                        
-                        
-                        self.Tile_Letter_Ref[Slot]=self.num
-                        print(self.evaluate_word())
-                        return
-
-                    elif self.Tile_slots[Slot]!=None:
-                        # Set letter in motion
-                        self.Letter_Coords[self.num] = POS[0]/self.width, POS[1]/self.height
-                        self.Letter_Positions[self.num] = POS[0]/self.width, POS[1]/self.height
-                        self.can_move[self.num]=True   
-                        return
-                else:
-                    self.Letter_Coords[self.num] = POS[0]/self.width, POS[1]/self.height
-                    self.Letter_Positions[self.num] = POS[0]/self.width, POS[1]/self.height
-                    self.can_move[self.num]=True                            
-                    return            
-            else:
-
-                self.Letter_Coords[self.num]=POS
-                self.can_move[self.num]=True
-                
-            # TODO determine here, when to set self.can_move[self.num] = True, or when to leave it as False            
-            
-            
-        return
-         
-    def on_touch_move(self, touch):
-        # Allows movement of tile, stops tile temporarily from moving, and draws it at coords as you move it
-        POS = touch.pos
-        if self.grabbed == True:
-            
-            x_offset= self.offset[0]*self.letter_size*self.width
-            y_offset = self.offset[1]*self.letter_size*self.width
-            self.Letter_Positions[self.num]= ((POS[0]-x_offset)/self.width), ((POS[1]-y_offset)/self.height)
-            
-            return        
-    
-    def decrease_timer(self):
-        self.count+=1
-        if self.count ==20:
-            self.Time -=1
-            if self.Time ==0:
-                sys.exit()
-            self.count = 0
-        return     
-        
-    def update(self, dt):        
-        self.move_letters()
-        self.on_size()        
-           
-    def reset(self):
-        self.create_letter_positions()
-        self.blocks = random.randint(5,7)
-
-    def on_size(self, *args):        
-        
-        self.F.children.clear()
-        self.canvas.clear()
-        # self.add_blocks()
-        self.create_tiles()        
-        self.decrease_timer()  
-        self.create_word()
-        self.display_timer()
-        self.display_score()
-
-# ---------------------------------------------------------------------------------------------------------------------------------------
-
-
 class Scramboozled(Widget):
     
     x_buffer = .2
@@ -491,7 +57,7 @@ class Scramboozled(Widget):
         self.Rules_Buttons = {}
         self.POS = Window.bind(mouse_pos = self.on_mouse_pos)
         self.Rules_Colors =  [(1,0,0),(1,1,1), (1,1,1), (1,1,1),(1,1,1),(1,1,1),(1,1,1),(1,1,1),(1,1,1)]
-        self.highlight_color = (0,1,0,.6)
+        self.highlight_color = (0,1,0,.8)
         self.stored_color = None
         self.stored_slot = None
         self.current_letter = None
@@ -586,12 +152,10 @@ class Scramboozled(Widget):
 
     def restart_clear_word(self):
         for _ in range(self.Next_available):
-            self.delete_slot()
-           
+            self.delete_slot()           
         self.word = ''
         self.Next_available = 1
         self.reset()
-
         return     
 
     def play_music(self):
@@ -679,8 +243,10 @@ class Scramboozled(Widget):
         return                
 
     def draw_grid(self):
+        # Color will dictate color of grid lines, and text lines
         with self.canvas:
-            Color(1,0,1)
+            Color(0,0,1)
+            
             x_gap = ((1-2*self.x_buffer) * self.width) / self.Lines
             letter_size = x_gap*self.let_ratio
             y_gap = ((1-2*self.y_buffer) * self.height)/ self.Lines 
@@ -775,22 +341,16 @@ class Scramboozled(Widget):
                                 self.Rules_Colors = Temp_Button_Colors
                                 self.Rules_Colors[button]=self.highlight_color
                                 self.on_size()
-                                return
-                                
-                                # TODO add bg color class variable, change when scrolled over
-                                # Change back when scrolling moves to other button
-        # TODO
-        # TODO figure out how to integrate this with letters, removing buttons, etc
-
-        elif self.initialized == True:
-            
+                                return                                
+        
+        #Checks to see if game has started outside of loading screen 
+        elif self.initialized == True:            
             if self.stored_color!=None:
                 # Referring to lettering being out of slot after clicked
                 if self.Letter_Dict[self.stored_slot][1]!=None:
                 # self.Current_button.background_color = self.stored_color
                 #TODO remove the changed button, place this button back in, by drawing it 
                     if self.stored_slot!=None:
-
                         for slot, position in self.positions.items():
                             if POS[0]>position[0][0]*self.grab_buffer and POS[0] <position[0][1]/self.grab_buffer:
                                 if POS[1]>position[1][0]*self.grab_buffer and POS[1]<position[1][1]/self.grab_buffer:
@@ -809,14 +369,12 @@ class Scramboozled(Widget):
                     if POS[1]>position[1][0]*self.grab_buffer and POS[1]<position[1][1]/self.grab_buffer:
                         button = self.buttons[slot]
                                                 
-                        self.Current_button = button
-                                               
+                        self.Current_button = button                                               
                         self.stored_color = self.Letters[slot][1]
                         # slot of button
                         self.stored_slot = slot
                         # Letter of button
-                        self.current_letter = curr_letter = self.Letters[slot][0]                        
-
+                        self.current_letter = curr_letter = self.Letters[slot][0]
                         x_pos, y_pos = self.Letter_Dict[slot][0]                        
                         x_size = self.x_letter_size
                         y_size = self.y_letter_size
@@ -1243,7 +801,7 @@ class Scramboozled(Widget):
     def input_letter(self,slot,letter, x_pos,y_pos,x_size,y_size,color):
 
         self.F.children = self.F.children[0:120]
-        print(len(self.F.children))
+        
         if letter==None:
             return
         # OLD_BUTTON = self.buttons[slot]
