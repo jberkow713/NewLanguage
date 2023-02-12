@@ -167,7 +167,6 @@ class Scramboozled(Widget):
     def change_clock(self):        
         self.clock.cancel()
         self.clock = Clock.schedule_interval(self.update,1/self.Speed)
-
     def change_color(self):
         
         final_colors = []
@@ -176,9 +175,8 @@ class Scramboozled(Widget):
         for x in Color:
             if x!=0:
                 x = 1-random.uniform(0, .5)                
-            final_colors.append(x)
-         
-        Color = tuple(final_colors)        
+            final_colors.append(x)         
+        Color = tuple(final_colors)
         self.color_index+=1
         self.Timer_Color=self.Level_Color=self.Score_Color = Color        
         return
@@ -209,12 +207,8 @@ class Scramboozled(Widget):
                 self.init_buttons[Names[count]] = Positions[count], Size[count]
                 self.F.add_widget(btn)
                 count +=1               
-        return
-            
-    def Game_Over(self):
-        #TODO create entire Screen just for Game Over
-        # Will display score, say Game Over, whatever else, some images
-        pass 
+        return            
+    
     def bg_color(self):
         Colors = [(1,0,0), (0,0,1), (1,1,1), (1,0,1)]
         val = random.randint(0,10)
@@ -235,8 +229,7 @@ class Scramboozled(Widget):
         return     
     
     def create_first_letter(self):
-        New = string.ascii_uppercase.replace('X', "")
-        New = New.replace(self.FIRST, "")
+        New = string.ascii_uppercase.replace('X', "").replace(self.FIRST,"")        
         First = New[random.randint(0,len(New)-1)]
         self.word+=First
         self.FIRST = First               
@@ -330,7 +323,7 @@ class Scramboozled(Widget):
     def on_mouse_pos(self, *args):
         Temp_Button_Colors = [(1,0,0),(1,1,1), (1,1,1), (1,1,1),(1,1,1),(1,1,1),(1,1,1),(1,1,1),(1,1,1)]
                     
-        POS =self.POS = args[1]
+        POS = self.POS = args[1]
         if self.initialized == False:
             if self.Rules == True:
                 for button,coords in self.Rules_Buttons.items():
@@ -498,34 +491,28 @@ class Scramboozled(Widget):
             data = json.load(json_file)
         with open('Word_Enums.json', 'r') as json_file:
             Enums = json.load(json_file)    
-        
-        List_Idxs = []
+                
         first = word[0]
         indexes = Enums[val]
-        start = indexes[first]
-        List_Idxs.append(start)
-        vals = [x for x in indexes.values()]
-        if start == vals[-1]:
+        start = indexes[first]        
+        next = [x for x in indexes.values() if x > start][0]                
+        if isinstance(next,int):
             return data[val][start:]
-        else:
-            for x in vals:
-                if x > start:
-                    return data[val][start:x]   
+        return data[val][start:next]         
 
     def validate_word(self):
         # returns True or False if specific word is in English Language        
         if len(self.word)<3:
             self.wrong.play()
-            return
-        L = self.narrow(self.word)
-        if self.word in L:            
+            return        
+        if self.word in self.narrow(self.word):            
             Score = self.calc_points()
             if len(self.word)==self.Lines:
                 self.cheer.play()
             else:
                 if self.level_up ==False:
                     self.correct.play()
-            self.Score+=Score            
+            self.Score +=Score            
             self.Time +=Score
             self.display_score()
             self.display_timer()
@@ -590,42 +577,38 @@ class Scramboozled(Widget):
 
         if self.FIRST in doubles:
             self.points += Score*2
-            if self.points >=self.Level_Points:
-                remainder = self.points -self.Level_Points
-                count = 1
-                while remainder>=self.Level_Points:
-                    remainder -=self.Level_Points
-                    count +=1
-                              
-                self.points = remainder
+            Multiplier = 2
+        else:
+            self.points +=Score
+            Multiplier = 1
 
-                for _ in range(count):
-                    self.Speed +=.5
-                    self.Level +=1
-                    self.change_color()
-                    self.change_clock()
-                    self.LEVEL.play()
-                self.level_up = True                                      
-            return Score *2
+        if self.points >=self.Level_Points:
+            count = self.points // self.Level_Points
+            self.points = self.points - count*self.Level_Points                
+            
+            for _ in range(count):
+                self.Speed +=.5
+                self.Level +=1
+                self.change_color()
+                self.change_clock()
+                self.LEVEL.play()
+            self.level_up = True                                      
+        return Score * Multiplier
 
-        else:            
-            self.points += Score
-            if self.points >=self.Level_Points:
-                remainder = self.points -self.Level_Points
-                count = 1
-                while remainder>=self.Level_Points:
-                    remainder -=self.Level_Points
-                    count +=1                             
-                self.points = remainder
-                                  
-                for _ in range(count):
-                    self.Speed +=.5
-                    self.Level +=1
-                    self.change_color()
-                    self.change_clock()
-                    self.LEVEL.play()
-                self.level_up = True                                           
-            return Score
+        # else:            
+        #     self.points += Score
+        #     if self.points >=self.Level_Points:
+        #         count = self.points // self.Level_Points
+        #         self.points = self.points - count*self.Level_Points                
+                                                  
+        #         for _ in range(count):
+        #             self.Speed +=.5
+        #             self.Level +=1
+        #             self.change_color()
+        #             self.change_clock()
+        #             self.LEVEL.play()
+        #         self.level_up = True                                           
+        #     return Score
 
     def full_delete(self):
         if len(self.word)>1:
@@ -886,8 +869,7 @@ class Scramboozled(Widget):
         
         if self.initialized==True:
 
-            if self.Time<=0:
-                self.Game_Over()
+            if self.Time<=0:                
                 print('Game Over')
                 sys.exit()
             self.display_timer()
