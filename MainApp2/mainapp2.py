@@ -559,22 +559,21 @@ class Scramboozled(Widget):
         if self.Level >=2:
             multiplier = self.Level//2
         else:
-            multiplier = 0    
+            multiplier = 0
+
         doubles = ['z','q','Z','Q']
         values = [self.Letters[x][1] for x in self.word_slots.values()]
-        Score = 1
-        
+        Score = 1        
         for v in values:
             for c,p in self.color_dict.items():
                 if v ==c:
                     Score+=p
+        
         if len(self.word)==self.Lines:
             Score *=4+multiplier
         elif len(self.word)>=5 and len(self.word)<self.Lines:
             Score*=2+multiplier
-        else:
-            Score*=1+multiplier
-
+        
         if self.FIRST in doubles:
             self.points += Score*2
             Multiplier = 2
@@ -594,21 +593,6 @@ class Scramboozled(Widget):
                 self.LEVEL.play()
             self.level_up = True                                      
         return Score * Multiplier
-
-        # else:            
-        #     self.points += Score
-        #     if self.points >=self.Level_Points:
-        #         count = self.points // self.Level_Points
-        #         self.points = self.points - count*self.Level_Points                
-                                                  
-        #         for _ in range(count):
-        #             self.Speed +=.5
-        #             self.Level +=1
-        #             self.change_color()
-        #             self.change_clock()
-        #             self.LEVEL.play()
-        #         self.level_up = True                                           
-        #     return Score
 
     def full_delete(self):
         if len(self.word)>1:
