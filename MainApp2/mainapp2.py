@@ -167,16 +167,11 @@ class Scramboozled(Widget):
     def change_clock(self):        
         self.clock.cancel()
         self.clock = Clock.schedule_interval(self.update,1/self.Speed)
-    def change_color(self):
-        
-        final_colors = []
+    def change_color(self):        
+        # Alters color of level slightly
         pos = self.color_index%len(self.Button_Colors)
-        Color = self.Button_Colors[pos]
-        for x in Color:
-            if x!=0:
-                x = 1-random.uniform(0, .5)                
-            final_colors.append(x)         
-        Color = tuple(final_colors)
+        color = self.Button_Colors[pos]
+        Color = tuple([0 if x == 0 else 1-random.uniform(0, .5) for x in color])        
         self.color_index+=1
         self.Timer_Color=self.Level_Color=self.Score_Color = Color        
         return
