@@ -502,10 +502,12 @@ class Scramboozled(Widget):
             return        
         if self.word in self.narrow(self.word):            
             Score = self.calc_points()
+            # For a word using all the tiles
             if len(self.word)==self.Lines:
                 self.cheer.play()
             else:
                 if self.level_up ==False:
+                    # Plays level up sound for a word that triggers level instead
                     self.correct.play()
             self.Score +=Score            
             self.Time +=Score
