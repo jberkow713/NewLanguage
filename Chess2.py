@@ -73,24 +73,30 @@ class Game:
                 if piece != '-':
                     x_val = c * self.Sq_sz
                     y_val = r * self.Sq_sz
-                    self.Piece_Locations[square]=(piece,x_val,y_val)
+                    self.Piece_Locations[square]=(piece,x_val,y_val,x_val+self.Sq_sz,y_val+self.Sq_sz)
                     self.screen.blit(self.IMAGES[piece], p.Rect(x_val, y_val, self.Sq_sz, self.Sq_sz))
                     square+=1
                 else:
                     x_val = c * self.Sq_sz
                     y_val = r * self.Sq_sz
-                    self.Piece_Locations[square]=('-',x_val,y_val)
+                    self.Piece_Locations[square]=('-',x_val,y_val,x_val+self.Sq_sz, y_val+self.Sq_sz)
                     square +=1
 
 class Player:
     def __init__(self, color, board):
         self.color = color
-        self.board = board 
+        self.board = board
+        self.current_piece = None        
     def move(self):
         if e.type == p.MOUSEBUTTONDOWN:
-            print(self.board.board)
-            print(self.board.Piece_Locations)
-            print(p.mouse.get_pos())
+            mouse_loc = p.mouse.get_pos()
+            for square, info in self.board.Piece_Locations.items():
+                if mouse_loc[0]>info[1] and mouse_loc[0]<info[3]:
+                    if mouse_loc[1]>info[2] and mouse_loc[1]<info[4]:
+                        self.current_piece = square, info[0]
+                        print(self.current_piece)
+                        return        
+            
 
 G = Game(20)
 P = Player('black', G)
