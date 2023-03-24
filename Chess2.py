@@ -83,35 +83,55 @@ class Game:
                     square +=1
 
 class Player:
-    def __init__(self, color, board):
+    def __init__(self, color, Game):
         self.color = color
-        self.board = board
-        self.current_piece = None        
+        self.Game = Game
+        self.board = Game.board
+        self.dim = Game.size
+        self.current_piece = None
+        self.current_square = None        
     def move(self):
-        if e.type == p.MOUSEBUTTONDOWN:
+        if e.type == p.MOUSEBUTTONDOWN:            
             mouse_loc = p.mouse.get_pos()
-            for square, info in self.board.Piece_Locations.items():
+            for square, info in self.Game.Piece_Locations.items():
+                # Collision Detection
                 if mouse_loc[0]>info[1] and mouse_loc[0]<info[3]:
                     if mouse_loc[1]>info[2] and mouse_loc[1]<info[4]:
-                        self.current_piece = square, info[0]
-                        print(self.current_piece)
-                        return        
+                        if self.current_piece == None:                            
+                            if info[0]!='-':
+                                self.current_piece = info[0]
+                                self.current_square = square                                
+                                return
+                            
+                        elif self.current_piece!=None:                            
+                            starting_piece = self.current_piece
+                            ending_piece = info[0]
+                            # Finding Grid Position
+                            starting_col = self.current_square % self.dim
+                            starting_row = self.current_square // self.dim
+                            ending_col = square % self.dim
+                            ending_row = square // self.dim                            
+                            # Setting board for drawing
+                            self.board[starting_row][starting_col] = ending_piece
+                            self.board[ending_row][ending_col] = starting_piece
+                            # Taking focus off clicked piece
+                            self.current_piece = None
+                            return       
+
             
 
 G = Game(20)
 P = Player('black', G)
 
-while True:        
-
+while True:
     for e in p.event.get():
         if e.type == p.QUIT:
             sys.exit()
-
+    clock.tick(Max_FPS)
     G.screen.fill(p.Color('white'))
     G.drawBoard()
     G.draw_pieces()
-
     P.move()
 
-    clock.tick(Max_FPS)
+    
     p.display.flip()
