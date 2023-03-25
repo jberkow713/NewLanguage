@@ -89,34 +89,54 @@ class Player:
         self.board = Game.board
         self.dim = Game.size
         self.current_piece = None
-        self.current_square = None        
+        self.current_square = None
+        self.time_flag = 0
+        self.increment = None        
+    
+    def Increment(self):
+        self.time_flag+=1
+        if self.time_flag >= 10:
+            self.time_flag=10
+            self.increment = None
+    
+    def decrease_timer(self):
+        self.time_flag-=1
+        if self.time_flag <= 0:
+            self.time_flag=0
+            self.increment = None
+    
     def move(self):
+        
         if e.type == p.MOUSEBUTTONDOWN:            
             mouse_loc = p.mouse.get_pos()
             for square, info in self.Game.Piece_Locations.items():
                 # Collision Detection
                 if mouse_loc[0]>info[1] and mouse_loc[0]<info[3]:
                     if mouse_loc[1]>info[2] and mouse_loc[1]<info[4]:
-                        if self.current_piece == None:                            
+                        if self.current_piece == None and self.time_flag==0:
                             if info[0]!='-':
                                 self.current_piece = info[0]
-                                self.current_square = square                                
+                                self.current_square = square
+                                self.increment = True
                                 return
                             
-                        elif self.current_piece!=None:                            
-                            starting_piece = self.current_piece
-                            ending_piece = info[0]
-                            # Finding Grid Position
-                            starting_col = self.current_square % self.dim
-                            starting_row = self.current_square // self.dim
-                            ending_col = square % self.dim
-                            ending_row = square // self.dim                            
-                            # Setting board for drawing
-                            self.board[starting_row][starting_col] = ending_piece
-                            self.board[ending_row][ending_col] = starting_piece
-                            # Taking focus off clicked piece
-                            self.current_piece = None
-                            return       
+                        elif self.current_piece!=None:
+                            if self.time_flag>=10:
+
+                                starting_piece = self.current_piece
+                                ending_piece = info[0]
+                                # Finding Grid Position
+                                starting_col = self.current_square % self.dim
+                                starting_row = self.current_square // self.dim
+                                ending_col = square % self.dim
+                                ending_row = square // self.dim                            
+                                # Setting board for drawing
+                                self.board[starting_row][starting_col] = ending_piece
+                                self.board[ending_row][ending_col] = starting_piece
+                                # Taking focus off clicked piece
+                                self.current_piece = None
+                                self.increment = False
+                                return       
 
             
 
@@ -132,6 +152,10 @@ while True:
     G.drawBoard()
     G.draw_pieces()
     P.move()
-
+    if P.increment==True:
+        P.Increment()
+    if P.increment==False:
+        P.decrease_timer()
+    
     
     p.display.flip()
