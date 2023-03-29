@@ -121,7 +121,7 @@ class Player:
                                 return
                             
                         elif self.current_piece!=None:
-                            if self.time_flag>=10:
+                            if self.time_flag>=5:
 
                                 starting_piece = self.current_piece
                                 ending_piece = info[0]
