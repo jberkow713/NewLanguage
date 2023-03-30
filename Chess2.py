@@ -14,6 +14,14 @@ Width, Height = 1024, 1024
 Max_FPS = 15
 clock = p.time.Clock()
 
+def can_move(square,piece,moved_square):
+    #square is square piece is moving from, piece is piece type, moved_square is ending grid square #
+     
+    # TODO return True if piece starting at the square can move to the moved square
+    # else return False, 
+    # To be used in computer and Player classes
+    return True
+
 class Game:
     def __init__(self, size):
         self.size = size
@@ -103,8 +111,8 @@ class Player:
         self.time_flag-=1
         if self.time_flag <= 0:
             self.time_flag=0
-            self.increment = None
-    
+            self.increment = None        
+
     def move(self):
         
         if e.type == p.MOUSEBUTTONDOWN:            
@@ -122,23 +130,21 @@ class Player:
                             
                         elif self.current_piece!=None:
                             if self.time_flag>=5:
-
                                 starting_piece = self.current_piece
                                 ending_piece = info[0]
-                                # Finding Grid Position
-                                starting_col = self.current_square % self.dim
-                                starting_row = self.current_square // self.dim
-                                ending_col = square % self.dim
-                                ending_row = square // self.dim                            
-                                # Setting board for drawing
-                                self.board[starting_row][starting_col] = ending_piece
-                                self.board[ending_row][ending_col] = starting_piece
-                                # Taking focus off clicked piece
-                                self.current_piece = None
-                                self.increment = False
-                                return       
-
-            
+                                if can_move(self.current_square,self.current_piece,square)==True:
+                                    # Finding Grid Position
+                                    starting_col = self.current_square % self.dim
+                                    starting_row = self.current_square // self.dim
+                                    ending_col = square % self.dim
+                                    ending_row = square // self.dim                                                            
+                                    # Setting board for drawing
+                                    self.board[starting_row][starting_col] = ending_piece
+                                    self.board[ending_row][ending_col] = starting_piece
+                                    # Taking focus off clicked piece
+                                    self.current_piece = None
+                                    self.increment = False
+                                    return            
 
 G = Game(20)
 P = Player('black', G)
@@ -155,7 +161,6 @@ while True:
     if P.increment==True:
         P.Increment()
     if P.increment==False:
-        P.decrease_timer()
-    
+        P.decrease_timer()    
     
     p.display.flip()
