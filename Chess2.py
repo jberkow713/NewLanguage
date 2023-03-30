@@ -95,8 +95,8 @@ class Player:
     
     def Increment(self):
         self.time_flag+=1
-        if self.time_flag >= 10:
-            self.time_flag=10
+        if self.time_flag >= 5:
+            self.time_flag=5
             self.increment = None
     
     def decrease_timer(self):
