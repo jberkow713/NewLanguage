@@ -264,33 +264,4 @@ print(data)
 for k,v in data.items():
     print(f'text for {k} is {v}')
 
-
-find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-# # print(data[0])
-# # for page in data[0]:
-# print(data[30])
-# print(get_human_readable_scrolling_text(data[30]))
-# # print(data[8])
-# # print(get_human_readable_scrolling_text(data[8]))
-# # # print(data[0:10])
+# find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
