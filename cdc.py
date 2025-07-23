@@ -5,6 +5,93 @@ from urllib.parse import urljoin, urlparse
 import json
 import re 
 from collections import defaultdict
+from fpdf import FPDF
+import os
+import sys
+
+def find_and_download_pdfs(url, output_dir="downloaded_pdfs"):
+    """
+    Finds PDF links on a given URL, then downloads and saves them.
+
+    Args:
+        url (str): The URL of the webpage to scan for PDF links.
+        output_dir (str): The directory where downloaded PDFs will be saved.
+                          Defaults to "downloaded_pdfs".
+    """
+    print(f"Scanning URL: {url}")
+
+    # Create the output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"Created output directory: {output_dir}")
+
+    try:
+        # Add a User-Agent header to mimic a browser and avoid being blocked
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing the URL {url}: {e}")
+        return
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    found_pdfs = 0
+
+    # Find all anchor tags (<a>)
+    for link in soup.find_all('a', href=True):
+        href = link['href']
+        absolute_url = urljoin(url, href) # Resolve relative URLs to absolute URLs
+
+        # Check if the link points to a PDF file
+        # Check both the path extension and the content-type if available (though not always reliable before download)
+        if absolute_url.lower().endswith('.pdf'):
+            parsed_url = urlparse(absolute_url)
+            filename = os.path.basename(parsed_url.path)
+
+            # Sanitize filename to remove potentially invalid characters for file paths
+            filename = "".join([c for c in filename if c.isalnum() or c in ('.', '_', '-')]).strip()
+            if not filename: # If filename becomes empty after sanitization
+                filename = "downloaded_pdf_" + str(found_pdfs + 1) + ".pdf"
+
+            file_path = os.path.join(output_dir, filename)
+
+            # Check if the file already exists to avoid re-downloading
+            if os.path.exists(file_path):
+                print(f"Skipping existing file: {filename}")
+                continue
+
+            print(f"Found PDF link: {absolute_url}")
+            print(f"Downloading {filename}...")
+
+            try:
+                # Download the PDF file
+                # Use stream=True for potentially large files and iterate over content
+                pdf_response = requests.get(absolute_url, stream=True, headers=headers, timeout=20)
+                pdf_response.raise_for_status()
+
+                # Check Content-Type header to be more robust for PDFs
+                if 'content-type' in pdf_response.headers and 'application/pdf' not in pdf_response.headers['content-type']:
+                    print(f"Warning: {absolute_url} does not have 'application/pdf' content type. Skipping.")
+                    continue
+
+                with open(file_path, 'wb') as f:
+                    for chunk in pdf_response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                print(f"Successfully downloaded: {filename}")
+                found_pdfs += 1
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error downloading {absolute_url}: {e}")
+            except IOError as e:
+                print(f"Error saving file {file_path}: {e}")
+
+    if found_pdfs == 0:
+        print("No PDF links found on the page.")
+    else:
+        print(f"\nFinished. Downloaded {found_pdfs} PDF(s) to '{output_dir}'.")
 
 def get_nccdphp_urls(start_url):
     """
@@ -168,13 +255,19 @@ def find_text_per_page():
     return info 
 
 
-find_text_per_page()
+# find_text_per_page()
+
 with open('nccdphp_Text.json', 'r') as f:
     data = json.load(f)
 
 print(data)
 for k,v in data.items():
     print(f'text for {k} is {v}')
+
+
+find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
+
+
     
 
 
