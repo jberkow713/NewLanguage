@@ -163,10 +163,20 @@ def find_text_per_page():
             print(f'adding text from {link}')
             Text.append(text)
             info[link]=text
+    with open('nccdphp_Text.json', 'w') as f:
+        json.dump(info , f, indent=4)        
     return info 
 
-       
-print(find_text_per_page())
+
+find_text_per_page()
+with open('nccdphp_Text.json', 'r') as f:
+    data = json.load(f)
+
+print(data)
+for k,v in data.items():
+    print(f'text for {k} is {v}')
+    
+
 
 
 
