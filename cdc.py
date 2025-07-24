@@ -38,6 +38,7 @@ def find_and_download_pdfs(url, output_dir="downloaded_pdfs"):
         return
 
     soup = BeautifulSoup(response.text, 'html.parser')
+    
     found_pdfs = 0
 
     # Find all anchor tags (<a>)
@@ -294,4 +295,6 @@ for k,v in data.items():
         save_to_file('Downloaded_Text/','cdc_about',v)
     
     count +=1
-'''    
+'''
+for link in data.keys():
+    find_and_download_pdfs(link)    
