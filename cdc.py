@@ -259,14 +259,39 @@ def find_text_per_page():
         json.dump(info , f, indent=4)        
     return info 
 
-
 # find_text_per_page()
+
+# find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
+
+# TODO
+# find count of all pdfs, don't download, get names
+# create text file output for one of the files in nccdphp_Text.json, save it
+
+def save_to_file(Folder, name,text):
+    
+    # Saves file to folder
+    filename = f"{Folder}{name}.txt"
+    print(filename)
+
+    try:
+        # Open the file in write mode ('w')
+        # 'w' will create the file if it doesn't exist, or overwrite it if it does.
+        # 'a' (append mode) would add to the end of an existing file.
+        with open(filename, 'w', encoding='utf-8') as file:
+            file.write(text)
+        print(f"Text successfully saved to {filename}")
+
+    except IOError as e:
+        print(f"Error saving file: {e}")
+    return 
 
 with open('nccdphp_Text.json', 'r') as f:
     data = json.load(f)
-
-print(data)
+'''
+count = 0
 for k,v in data.items():
-    print(f'text for {k} is {v}')
-
-# find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
+    if count <1:
+        save_to_file('Downloaded_Text/','cdc_about',v)
+    
+    count +=1
+'''    
