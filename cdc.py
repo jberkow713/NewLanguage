@@ -97,6 +97,9 @@ def get_nccdphp_urls(start_url):
     """
     Scrapes the CDC website starting from start_url, traverses clickable links,
     and returns a unique list of URLs containing '/nccdphp/' in their path.
+
+    Can add a variable to search for specific link such as '/nccdphp/', to make code reusable for 
+    other websites
     """
     base_domain = urlparse(start_url).netloc
     visited_urls = set()
@@ -192,10 +195,12 @@ def get_human_readable_scrolling_text(url):
             '[aria-hidden="true"]' # often used for decorative elements
         ]:
             for tag in soup.select(selector):
+                # getting rid of unusable stuff
                 tag.decompose() # Remove the tag and its contents
 
         for tag_name in boilerplate_tags:
             for tag in soup.find_all(tag_name):
+                # getting rid of more unusable tags and information
                 tag.decompose() # Remove the tag and its contents
 
         # --- Strategy 2: Focus on common content-bearing tags ---
@@ -233,23 +238,23 @@ def get_human_readable_scrolling_text(url):
         print(f"An unexpected error occurred while processing '{url}': {e}")
         return {}
 
-
-with open('nccdphp.json', 'r') as file:
-    data = json.load(file)
-
-
 def find_text_per_page():
     with open('nccdphp.json', 'r') as file:
+        # Loading in links
         data = json.load(file)
     
     info = {}
     Text = []
     for link in data:
+        # Creates dictionary key with only the first links on the page,
+        # As other links share readable text
         text = get_human_readable_scrolling_text(link)
         if text not in Text:
             print(f'adding text from {link}')
             Text.append(text)
             info[link]=text
+    # Stores dictionary in json, can also add parameter to do this if needed for reusability for
+    # other links/ files 
     with open('nccdphp_Text.json', 'w') as f:
         json.dump(info , f, indent=4)        
     return info 
