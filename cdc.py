@@ -8,6 +8,9 @@ from collections import defaultdict
 from fpdf import FPDF
 import os
 import sys
+import html2text
+import asyncio
+from playwright.async_api import async_playwright
 
 def find_and_download_pdfs(url, output_dir="downloaded_pdfs"):
     """
@@ -237,6 +240,58 @@ def get_human_readable_scrolling_text(url):
         print(f"An unexpected error occurred while processing '{url}': {e}")
         return {}
 
+def scrape_webpage_to_markdown(url):
+    """
+    Fetches the HTML content from a given URL, parses it using BeautifulSoup,
+    and converts it into human-readable Markdown text, preserving common formatting.
+
+    Args:
+        url (str): The URL of the webpage to scrape.
+
+    Returns:
+        str: The Markdown representation of the human-readable text,
+             or an error message if the scraping fails.
+    """
+    try:
+        # 1. Fetch the HTML content
+        # Add a User-Agent header to mimic a web browser and avoid being blocked
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
+
+        # 2. Parse the HTML using BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Remove elements that are typically not part of the main readable content
+        # (e.g., scripts, styles, navigation, footers, headers, ads)
+        for selector in ['script', 'style', 'noscript', 'meta', 'link', 'form',
+                         'nav', 'footer', 'header', 'aside', '.sidebar',
+                         '[class*="ad"]', '[id*="ad"]', '[aria-hidden="true"]']:
+            for element in soup.find_all(selector):
+                element.decompose() # Remove the element from the soup tree
+
+        # Initialize the html2text converter
+        h = html2text.HTML2Text()
+        h.body_width = 0  # Disable wrapping for better raw output
+        h.ignore_links = False # Keep links
+        h.ignore_images = False # Keep images (as markdown image syntax)
+        h.bypass_tables = False # Keep tables as markdown tables if possible
+        h.single_line_break = True # Handle <br> as single newline
+
+        # Convert the processed HTML to Markdown
+        # We convert the body content, as <head> usually contains non-visual data
+        markdown_content = h.handle(str(soup.body if soup.body else soup))
+
+        return markdown_content
+
+    except requests.exceptions.RequestException as e:
+        return f"Error fetching URL: {e}"
+    except Exception as e:
+        return f"An unexpected error occurred: {e}"
+
+
 def find_text_per_page():
     with open('nccdphp.json', 'r') as file:
         # Loading in links
@@ -291,9 +346,141 @@ for k,v in data.items():
     
     count +=1
 '''
+'''
 for link in data.keys():
     find_and_download_pdfs(link) 
-
+'''
 #TODO
 #Find out if there is a way to format text from the website, so that when it is saved, it will be easier to read
 # Adding in order to save to github because github is strange
+
+
+
+PDF_OUTPUT_DIR = "generated_pdfs"
+if not os.path.exists(PDF_OUTPUT_DIR):
+    os.makedirs(PDF_OUTPUT_DIR)
+
+def fetch_initial_html(url):
+    """
+    Fetches the raw HTML content from a given URL.
+    This is a helper function for the Playwright part.
+    """
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=15) # Increased timeout
+        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
+        return response.text
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Error fetching initial HTML from {url}: {e}")
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred while fetching HTML: {e}")
+
+async def scrape_and_save_pdf(url,split_val):
+    """
+    Navigates to the URL using a headless browser, executes JavaScript
+    to remove non-human-readable elements, and then saves the rendered
+    page as a PDF file.
+
+    Args:
+        url (str): The URL of the webpage to scrape.
+
+    Returns:
+        str: The path to the generated PDF file, or raises an exception on error.
+    """
+    output_filename = ""
+    try:
+        # Sanitize URL for filename
+        # sanitized_url = re.sub(r'[^a-zA-Z0-9]', '_', url)
+        # # Trim if too long
+        # if len(sanitized_url) > 50:
+        #     sanitized_url = sanitized_url[:20] + "_" + str(hash(url))[:8]
+
+        sanitized_url = url.split(split_val)[1].split('.html')[0]
+        output_filename = os.path.join(PDF_OUTPUT_DIR, f"{sanitized_url}.pdf")
+        print(output_filename)
+
+        async with async_playwright() as p:
+            browser = await p.chromium.launch() # Launch a Chromium browser
+            page = await browser.new_page()
+
+            # Navigate to the URL and wait for the page to be fully loaded
+            try:
+                await page.goto(url, wait_until="load", timeout=60000) # Increased timeout to 60 seconds
+            except Exception as goto_error:
+                # If 'load' fails, try 'domcontentloaded' as a fallback, with a longer timeout
+                print(f"Initial page.goto failed with wait_until='load': {goto_error}. Retrying with 'domcontentloaded'...")
+                await page.goto(url, wait_until="domcontentloaded", timeout=90000)
+
+            # Execute JavaScript in the browser context to remove unwanted elements.
+            # This ensures that original CSS and images are loaded, but then
+            # non-content elements are removed before printing.
+            await page.evaluate('''
+                () => {
+                    const selectorsToRemove = [
+                        'script', 'style', 'noscript', 'meta', 'link[rel="stylesheet"]', 'form',
+                        'nav', 'footer', 'header', 'aside', '.sidebar',
+                        '[class*="ad"]', '[id*="ad"]', '[aria-hidden="true"]',
+                        'iframe', '[role="navigation"]', '[role="banner"]', '[role="contentinfo"]'
+                    ];
+                    selectorsToRemove.forEach(selector => {
+                        document.querySelectorAll(selector).forEach(element => {
+                            // Only remove elements if they are not direct children of <body> and don't contain main content
+                            // This heuristic tries to avoid removing essential layout if a site uses semantic tags broadly
+                            if (element.tagName !== 'BODY' && !element.contains(document.querySelector('article')) && !element.contains(document.querySelector('main'))) {
+                                element.remove();
+                            }
+                        });
+                    });
+
+                    // Remove elements that are hidden or have zero dimensions (e.g., tracking pixels, empty divs)
+                    document.querySelectorAll('*').forEach(el => {
+                        const style = window.getComputedStyle(el);
+                        if (style.display === 'none' || style.visibility === 'hidden' || el.offsetWidth === 0 || el.offsetHeight === 0) {
+                            el.remove();
+                        }
+                    });
+
+                    // Optional: Remove empty paragraphs, divs etc.
+                    document.querySelectorAll('p, div, span').forEach(el => {
+                        if (el.textContent.trim() === '' && el.children.length === 0) {
+                            el.remove();
+                        }
+                    });
+                }
+            ''')
+
+            # Save the page as PDF
+            await page.pdf(path=output_filename, format="A4", print_background=True)
+            print(f"PDF successfully saved to {output_filename}")
+            return output_filename
+
+    except Exception as e:
+        # Clean up any partially created file if an error occurred during PDF generation
+        if os.path.exists(output_filename):
+            os.remove(output_filename)
+        raise Exception(f"Error during PDF generation for {url}: {e}")
+
+
+# TODO
+# Better naming convention for PDF, condense all into a class that does everything
+
+
+# This block is for demonstrating how to use the scraper as a standalone script
+if __name__ == '__main__':
+    import time 
+    test_url = "https://www.cdc.gov/nccdphp/about/index.html" # Replace with a URL you want to test
+    print(f"Attempting to generate PDF for {test_url}...")
+    
+        # asyncio.run is used to execute the async function in a synchronous context
+    for link in data.keys():
+        print(link)
+        try:
+            pdf_path = asyncio.run(scrape_and_save_pdf(link,'https://www.cdc.gov/nccdphp/'))
+            print(f"PDF saved to: {pdf_path}")
+        except Exception as e:
+            print(f'{link} failed to generate PDF')
+            continue
+            # 
+    
