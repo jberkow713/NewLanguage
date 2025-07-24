@@ -94,13 +94,11 @@ def find_and_download_pdfs(url, output_dir="downloaded_pdfs"):
     else:
         print(f"\nFinished. Downloaded {found_pdfs} PDF(s) to '{output_dir}'.")
 
-def get_nccdphp_urls(start_url):
+def get_urls(start_url,Filter):
     """
     Scrapes the CDC website starting from start_url, traverses clickable links,
-    and returns a unique list of URLs containing '/nccdphp/' in their path.
+    and returns a unique list of URLs containing the filter variable such as '/nccdphp/' in their path.
 
-    Can add a variable to search for specific link such as '/nccdphp/', to make code reusable for 
-    other websites
     """
     base_domain = urlparse(start_url).netloc
     visited_urls = set()
@@ -114,7 +112,7 @@ def get_nccdphp_urls(start_url):
             continue
         else:
 
-            if '/nccdphp/' in current_url:
+            if Filter in current_url:
                 visited_urls.add(current_url)
                 print(f"Visiting: {current_url}")
 
@@ -136,7 +134,7 @@ def get_nccdphp_urls(start_url):
                     # Ensure we stay within the cdc.gov domain and avoid external links
                     if parsed_url.netloc == base_domain:
                         # Check if '/nccdphp/' is in the path of the URL
-                        if '/nccdphp/' in parsed_url.path:
+                        if Filter in parsed_url.path:
                             nccdphp_urls.add(absolute_url)
                         
                         # Add to queue for further exploration if not already visited
@@ -148,7 +146,7 @@ def get_nccdphp_urls(start_url):
 def store_all_nccdphp_site():
 
     start_link = "https://www.cdc.gov/nccdphp/index.html"
-    nccdphp_sites = get_nccdphp_urls(start_link)
+    nccdphp_sites = get_urls(start_link,'/nccdphp/')
     with open('nccdphp.json', 'w') as f:
         json.dump(nccdphp_sites , f, indent=4)
     return     
@@ -264,9 +262,6 @@ def find_text_per_page():
 
 # find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
 
-# TODO
-# find count of all pdfs, don't download, get names
-# create text file output for one of the files in nccdphp_Text.json, save it
 
 def save_to_file(Folder, name,text):
     
@@ -297,4 +292,8 @@ for k,v in data.items():
     count +=1
 '''
 for link in data.keys():
-    find_and_download_pdfs(link)    
+    find_and_download_pdfs(link) 
+
+#TODO
+#Find out if there is a way to format text from the website, so that when it is saved, it will be easier to read
+# Adding in order to save to github because github is strange
