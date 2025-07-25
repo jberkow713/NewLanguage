@@ -147,12 +147,20 @@ def get_urls(start_url,Filter):
     return sorted(list(nccdphp_urls))
 
 def store_all_nccdphp_site():
-
+    '''
+    Stores all 'nccdphp' urls
+    '''
     start_link = "https://www.cdc.gov/nccdphp/index.html"
     nccdphp_sites = get_urls(start_link,'/nccdphp/')
     with open('nccdphp.json', 'w') as f:
         json.dump(nccdphp_sites , f, indent=4)
     return     
+
+def store_generic_links(start_link,Filter,name):
+    sites = get_urls(start_link,Filter)
+    with open(name, 'w') as f:
+        json.dump(sites , f, indent=4)
+    return 
 
 def get_human_readable_scrolling_text(url):
     """
@@ -239,60 +247,31 @@ def get_human_readable_scrolling_text(url):
     except Exception as e:
         print(f"An unexpected error occurred while processing '{url}': {e}")
         return {}
-
-def scrape_webpage_to_markdown(url):
-    """
-    Fetches the HTML content from a given URL, parses it using BeautifulSoup,
-    and converts it into human-readable Markdown text, preserving common formatting.
-
-    Args:
-        url (str): The URL of the webpage to scrape.
-
-    Returns:
-        str: The Markdown representation of the human-readable text,
-             or an error message if the scraping fails.
-    """
-    try:
-        # 1. Fetch the HTML content
-        # Add a User-Agent header to mimic a web browser and avoid being blocked
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
-
-        # 2. Parse the HTML using BeautifulSoup
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Remove elements that are typically not part of the main readable content
-        # (e.g., scripts, styles, navigation, footers, headers, ads)
-        for selector in ['script', 'style', 'noscript', 'meta', 'link', 'form',
-                         'nav', 'footer', 'header', 'aside', '.sidebar',
-                         '[class*="ad"]', '[id*="ad"]', '[aria-hidden="true"]']:
-            for element in soup.find_all(selector):
-                element.decompose() # Remove the element from the soup tree
-
-        # Initialize the html2text converter
-        h = html2text.HTML2Text()
-        h.body_width = 0  # Disable wrapping for better raw output
-        h.ignore_links = False # Keep links
-        h.ignore_images = False # Keep images (as markdown image syntax)
-        h.bypass_tables = False # Keep tables as markdown tables if possible
-        h.single_line_break = True # Handle <br> as single newline
-
-        # Convert the processed HTML to Markdown
-        # We convert the body content, as <head> usually contains non-visual data
-        markdown_content = h.handle(str(soup.body if soup.body else soup))
-
-        return markdown_content
-
-    except requests.exceptions.RequestException as e:
-        return f"Error fetching URL: {e}"
-    except Exception as e:
-        return f"An unexpected error occurred: {e}"
-
+def find_text_per_page_generic(file_name):
+        '''
+    Finds all non-repeating text and stores {URL:Text} for 'nccdphp' sites
+    '''
+    with open(file_name, 'r') as file:
+        # Loading in links
+        data = json.load(file)
+    
+    info = {}
+    Text = []
+    for link in data:
+        # Creates dictionary key with only the first links on the page,
+        # As other links share readable text
+        text = get_human_readable_scrolling_text(link)
+        if text not in Text:
+            print(f'adding text from {link}')
+            Text.append(text)
+            info[link]=text
+         
+    return [x for x in info.keys()]
 
 def find_text_per_page():
+    '''
+    Finds all non-repeating text and stores {URL:Text} for 'nccdphp' sites
+    '''
     with open('nccdphp.json', 'r') as file:
         # Loading in links
         data = json.load(file)
@@ -313,13 +292,8 @@ def find_text_per_page():
         json.dump(info , f, indent=4)        
     return info 
 
-# find_text_per_page()
-
-# find_and_download_pdfs('https://www.cdc.gov/healthy-schools/parents/index.html')
-
-
 def save_to_file(Folder, name,text):
-    
+
     # Saves file to folder
     filename = f"{Folder}{name}.txt"
     print(filename)
@@ -335,26 +309,6 @@ def save_to_file(Folder, name,text):
     except IOError as e:
         print(f"Error saving file: {e}")
     return 
-
-with open('nccdphp_Text.json', 'r') as f:
-    data = json.load(f)
-'''
-count = 0
-for k,v in data.items():
-    if count <1:
-        save_to_file('Downloaded_Text/','cdc_about',v)
-    
-    count +=1
-'''
-'''
-for link in data.keys():
-    find_and_download_pdfs(link) 
-'''
-#TODO
-#Find out if there is a way to format text from the website, so that when it is saved, it will be easier to read
-# Adding in order to save to github because github is strange
-
-
 
 PDF_OUTPUT_DIR = "generated_pdfs"
 if not os.path.exists(PDF_OUTPUT_DIR):
@@ -381,7 +335,7 @@ async def scrape_and_save_pdf(url,split_val):
     """
     Navigates to the URL using a headless browser, executes JavaScript
     to remove non-human-readable elements, and then saves the rendered
-    page as a PDF file.
+    page as a PDF file. Saves the file based on the split_val given to it, stores PDF in folder
 
     Args:
         url (str): The URL of the webpage to scrape.
@@ -391,12 +345,6 @@ async def scrape_and_save_pdf(url,split_val):
     """
     output_filename = ""
     try:
-        # Sanitize URL for filename
-        # sanitized_url = re.sub(r'[^a-zA-Z0-9]', '_', url)
-        # # Trim if too long
-        # if len(sanitized_url) > 50:
-        #     sanitized_url = sanitized_url[:20] + "_" + str(hash(url))[:8]
-
         sanitized_url = url.split(split_val)[1].split('.html')[0]
         output_filename = os.path.join(PDF_OUTPUT_DIR, f"{sanitized_url}.pdf")
         print(output_filename)
@@ -462,25 +410,60 @@ async def scrape_and_save_pdf(url,split_val):
             os.remove(output_filename)
         raise Exception(f"Error during PDF generation for {url}: {e}")
 
+class Scraper:
+    '''
+    class takes in keyword to search for in websites, starting website, a Filter to use for 
+    file_name creation, a json_file to store links in, and a pdf_folder to save pdfs for non-replicated
+    links to. 
 
+    '''
+    def __init__(self, keyword, starting_site,Filter,json_file,pdf_folder):
+        self.keyword = keyword 
+        self.starting_site=starting_site
+        self.Filter = Filter 
+        self.json_file = json_file
+        self.pdf_folder = pdf_folder
+        self.links = None
+        self.failed = []
+        self.worked = [] 
+    def find_usable_links(self):
+        '''
+        Returns a list of unique links to then be scraped for PDFS
+        '''
+        store_generic_links(self.starting_site,self.keyword,self.json_file)
+        self.links = find_text_per_page_generic(self.json_file)
+        return
+    def create_pdfs(self):
+        '''
+        Creates PDFS for all usable non repetitive links
+        '''
+        for link in self.links:
+            try:
+                pdf_path = asyncio.run(scrape_and_save_pdf(link,self.Filter))
+                self.worked.append(link)
+            except Exception as e:
+                print(f'{link} failed to generate PDF')
+                self.failed.append(link)
+                continue
+
+'''
 # TODO
-# Better naming convention for PDF, condense all into a class that does everything
+# Better naming convention for PDF
+'''
 
-
-# This block is for demonstrating how to use the scraper as a standalone script
+'''
+# This block is for demonstrating how to use the scraper as for nccdphp files, where links were stored
+# in 'nccdphp_Text.json'
 if __name__ == '__main__':
-    import time 
-    test_url = "https://www.cdc.gov/nccdphp/about/index.html" # Replace with a URL you want to test
-    print(f"Attempting to generate PDF for {test_url}...")
-    
-        # asyncio.run is used to execute the async function in a synchronous context
+    with open('nccdphp_Text.json', 'r') as file:
+        # Loading in links
+        data = json.load(file)
     for link in data.keys():
-        print(link)
         try:
             pdf_path = asyncio.run(scrape_and_save_pdf(link,'https://www.cdc.gov/nccdphp/'))
             print(f"PDF saved to: {pdf_path}")
         except Exception as e:
             print(f'{link} failed to generate PDF')
             continue
-            # 
+'''
     
