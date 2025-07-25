@@ -231,7 +231,6 @@ def get_human_readable_scrolling_text(url):
         # Join all collected texts into a single string, separated by two newlines
         # for better readability, mimicking paragraphs.
         final_text = "\n\n".join(all_readable_texts)
-
         return final_text
 
     except requests.exceptions.RequestException as e:
@@ -240,13 +239,13 @@ def get_human_readable_scrolling_text(url):
     except Exception as e:
         print(f"An unexpected error occurred while processing '{url}': {e}")
         return ""
-
     except requests.exceptions.RequestException as e:
         print(f"Error fetching the URL '{url}': {e}")
         return {}
     except Exception as e:
         print(f"An unexpected error occurred while processing '{url}': {e}")
         return {}
+
 def find_text_per_page_generic(file_name):
         '''
     Finds all non-repeating text and stores {URL:Text} for 'nccdphp' sites
@@ -310,9 +309,6 @@ def save_to_file(Folder, name,text):
         print(f"Error saving file: {e}")
     return 
 
-PDF_OUTPUT_DIR = "generated_pdfs"
-if not os.path.exists(PDF_OUTPUT_DIR):
-    os.makedirs(PDF_OUTPUT_DIR)
 
 def fetch_initial_html(url):
     """
@@ -331,7 +327,7 @@ def fetch_initial_html(url):
     except Exception as e:
         raise Exception(f"An unexpected error occurred while fetching HTML: {e}")
 
-async def scrape_and_save_pdf(url,split_val):
+async def scrape_and_save_pdf(Folder,url,split_val):
     """
     Navigates to the URL using a headless browser, executes JavaScript
     to remove non-human-readable elements, and then saves the rendered
@@ -343,10 +339,14 @@ async def scrape_and_save_pdf(url,split_val):
     Returns:
         str: The path to the generated PDF file, or raises an exception on error.
     """
+    
+    if not os.path.exists(Folder):
+        os.makedirs(Folder)
+
     output_filename = ""
     try:
         sanitized_url = url.split(split_val)[1].split('.html')[0]
-        output_filename = os.path.join(PDF_OUTPUT_DIR, f"{sanitized_url}.pdf")
+        output_filename = os.path.join(Folder, f"{sanitized_url}.pdf")
         print(output_filename)
 
         async with async_playwright() as p:
@@ -415,7 +415,11 @@ class Scraper:
     class takes in keyword to search for in websites, starting website, a Filter to use for 
     file_name creation, a json_file to store links in, and a pdf_folder to save pdfs for non-replicated
     links to. 
-
+              keyword example input: '/nccdphp/'
+              starting_site example input: "https://www.cdc.gov/nccdphp/index.html"
+              Filter example input: 'https://www.cdc.gov/nccdphp/'
+              json_file example input: 'nccdphp.json'
+              pdf_folder example input: 'generated_pdfs'
     '''
     def __init__(self, keyword, starting_site,Filter,json_file,pdf_folder):
         self.keyword = keyword 
@@ -429,17 +433,19 @@ class Scraper:
     def find_usable_links(self):
         '''
         Returns a list of unique links to then be scraped for PDFS
+        Gets all initial sites, then narrows them down based on finding unique text, and stores
+        the outcome in self.links
         '''
         store_generic_links(self.starting_site,self.keyword,self.json_file)
         self.links = find_text_per_page_generic(self.json_file)
         return
     def create_pdfs(self):
         '''
-        Creates PDFS for all usable non repetitive links
+        Creates PDFS for all usable non repetitive links using specified storage folder
         '''
         for link in self.links:
             try:
-                pdf_path = asyncio.run(scrape_and_save_pdf(link,self.Filter))
+                asyncio.run(scrape_and_save_pdf(self.pdf_folder,link,self.Filter))
                 self.worked.append(link)
             except Exception as e:
                 print(f'{link} failed to generate PDF')
@@ -460,7 +466,7 @@ if __name__ == '__main__':
         data = json.load(file)
     for link in data.keys():
         try:
-            pdf_path = asyncio.run(scrape_and_save_pdf(link,'https://www.cdc.gov/nccdphp/'))
+            pdf_path = asyncio.run(scrape_and_save_pdf("generated_pdfs",link,'https://www.cdc.gov/nccdphp/'))
             print(f"PDF saved to: {pdf_path}")
         except Exception as e:
             print(f'{link} failed to generate PDF')
